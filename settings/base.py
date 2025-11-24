@@ -9,7 +9,7 @@ load_dotenv()
 
 ## BASE SETTINGS
 
-BASE_DIR = pathlib.Path(__file__).resolve().parent
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 RAG_MODULE_DIR = BASE_DIR / "rag_module"
 TELEGRAM_FETCHER_MODULE = BASE_DIR / "telegram_fetcher_module"
 LOG_DIR = BASE_DIR / "logs"
@@ -49,3 +49,8 @@ def get_logger(file_name: str) -> logging.Logger:
 ## TELEGRAM SETTINGS
 API_ID = os.getenv('API_ID')
 API_HASH = os.getenv('API_HASH')
+
+SOURCES = {
+    "qafqazinfo": "https://t.me/qafqazinfo",
+    'operativ': 'https://t.me/operativmm',
+}

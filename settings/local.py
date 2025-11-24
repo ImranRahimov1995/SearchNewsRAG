@@ -1,1 +1,4 @@
-from base import *
+"""Local development settings."""
+
+from .base import *
+

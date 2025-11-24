@@ -1,1 +1,4 @@
-from base import *
+"""Production settings."""
+
+from .base import *
+
