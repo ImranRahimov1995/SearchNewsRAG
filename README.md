@@ -39,10 +39,87 @@ python -m telegram_fetcher --source qafqazinfo --stop-date 2024-01-01
 python -m telegram_fetcher --stop-date 2025-11-23 --output-dir ./datanew
 ```
 
+
+### 2. News Detail Parser
+Async service for extracting full article content from URLs.
+
+**Features:**
+- Async HTTP requests with aiohttp (2-3x faster than threading)
+- Configurable concurrent request limit (semaphore)
+- Site-specific parsers (easily extensible)
+- Smart retry logic with exponential backoff
+- Comprehensive error logging
+
+
+**Usage:**
+```bash
+# Parse article details from JSON
+python -m telegram_fetcher.parsers \
+  --site qafqazinfo \
+  --input datanew/qafqazinfo.json
+
+# Save to different file
+python -m telegram_fetcher.parsers \
+  --site qafqazinfo \
+  --input datanew/qafqazinfo.json \
+  --output datanew/qafqazinfo_full.json
+
+# Overwrite existing details
+python -m telegram_fetcher.parsers \
+  --site qafqazinfo \
+  --input datanew/qafqazinfo.json \
+  --overwrite
+
+# Increase concurrency for faster processing
+python -m telegram_fetcher.parsers \
+  --site qafqazinfo \
+  --input datanew/qafqazinfo.json \
+  --concurrent 100
+```
+
+**Output format:**
+```json
+[
+  {
+    "id": 12345,
+    "date": "2024-11-24T10:30:00+00:00",
+    "text": "Breaking news content...",
+
+  }
+]
+```
+
+
 **Architecture:**
 - `base.py` - Core abstractions and collectors
 - `services.py` - NewsCollectionService implementation
 - `__main__.py` - CLI entry point
+
+
+**Output format:**
+```json
+[
+  {
+    "id": 12345,
+    "date": "2024-11-24T10:30:00+00:00",
+    "text": "Breaking news...",
+    "url": "https://qafqazinfo.az/news/detail/12345",
+    "detail": "Full article content extracted from webpage..."
+  }
+]
+```
+
+**Architecture:**
+- `parsers/base.py` - Abstract interfaces and base implementations
+  - `IURLExtractor` - Extract URLs from text
+  - `IContentFetcher` - Async HTTP fetching
+  - `IContentParser` - Parse HTML content
+  - `BaseContentParser` - Base parser class
+- `parsers/qafqazinfo.py` - QafqazInfo site-specific parser
+- `parsers/__main__.py` - CLI for batch processing
+
+
+
 
 ## Environment
 Requires `.env` with:
