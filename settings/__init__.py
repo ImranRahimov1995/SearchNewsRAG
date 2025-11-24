@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Load environment variables first
 load_dotenv()
 
-SETTINGS_MODULE = os.getenv('settings', 'local').lower()
+SETTINGS_MODULE = os.getenv('SETTINGS', 'local').lower()
 
 if SETTINGS_MODULE == 'prod':
     from .prod import *
