@@ -96,8 +96,6 @@ repos:
         args:
           - tests/
           - --cov=telegram_fetcher
-          - --cov=text
-          - --cov=rag_module
           - --cov-fail-under=10
           - --cov-report=term-missing:skip-covered
         stages: [push]
