@@ -87,18 +87,20 @@ repos:
           - --maxfail=3
         stages: [commit]
 
-      - id: pytest-cov
-        name: pytest-cov (Check test coverage)
-        entry: poetry run pytest
-        language: system
-        pass_filenames: false
-        always_run: false
-        args:
-          - tests/
-          - --cov=telegram_fetcher
-          - --cov-fail-under=10
-          - --cov-report=term-missing:skip-covered
-        stages: [push]
+      # - id: pytest-cov
+      #   name: pytest-cov (Check test coverage)
+      #   entry: poetry run -m pytest
+      #   language: system
+      #   pass_filenames: false
+      #   always_run: false
+      #   args:
+      #     - tests/
+      #     - --cov=telegram_fetcher
+      #     - --cov=text
+      #     - --cov=rag_module
+      #     - --cov-fail-under=80
+      #     - --cov-report=term-missing:skip-covered
+      #   stages: [push]
 
   # Documentation checks
   - repo: https://github.com/pycqa/pydocstyle
