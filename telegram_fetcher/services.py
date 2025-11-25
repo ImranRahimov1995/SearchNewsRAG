@@ -1,16 +1,13 @@
-
 import os
-import datetime
-
+from datetime import datetime
 from typing import Dict, Optional
 
+from settings import API_HASH, API_ID
 from telegram_fetcher.base import (
     BaseCollectionService,
     IMessageCollector,
     TelegramCollector,
-    API_ID,
-    API_HASH,
-    logger
+    logger,
 )
 
 
@@ -22,10 +19,13 @@ class NewsCollectionService(BaseCollectionService):
         sources: Dict[str, str],
         stop_date: datetime,
         collector: Optional[IMessageCollector] = None,
-        output_dir:  Optional[str] = "."
-
+        output_dir: str = ".",
     ):
         if collector is None:
+            if API_ID is None or API_HASH is None:
+                raise ValueError(
+                    "API_ID and API_HASH must be set in environment"
+                )
             collector = TelegramCollector(API_ID, API_HASH)
 
         super().__init__(collector)
@@ -46,9 +46,7 @@ class NewsCollectionService(BaseCollectionService):
 
             try:
                 count = await self.collector.collect(
-                    url,
-                    self.stop_date,
-                    output_file
+                    url, self.stop_date, output_file
                 )
                 results[name] = count
                 self._log_result(name, count)
@@ -62,10 +60,7 @@ class NewsCollectionService(BaseCollectionService):
         return results
 
     async def collect_single(
-        self,
-        name: str,
-        url: str,
-        output_file: Optional[str] = None
+        self, name: str, url: str, output_file: Optional[str] = None
     ) -> int:
         """Collect from single source."""
         if output_file is None:
@@ -75,9 +70,7 @@ class NewsCollectionService(BaseCollectionService):
 
         try:
             count = await self.collector.collect(
-                url,
-                self.stop_date,
-                output_file
+                url, self.stop_date, output_file
             )
             self._log_result(name, count)
             return count
