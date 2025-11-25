@@ -1,12 +1,11 @@
-from typing import Dict, Callable
+from typing import Callable, Dict
 
 from telegram_fetcher.parsers.base import SiteProcessor
 from telegram_fetcher.parsers.qafqazinfo import create_qafqazinfo_processor
 
-
 # Registry mapping site names to factory functions
 SITE_PROCESSORS: Dict[str, Callable[[], SiteProcessor]] = {
-    'qafqazinfo': create_qafqazinfo_processor,
+    "qafqazinfo": create_qafqazinfo_processor,
 }
 
 
