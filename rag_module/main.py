@@ -1,6 +1,3 @@
-
-
-
 def main():
     pass
 

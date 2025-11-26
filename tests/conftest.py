@@ -2,12 +2,11 @@
 Pytest configuration and shared fixtures.
 """
 
-import pytest
 import tempfile
-
 from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import Mock, AsyncMock
+
+import pytest
 
 
 @pytest.fixture
@@ -21,9 +20,9 @@ def temp_dir():
 def sample_news_item():
     """Sample news item for testing."""
     return {
-        'id': 12345,
-        'date': '2025-11-24T10:30:00+00:00',
-        'text': 'Breaking news from https://qafqazinfo.az/news/12345',
+        "id": 12345,
+        "date": "2025-11-24T10:30:00+00:00",
+        "text": "Breaking news from https://qafqazinfo.az/news/12345",
     }
 
 
@@ -32,19 +31,19 @@ def sample_news_list():
     """Sample list of news items."""
     return [
         {
-            'id': 1,
-            'date': '2025-11-24T10:00:00+00:00',
-            'text': 'News 1 https://qafqazinfo.az/news/1',
+            "id": 1,
+            "date": "2025-11-24T10:00:00+00:00",
+            "text": "News 1 https://qafqazinfo.az/news/1",
         },
         {
-            'id': 2,
-            'date': '2025-11-23T10:00:00+00:00',
-            'text': 'News 2 https://qafqazinfo.az/news/2',
+            "id": 2,
+            "date": "2025-11-23T10:00:00+00:00",
+            "text": "News 2 https://qafqazinfo.az/news/2",
         },
         {
-            'id': 3,
-            'date': '2025-11-22T10:00:00+00:00',
-            'text': 'News 3 https://qafqazinfo.az/news/3',
+            "id": 3,
+            "date": "2025-11-22T10:00:00+00:00",
+            "text": "News 3 https://qafqazinfo.az/news/3",
         },
     ]
 

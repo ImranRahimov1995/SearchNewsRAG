@@ -3,42 +3,41 @@ Main entry point for Telegram News Collector.
 Usage: python -m telegram_fetcher [--stop-date YYYY-MM-DD]
 """
 
-import asyncio
 import argparse
-
+import asyncio
 from datetime import datetime, timezone
 from typing import Optional
 
-from telegram_fetcher.services import NewsCollectionService
-from telegram_fetcher.base import logger
 from settings import SOURCES
+from telegram_fetcher.base import logger
+from telegram_fetcher.services import NewsCollectionService
 
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description='Collect news from Telegram channels'
+        description="Collect news from Telegram channels"
     )
 
     parser.add_argument(
-        '--stop-date',
+        "--stop-date",
         type=str,
-        default='2020-01-01',
-        help='Stop collecting at this date (YYYY-MM-DD)'
+        default="2020-01-01",
+        help="Stop collecting at this date (YYYY-MM-DD)",
     )
 
     parser.add_argument(
-        '--source',
+        "--source",
         type=str,
         default=None,
-        help='Collect from specific source only'
+        help="Collect from specific source only",
     )
 
     parser.add_argument(
-        '--output-dir',
+        "--output-dir",
         type=str,
-        default='.',
-        help='Output directory for JSON files'
+        default=".",
+        help="Output directory for JSON files",
     )
 
     return parser.parse_args()
@@ -47,7 +46,7 @@ def parse_arguments() -> argparse.Namespace:
 def parse_stop_date(date_string: str) -> datetime:
     """Parse stop date from string format YYYY-MM-DD."""
     try:
-        dt = datetime.strptime(date_string, '%Y-%m-%d')
+        dt = datetime.strptime(date_string, "%Y-%m-%d")
         return dt.replace(tzinfo=timezone.utc)
     except ValueError as e:
         logger.error(f"Invalid date format: {date_string}")
@@ -82,9 +81,7 @@ async def main():
 
     # Create service
     service = NewsCollectionService(
-        sources=sources,
-        stop_date=stop_date,
-        output_dir=args.output_dir
+        sources=sources, stop_date=stop_date, output_dir=args.output_dir
     )
 
     # Collect messages

@@ -1,8 +1,8 @@
+import logging
 import os
 import pathlib
-import logging
-    
 from logging.handlers import RotatingFileHandler
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,11 +27,11 @@ def get_logger(file_name: str) -> logging.Logger:
             log_path,
             maxBytes=5 * 1024 * 1024,  # 5 MB
             backupCount=5,
-            encoding='utf-8'
+            encoding="utf-8",
         )
 
         formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s'
+            "%(asctime)s - %(levelname)s - %(message)s"
         )
         handler.setFormatter(formatter)
 
@@ -47,10 +47,10 @@ def get_logger(file_name: str) -> logging.Logger:
 
 
 ## TELEGRAM SETTINGS
-API_ID = os.getenv('API_ID')
-API_HASH = os.getenv('API_HASH')
+API_ID = os.getenv("API_ID")
+API_HASH = os.getenv("API_HASH")
 
 SOURCES = {
     "qafqazinfo": "https://t.me/qafqazinfo",
-    'operativ': 'https://t.me/operativmm',
+    "operativ": "https://t.me/operativmm",
 }
