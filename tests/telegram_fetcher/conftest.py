@@ -9,6 +9,53 @@ import pytest
 
 
 @pytest.fixture
+def sample_news_item():
+    """Sample news item for testing."""
+    return {
+        "id": 12345,
+        "date": "2025-11-24T10:30:00+00:00",
+        "text": "Breaking news from https://qafqazinfo.az/news/12345",
+    }
+
+
+@pytest.fixture
+def sample_news_list():
+    """Sample list of news items."""
+    return [
+        {
+            "id": 1,
+            "date": "2025-11-24T10:00:00+00:00",
+            "text": "News 1 https://qafqazinfo.az/news/1",
+        },
+        {
+            "id": 2,
+            "date": "2025-11-23T10:00:00+00:00",
+            "text": "News 2 https://qafqazinfo.az/news/2",
+        },
+        {
+            "id": 3,
+            "date": "2025-11-22T10:00:00+00:00",
+            "text": "News 3 https://qafqazinfo.az/news/3",
+        },
+    ]
+
+
+@pytest.fixture
+def sample_html_content():
+    """Sample HTML content for parsing."""
+    return """
+    <html>
+        <body>
+            <div class="panel-body news_text">
+                <p>This is the main article content.</p>
+                <p>It contains multiple paragraphs.</p>
+            </div>
+        </body>
+    </html>
+    """
+
+
+@pytest.fixture
 def telegram_api_credentials():
     """Telegram API credentials for testing."""
     return {"api_id": 12345, "api_hash": "test_api_hash"}
@@ -77,3 +124,26 @@ def mock_telegram_client():
 def output_file(temp_dir):
     """Standard output file path for tests."""
     return temp_dir / "output.json"
+
+
+@pytest.fixture
+def stop_date():
+    """Create a stop date for testing."""
+    return datetime(2025, 11, 23, tzinfo=timezone.utc)
+
+
+@pytest.fixture
+def sources():
+    """Create test sources dictionary."""
+    return {
+        "operativ": "https://t.me/operativ_news",
+        "qafqazinfo": "https://t.me/qafqazinfo",
+    }
+
+
+@pytest.fixture
+def mock_collector():
+    """Create a mock message collector."""
+    collector = AsyncMock()
+    collector.collect = AsyncMock(return_value=10)
+    return collector
