@@ -90,7 +90,6 @@ addopts = [
     "--strict-markers",
     "--verbose",
     "--cov=telegram_fetcher",
-    "--cov=text",
     "--cov=rag_module",
     "--cov-report=term-missing",
     "--cov-report=html",
@@ -102,9 +101,10 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 ignore_missing_imports = true
+explicit_package_bases = true
 
 [tool.coverage.run]
-source = ["telegram_fetcher", "text", "rag_module"]
+source = ["telegram_fetcher", "rag_module"]
 omit = [
     "*/tests/*",
     "*/__pycache__/*",
