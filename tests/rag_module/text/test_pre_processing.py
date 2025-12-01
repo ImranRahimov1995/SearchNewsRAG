@@ -2,7 +2,7 @@
 Comprehensive tests for processing module.
 """
 
-from rag_module.baseclasses.text.pre_processing import (
+from rag_module.text.pre_processing import (
     AzerbaijaniDateTimeProcessor,
     ContextAwareProcessingPipeline,
     EmojiRemover,

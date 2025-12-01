@@ -3,15 +3,15 @@
 import json
 from unittest.mock import MagicMock
 
-from rag_module.baseclasses.data_processing.analyzers import DummyAnalyzer
-from rag_module.baseclasses.data_processing.chunkers import SentenceChunker
-from rag_module.baseclasses.data_processing.cleaners import TelegramNewsCleaner
-from rag_module.baseclasses.data_processing.loaders import TelegramJSONLoader
-from rag_module.baseclasses.data_processing.pipeline import (
+from rag_module.data_processing.analyzers import DummyAnalyzer
+from rag_module.data_processing.chunkers import SentenceChunker
+from rag_module.data_processing.cleaners import TelegramNewsCleaner
+from rag_module.data_processing.loaders import TelegramJSONLoader
+from rag_module.data_processing.pipeline import (
     DocumentProcessingPipeline,
     PipelineFactory,
 )
-from rag_module.baseclasses.data_processing.protocols import Document
+from rag_module.data_processing.protocols import Document
 
 
 class TestDocumentProcessingPipeline:

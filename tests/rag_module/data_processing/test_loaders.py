@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from rag_module.baseclasses.data_processing.loaders import (
+from rag_module.data_processing.loaders import (
     JSONFileLoader,
     TelegramJSONLoader,
 )

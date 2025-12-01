@@ -48,6 +48,8 @@ pre-commit = "^3.5.0"
 bandit = {extras = ["toml"], version = "^1.7.10"}
 isort = "^5.13.2"
 pydocstyle = "^6.3.0"
+ipython = "^9.7.0"
+ipykernel = "^7.1.0"
 
 [tool.black]
 line-length = 79
