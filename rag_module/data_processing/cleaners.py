@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from rag_module.baseclasses.text.pre_processing import (
+from rag_module.text.pre_processing import (
     azerbaijani_news_processor,
     default_telegram_news_processor,
 )

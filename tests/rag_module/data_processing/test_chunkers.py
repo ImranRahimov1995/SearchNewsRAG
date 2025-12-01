@@ -1,6 +1,6 @@
 """Tests for text chunkers."""
 
-from rag_module.baseclasses.data_processing.chunkers import (
+from rag_module.data_processing.chunkers import (
     FixedSizeChunker,
     LangChainRecursiveChunker,
     SentenceChunker,

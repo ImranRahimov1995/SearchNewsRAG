@@ -1,9 +1,6 @@
 """Tests for text analyzers."""
 
-from rag_module.baseclasses.data_processing.analyzers import (
-    DummyAnalyzer,
-    NewsClassifier,
-)
+from rag_module.data_processing.analyzers import DummyAnalyzer, NewsClassifier
 
 
 class TestDummyAnalyzer:

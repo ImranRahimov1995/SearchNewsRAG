@@ -1,6 +1,6 @@
 """Tests for text cleaners."""
 
-from rag_module.baseclasses.data_processing.cleaners import (
+from rag_module.data_processing.cleaners import (
     AzerbaijaniNewsCleaner,
     TelegramNewsCleaner,
 )
