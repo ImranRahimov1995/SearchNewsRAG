@@ -64,7 +64,22 @@ class JSONFileLoader(BaseDataLoader):
 
 
 class TelegramJSONLoader(JSONFileLoader):
-    """Load and validate Telegram message data from JSON."""
+    """Load and validate Telegram message data from JSON.
+
+    Supports optional data slicing for processing subsets of data.
+    """
+
+    def __init__(
+        self, start_index: int | None = None, end_index: int | None = None
+    ):
+        """Initialize Telegram JSON loader.
+
+        Args:
+            start_index: Start index for data slicing (inclusive)
+            end_index: End index for data slicing (exclusive)
+        """
+        self.start_index = start_index
+        self.end_index = end_index
 
     def load(self, source: str) -> list[dict[str, Any]]:
         """Load and validate Telegram data.
@@ -73,9 +88,20 @@ class TelegramJSONLoader(JSONFileLoader):
             source: Path to Telegram JSON file
 
         Returns:
-            List of validated Telegram messages (items without text/detail are skipped)
+            List of validated Telegram messages
+            (items without text/detail are skipped)
         """
         data = super().load(source)
+
+        if self.start_index is not None or self.end_index is not None:
+            start = self.start_index or 0
+            end = self.end_index
+            original_count = len(data)
+            data = data[start:end]
+            logger.info(
+                f"Applied slicing [{start}:{end}]: "
+                f"{original_count} -> {len(data)} items"
+            )
 
         valid_items = []
         skipped_count = 0
@@ -83,7 +109,8 @@ class TelegramJSONLoader(JSONFileLoader):
         for idx, item in enumerate(data):
             if not item.get("text") and not item.get("detail"):
                 logger.warning(
-                    f"Skipping item {idx}: missing both 'text' and 'detail' fields"
+                    f"Skipping item {idx}: "
+                    f"missing both 'text' and 'detail' fields"
                 )
                 skipped_count += 1
                 continue
