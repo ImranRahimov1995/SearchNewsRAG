@@ -1,6 +1,5 @@
 """Data processing pipeline components for RAG module."""
 
-from .analyzers.base import BaseTextAnalyzer, DummyAnalyzer, NewsClassifier
 from .chunkers import FixedSizeChunker, SentenceChunker
 from .cleaners import AzerbaijaniNewsCleaner
 from .loaders import JSONFileLoader, TelegramJSONLoader
@@ -27,11 +26,6 @@ __all__ = [
     "ITextAnalyzer",
     "IAsyncTextAnalyzer",
     "ITextChunker",
-    # Analyzers
-    "BaseTextAnalyzer",
-    "DummyAnalyzer",
-    "NewsClassifier",
-
     # Chunkers
     "FixedSizeChunker",
     "SentenceChunker",
