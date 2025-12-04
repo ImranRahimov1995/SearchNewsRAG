@@ -293,18 +293,18 @@ class VectorizationService:
 
     def _normalize_metadata(self, metadata: dict[str, Any]) -> dict[str, Any]:
         """Normalize metadata for ChromaDB compatibility.
-        
+
         ChromaDB only accepts str, int, float, bool, or None values.
         Converts lists to comma-separated strings.
-        
+
         Args:
             metadata: Raw metadata dictionary
-            
+
         Returns:
             Normalized metadata dictionary
         """
-        normalized = {}
-        
+        normalized: dict[str, Any] = {}
+
         for key, value in metadata.items():
             if value is None:
                 normalized[key] = None
@@ -316,7 +316,7 @@ class VectorizationService:
                 continue
             else:
                 normalized[key] = str(value)
-        
+
         return normalized
 
     def _build_vector_document(
@@ -341,7 +341,7 @@ class VectorizationService:
         chunk_id = f"{source_name}_{doc_id}_chunk_{chunk_index}"
 
         base_metadata = self._normalize_metadata(doc.metadata)
-        
+
         metadata = {
             **base_metadata,
             "source": source_name,
@@ -427,11 +427,15 @@ class VectorizationService:
             List of vectorized documents
         """
         if self.config.analyzer_mode == "async":
+            if not isinstance(pipeline, AsyncDocumentProcessingPipeline):
+                raise TypeError("Async mode requires AsyncDocumentProcessingPipeline")
             return asyncio.run(
                 self._vectorize_async(
                     pipeline, Path(source), source_name, start_index, end_index
                 )
             )
+        if not isinstance(pipeline, DocumentProcessingPipeline):
+            raise TypeError("Sync mode requires DocumentProcessingPipeline")
         return self._vectorize_sync(
             pipeline, Path(source), source_name, start_index, end_index
         )
