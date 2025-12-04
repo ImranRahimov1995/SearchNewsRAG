@@ -22,8 +22,8 @@ class QafqazInfoURLExtractor(BaseURLExtractor):
 
 
 class QafqazInfoParser(BaseContentParser):
-    """
-    QafqazInfo-specific parser.
+    """QafqazInfo-specific parser.
+
     Uses simple CSS selector approach.
     """
 
@@ -67,7 +67,6 @@ class QafqazInfoParser(BaseContentParser):
 
 def create_qafqazinfo_processor() -> SiteProcessor:
     """Factory function to create QafqazInfo processor."""
-
     url_extractor = QafqazInfoURLExtractor()
     fetcher = AsyncContentFetcher(timeout=15, max_retries=2, delay=0.3)
     parser = QafqazInfoParser(fetcher)

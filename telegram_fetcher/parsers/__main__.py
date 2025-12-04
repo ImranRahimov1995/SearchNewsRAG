@@ -1,5 +1,5 @@
-"""
-CLI for news detail parsing.
+"""CLI for news detail parsing.
+
 Fetches article content from URLs in JSON files.
 """
 
@@ -43,7 +43,6 @@ class NewsParsingService:
         overwrite: bool = False,
     ) -> Dict[str, int]:
         """Parse news items from JSON file."""
-
         if output_file is None:
             output_file = input_file
 
@@ -165,7 +164,6 @@ class NewsParsingService:
         self, items: List[NewsItem], output_file: str
     ) -> None:
         """Save results to JSON file."""
-
         result_data = [
             {
                 "id": item.id,

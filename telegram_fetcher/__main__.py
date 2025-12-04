@@ -1,6 +1,6 @@
-"""
-Main entry point for Telegram News Collector.
-Usage: python -m telegram_fetcher [--stop-date YYYY-MM-DD]
+"""Telegram news collector CLI.
+
+Collects messages from Telegram channels and saves to JSON.
 """
 
 import argparse

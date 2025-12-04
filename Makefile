@@ -21,8 +21,8 @@ test-fast: ## Run tests with minimal output
 
 lint: ## Run all linters
 	poetry run ruff check .
-	poetry run mypy telegram_fetcher/ rag_module/
-	poetry run bandit -r telegram_fetcher/ rag_module/
+	poetry run mypy --config-file pyproject.toml telegram_fetcher/ rag_module/
+	poetry run bandit -c pyproject.toml -r telegram_fetcher/ rag_module/
 
 format: ## Format code with black and isort
 	poetry run black .
@@ -33,6 +33,10 @@ check: ## Run all checks (format + lint + test)
 	$(MAKE) format
 	$(MAKE) lint
 	$(MAKE) test
+
+ci: ## Run CI checks (matches GitHub Actions)
+	poetry run pre-commit run --all-files
+	poetry run pytest --cov --cov-report=xml --cov-report=term
 
 pre-commit: ## Run pre-commit on all files
 	poetry run pre-commit run --all-files
@@ -67,8 +71,3 @@ setup: ## First-time setup
 
 # Development workflow shortcuts
 dev-check: format lint test-fast ## Quick development check
-
-ci: ## CI/CD simulation
-	$(MAKE) format
-	$(MAKE) lint
-	$(MAKE) test-cov
