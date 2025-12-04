@@ -1,6 +1,4 @@
-"""
-Base classes and interfaces for news detail fetching with async support.
-"""
+"""Base classes and interfaces for news detail fetching with async support."""
 
 import asyncio
 import re
@@ -30,19 +28,25 @@ class NewsItem:
 class IURLExtractor(Protocol):
     """Interface for URL extraction."""
 
-    def extract(self, text: str) -> Optional[str]: ...
+    def extract(self, text: str) -> Optional[str]:
+        """Extract URL from text."""
+        ...
 
 
 class IContentParser(Protocol):
     """Interface for content parsing."""
 
-    def parse(self, html: str) -> str: ...
+    def parse(self, html: str) -> str:
+        """Parse content from HTML."""
+        ...
 
 
 class IContentFetcher(Protocol):
     """Interface for async content fetching."""
 
-    async def fetch(self, url: str) -> str: ...
+    async def fetch(self, url: str) -> str:
+        """Fetch content from URL."""
+        ...
 
 
 class BaseURLExtractor:
@@ -124,10 +128,8 @@ class AsyncContentFetcher:
 
         for attempt in range(self.max_retries + 1):
             try:
-                # Random delay to avoid rate limiting
                 await asyncio.sleep(self.delay)
 
-                # Update User-Agent for each request
                 headers = {"User-Agent": self.ua.random}
 
                 if self.session is None:
@@ -137,7 +139,6 @@ class AsyncContentFetcher:
                     response.raise_for_status()
                     html_content: str = await response.text()
 
-                    # Validate content
                     if len(html_content) < 100:
                         return (
                             f"Invalid content "
@@ -199,7 +200,6 @@ class SiteProcessor:
                 item.detail = "No URL found"
                 return item
 
-        # parse is already async, so just await it
         item.detail = await self.content_parser.parse(item.url)  # type: ignore[misc]
 
         return item

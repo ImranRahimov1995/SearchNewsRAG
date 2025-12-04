@@ -26,7 +26,7 @@ logger = get_logger("news_analyzer")
 
 
 def parse_entities(
-    entities_data: list[dict[str, Any]]
+    entities_data: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     """Parse and validate entity data.
 
@@ -174,7 +174,7 @@ class OpenAINewsAnalyzer(BaseTextAnalyzer):
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str | None = None,
         model: str = "gpt-4o-mini",
         temperature: float = 0.1,
         max_content_length: int = 4000,
@@ -265,7 +265,6 @@ class OpenAINewsAnalyzer(BaseTextAnalyzer):
         content = response.choices[0].message.content
 
         try:
-
             start = content.find("{")
             end = content.rfind("}") + 1
             json_str = content[start:end]
@@ -290,7 +289,7 @@ class AsyncOpenAINewsAnalyzer:
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str | None = None,
         model: str = "gpt-4o-mini",
         temperature: float = 0.1,
         max_content_length: int = 4000,

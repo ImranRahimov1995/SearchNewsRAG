@@ -1,3 +1,5 @@
+"""Base classes and protocols for Telegram message collection."""
+
 import json
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
@@ -27,14 +29,21 @@ class TelegramMessage:
 class IDateFilter(Protocol):
     """Interface for date filtering."""
 
-    def should_stop(self, message_date: datetime) -> bool: ...
+    def should_stop(self, message_date: datetime) -> bool:
+        """Check if collection should stop based on date."""
+        ...
 
 
 class IMessageWriter(Protocol):
     """Interface for writing messages."""
 
-    def add(self, message: TelegramMessage) -> None: ...
-    def save(self) -> int: ...
+    def add(self, message: TelegramMessage) -> None:
+        """Add message to storage."""
+        ...
+
+    def save(self) -> int:
+        """Save collected messages."""
+        ...
 
 
 class IMessageCollector(Protocol):
@@ -42,7 +51,9 @@ class IMessageCollector(Protocol):
 
     async def collect(
         self, channel_url: str, stop_date: datetime, output_file: str
-    ) -> int: ...
+    ) -> int:
+        """Collect messages from channel."""
+        ...
 
 
 class DateFilter:

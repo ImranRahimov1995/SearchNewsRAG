@@ -452,7 +452,6 @@ class AsyncPipelineFactory:
         Returns:
             Async pipeline configured with OpenAI analyzer
         """
-
         logger.info(
             f"Creating async OpenAI pipeline: "
             f"model={model}, max_concurrent={max_concurrent}"
@@ -492,7 +491,6 @@ class AsyncPipelineFactory:
         Returns:
             Async pipeline with LangChain recursive chunker and OpenAI analyzer
         """
-
         logger.info(
             f"Creating default async pipeline: "
             f"model={model}, max_concurrent={max_concurrent}"

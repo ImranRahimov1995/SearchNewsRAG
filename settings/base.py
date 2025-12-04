@@ -1,3 +1,5 @@
+"""Base settings and configuration for SearchNewsRAG."""
+
 import logging
 import os
 import pathlib
@@ -17,6 +19,14 @@ LOG_DIR.mkdir(exist_ok=True)
 
 
 def get_logger(file_name: str) -> logging.Logger:
+    """Get configured logger instance for the given module.
+
+    Args:
+        file_name: Name of the module requesting the logger
+
+    Returns:
+        Configured logger instance with file and console handlers
+    """
     logger = logging.getLogger(file_name)
     logger.setLevel(logging.INFO)
 

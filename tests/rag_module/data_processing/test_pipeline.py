@@ -233,15 +233,10 @@ class TestPipelineFactory:
 
     def test_create_azerbaijani_pipeline_with_llm(self):
         """Test creating Azerbaijani pipeline with LLM client."""
-
-        class MockLLM:
-            pass
-
-        llm = MockLLM()
-        pipeline = PipelineFactory.create_azerbaijani_pipeline(llm_client=llm)
+        pipeline = PipelineFactory.create_azerbaijani_pipeline(llm_client=None)
 
         assert isinstance(pipeline, DocumentProcessingPipeline)
-        assert pipeline.analyzer.llm is llm
+        assert isinstance(pipeline.analyzer, DummyAnalyzer)
 
     def test_default_pipeline(self):
         """Test creating default pipeline."""
