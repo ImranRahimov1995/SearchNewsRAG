@@ -59,6 +59,37 @@ class ITextAnalyzer(Protocol):
         ...
 
 
+class IAsyncTextAnalyzer(Protocol):
+    """Interface for async text analysis and metadata extraction."""
+
+    async def analyze_async(
+        self, text: str, context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """Analyze text asynchronously and extract metadata.
+
+        Args:
+            text: Text to analyze
+            context: Additional context information
+
+        Returns:
+            Extracted metadata dictionary
+        """
+        ...
+
+    async def analyze_batch_async(
+        self, items: list[tuple[str, dict[str, Any] | None]]
+    ) -> list[dict[str, Any]]:
+        """Analyze multiple texts asynchronously in batch.
+
+        Args:
+            items: List of (text, context) tuples
+
+        Returns:
+            List of metadata dictionaries
+        """
+        ...
+
+
 class ITextChunker(Protocol):
     """Interface for splitting text into chunks."""
 
