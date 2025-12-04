@@ -111,7 +111,7 @@ class TestQueryPipeline:
 
     def test_pipeline_initialization(self):
         """Test pipeline initialization with defaults."""
-        pipeline = QueryPipeline()
+        pipeline = QueryPipeline(llm_processor=MockLLMProcessor())
 
         assert pipeline.llm_processor is not None
         assert pipeline.router is not None
