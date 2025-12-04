@@ -324,7 +324,7 @@ python -m rag_module vectorize \\
     "keywords": ["görüş", "əməkdaşlıq", "layihə"],
     "summary": "Brief summary...",
     "llm_analysis_exists": True,  # Flag
-    
+
     # Chunk metadata
     "source": "qafqazinfo_2024",
     "doc_id": "123",

@@ -58,7 +58,8 @@ repos:
         additional_dependencies:
           - types-requests
           - types-beautifulsoup4
-        args: [--ignore-missing-imports]
+        args: [--config-file=pyproject.toml]
+        files: ^(telegram_fetcher|rag_module)/
         exclude: ^tests/
 
   # Security checks with bandit

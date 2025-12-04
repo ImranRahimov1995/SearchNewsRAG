@@ -3,7 +3,7 @@
 import asyncio
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from settings import get_logger
 
@@ -427,17 +427,31 @@ class VectorizationService:
             List of vectorized documents
         """
         if self.config.analyzer_mode == "async":
-            if not isinstance(pipeline, AsyncDocumentProcessingPipeline):
-                raise TypeError("Async mode requires AsyncDocumentProcessingPipeline")
+            if not (
+                isinstance(pipeline, AsyncDocumentProcessingPipeline)
+                or hasattr(pipeline, "process_async")
+            ):
+                raise TypeError(
+                    "Async mode requires AsyncDocumentProcessingPipeline"
+                )
+            async_pipeline = cast(AsyncDocumentProcessingPipeline, pipeline)
             return asyncio.run(
                 self._vectorize_async(
-                    pipeline, Path(source), source_name, start_index, end_index
+                    async_pipeline,
+                    Path(source),
+                    source_name,
+                    start_index,
+                    end_index,
                 )
             )
-        if not isinstance(pipeline, DocumentProcessingPipeline):
+        if not (
+            isinstance(pipeline, DocumentProcessingPipeline)
+            or hasattr(pipeline, "process")
+        ):
             raise TypeError("Sync mode requires DocumentProcessingPipeline")
+        sync_pipeline = cast(DocumentProcessingPipeline, pipeline)
         return self._vectorize_sync(
-            pipeline, Path(source), source_name, start_index, end_index
+            sync_pipeline, Path(source), source_name, start_index, end_index
         )
 
     def _vectorize_sync(

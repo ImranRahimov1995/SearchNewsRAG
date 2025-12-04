@@ -104,6 +104,8 @@ warn_unused_configs = true
 disallow_untyped_defs = false
 ignore_missing_imports = true
 explicit_package_bases = true
+files = ["telegram_fetcher", "rag_module"]
+exclude = ["tests"]
 
 [tool.coverage.run]
 source = ["telegram_fetcher", "rag_module"]
