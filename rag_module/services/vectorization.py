@@ -349,6 +349,7 @@ class VectorizationService:
             "chunk_index": chunk_index,
             "total_chunks": len(doc.chunks),
             "chunk_size": len(chunk),
+            "full_content": doc.content,
         }
 
         return VectorDocument(
