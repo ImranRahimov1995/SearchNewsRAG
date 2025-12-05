@@ -1,8 +1,7 @@
 """Simple search handler - pure vector search without filters."""
 
-from settings import get_logger
-
 from rag_module.vector_store.protocols import IVectorStore
+from settings import get_logger
 
 from ..protocols import SearchResult
 
@@ -50,7 +49,9 @@ class SimpleSearchHandler:
             search_results.append(
                 SearchResult(
                     doc_id=r.document.metadata.get("doc_id", "unknown"),
-                    content=r.document.metadata.get("full_content", r.document.content),
+                    content=r.document.metadata.get(
+                        "full_content", r.document.content
+                    ),
                     score=r.score,
                     metadata=r.document.metadata,
                 )

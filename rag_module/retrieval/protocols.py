@@ -3,8 +3,6 @@
 from dataclasses import dataclass
 from typing import Protocol
 
-from rag_module.vector_store.protocols import IVectorStore
-
 
 @dataclass
 class SearchResult:
@@ -19,7 +17,9 @@ class SearchResult:
 class IRetrievalHandler(Protocol):
     """Interface for retrieval handlers."""
 
-    def retrieve(self, query: str, entities: list, top_k: int = 10) -> list[SearchResult]:
+    def retrieve(
+        self, query: str, entities: list, top_k: int = 10
+    ) -> list[SearchResult]:
         """Retrieve relevant documents.
 
         Args:

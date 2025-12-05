@@ -2,11 +2,10 @@
 
 from dataclasses import dataclass
 
-from settings import get_logger
-
 from rag_module.query_processing import QueryPipeline, QueryProcessingResult
 from rag_module.query_processing.protocols import RetrievalStrategy
 from rag_module.vector_store.protocols import IVectorStore
+from settings import get_logger
 
 from .handlers import SimpleSearchHandler, UnknownHandler
 from .protocols import SearchResult
