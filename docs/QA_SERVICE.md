@@ -270,15 +270,15 @@ qa_service = QuestionAnsweringService(
 ```python
 try:
     response = qa_service.answer(query)
-    
+
     if response.confidence == "low":
         print("⚠️ Low confidence answer")
-    
+
     if not response.sources:
         print("⚠️ No sources found")
-    
+
     print(response.answer)
-    
+
 except Exception as e:
     print(f"Error: {e}")
     # Fallback logic
