@@ -51,7 +51,7 @@ class VectorizationConfig:
     max_concurrent: int = 50
     collection_name: str = "news"
     persist_directory: str = "./chroma_db"
-    embedding_model: str = "text-embedding-3-small"
+    embedding_model: str = "text-embedding-3-large"
 
     def validate(self) -> None:
         """Validate configuration parameters.
