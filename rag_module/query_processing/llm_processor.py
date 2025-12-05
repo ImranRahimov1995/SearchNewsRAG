@@ -1,10 +1,10 @@
-"""LLM-based query processor using OpenAI GPT-3.5 for Azerbaijani language.
+"""LLM-based query processor using OpenAI for Azerbaijani language.
 
 Performs all query processing in a single API call:
+- Language detection and translation
 - Text cleaning and normalization
-- Grammar and spelling correction
-- Named Entity Recognition
-- Intent classification
+- Named Entity Recognition (NER)
+- Intent classification (factoid or unknown)
 """
 
 import json
@@ -12,6 +12,10 @@ from typing import Any
 
 from openai import OpenAI
 
+from rag_module.promts import (
+    QUERY_ANALYZER_SYSTEM_PROMPT,
+    QUERY_ANALYZER_USER_PROMPT,
+)
 from settings import get_logger
 
 from .protocols import (
@@ -26,59 +30,20 @@ logger = get_logger("llm_query_processor")
 
 
 class LLMQueryProcessor:
-    """OpenAI GPT-3.5 based query processor for Azerbaijani.
+    """OpenAI-based query processor for Azerbaijani news search.
 
     Performs complete query understanding in single LLM call:
-    1. Text cleaning (lowercase, remove noise)
-    2. Grammar/spelling correction for Azerbaijani
-    3. Named Entity Recognition
-    4. Intent classification
+    1. Language detection (az, en, ru, tr, etc.)
+    2. Translation to Azerbaijani (if needed)
+    3. Text cleaning and correction
+    4. Named Entity Recognition (NER)
+    5. Intent classification (factoid or unknown)
     """
-
-    SYSTEM_PROMPT = """Sən Azərbaycan dilində sorğuları təhlil edən AI köməkçisisən.
-
-Vəzifələrin:
-1. Sorğunu təmizlə (kiçik hərflərə çevir, boşluqları normallaşdır)
-2. Qrammatik və orfoqrafik səhvləri düzəlt
-3. Named Entity Recognition (NER) - şəxs, təşkilat, yer, tarix, sənəd
-4. Sorğunun növünü müəyyən et
-
-Sorğu növləri:
-- factoid: "kim", "nə", "harada", "nə vaxt" sualları
-- definition: anlayış izahı istəyi
-- statistical: "neçə", "faiz", "statistika", "dinamika"
-- analytical: "niyə", "izah et", "səbəb"
-- task_oriented: "yarat", "qur", "hesabla"
-- opinion: subyektiv, fikir sorğusu
-- local_az: Azərbaycan-spesifik (məsələn: "xalq bank", "asan imza")
-- unknown: müəyyən edilə bilməyən
-
-Entity növləri: person, organization, location, date, document, number, money, other
-
-VACIB: Cavabı YALNIZ JSON formatında ver, başqa heç nə əlavə etmə!"""
-
-    USER_PROMPT_TEMPLATE = """Sorğu: "{query}"
-
-JSON cavab (mütləq bu strukturda):
-{{
-  "cleaned": "təmizlənmiş sorğu",
-  "corrected": "düzəldilmiş sorğu",
-  "language": "az",
-  "intent": "intent_növü",
-  "confidence": 0.0-1.0,
-  "entities": [
-    {{"text": "entity", "type": "növ", "normalized": "normallaşdırılmış", "confidence": 0.0-1.0}}
-  ],
-  "keywords": ["açar", "sözlər"],
-  "is_local_content": true/false,
-  "requires_temporal_filter": true/false,
-  "reasoning": "qısa izahat"
-}}"""
 
     def __init__(
         self,
         api_key: str | None = None,
-        model: str = "gpt-3.5-turbo",
+        model: str = "gpt-4o-mini",
         temperature: float = 0.1,
     ):
         """Initialize LLM query processor.
@@ -107,7 +72,7 @@ JSON cavab (mütləq bu strukturda):
             Tuple of (processed_query, query_analysis)
 
         Raises:
-            ValueError: If LLM response cannot be parsed
+            ValueError: If query is empty or LLM response cannot be parsed
         """
         if not query or not query.strip():
             raise ValueError("Query cannot be empty")
@@ -118,10 +83,13 @@ JSON cavab (mütləq bu strukturda):
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": self.SYSTEM_PROMPT},
+                    {
+                        "role": "system",
+                        "content": QUERY_ANALYZER_SYSTEM_PROMPT,
+                    },
                     {
                         "role": "user",
-                        "content": self.USER_PROMPT_TEMPLATE.format(
+                        "content": QUERY_ANALYZER_USER_PROMPT.format(
                             query=query
                         ),
                     },
@@ -133,7 +101,8 @@ JSON cavab (mütləq bu strukturda):
             result = self._parse_response(response, query)
 
             logger.info(
-                f"Query processed: intent={result[1].intent}, "
+                f"Query processed: lang={result[0].language}, "
+                f"intent={result[1].intent}, "
                 f"entities={len(result[1].entities)}, "
                 f"confidence={result[1].confidence:.2f}"
             )
@@ -141,7 +110,7 @@ JSON cavab (mütləq bu strukturda):
             return result
 
         except Exception as e:
-            logger.error(f"Error processing query: {e}")
+            logger.error(f"Error processing query: {e}", exc_info=True)
             return self._fallback_processing(query)
 
     def _parse_response(
@@ -159,13 +128,14 @@ JSON cavab (mütləq bu strukturda):
         content = response.choices[0].message.content
         data = json.loads(content)
 
+        detected_lang = data.get("detected_language", "az")
+        translated = data.get("translated_to_az", original_query)
+
         processed = ProcessedQuery(
             original=original_query,
-            cleaned=data.get("cleaned", original_query.lower()),
-            corrected=data.get(
-                "corrected", data.get("cleaned", original_query)
-            ),
-            language=data.get("language", "az"),
+            cleaned=data.get("cleaned", translated.lower()),
+            corrected=data.get("corrected", data.get("cleaned", translated)),
+            language=detected_lang,
         )
 
         entities = []
@@ -182,10 +152,10 @@ JSON cavab (mütləq bu strukturda):
                 logger.warning(f"Skipping invalid entity: {e}")
                 continue
 
-        try:
-            intent = QueryIntent(data.get("intent", "unknown"))
-        except ValueError:
-            logger.warning(f"Unknown intent: {data.get('intent')}")
+        intent_str = data.get("intent", "unknown").lower()
+        if intent_str == "factoid":
+            intent = QueryIntent.FACTOID
+        else:
             intent = QueryIntent.UNKNOWN
 
         analysis = QueryAnalysis(
@@ -193,15 +163,17 @@ JSON cavab (mütləq bu strukturda):
             entities=entities,
             confidence=float(data.get("confidence", 0.0)),
             keywords=data.get("keywords", []),
-            is_local_content=bool(data.get("is_local_content", False)),
-            requires_temporal_filter=bool(
-                data.get("requires_temporal_filter", False)
-            ),
-            metadata={"reasoning": data.get("reasoning", "")},
+            is_local_content=False,
+            requires_temporal_filter=False,
+            metadata={
+                "reasoning": data.get("reasoning", ""),
+                "detected_language": detected_lang,
+                "translated_to_az": translated,
+            },
         )
 
         logger.debug(
-            f"Parsed: cleaned='{processed.cleaned}', "
+            f"Parsed: lang={detected_lang}, "
             f"corrected='{processed.corrected}', intent={analysis.intent}"
         )
 
