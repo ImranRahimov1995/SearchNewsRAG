@@ -12,7 +12,7 @@ from typing import Any
 
 from openai import OpenAI
 
-from rag_module.promts import (
+from rag_module.prompts import (
     QUERY_ANALYZER_SYSTEM_PROMPT,
     QUERY_ANALYZER_USER_PROMPT,
 )
