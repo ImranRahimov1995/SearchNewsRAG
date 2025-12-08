@@ -33,6 +33,10 @@ requests = "2.32.5"
 aiohttp = "3.13.2"
 fake-useragent = "2.2.0"
 beautifulsoup4 = "4.14.2"
+fastapi = "0.115.6"
+uvicorn = {extras = ["standard"], version = "0.34.0"}
+pydantic = "2.10.6"
+pydantic-settings = "^2.10.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.2"
