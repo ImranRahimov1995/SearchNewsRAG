@@ -88,6 +88,7 @@ class LLMResponseGenerator:
             logger.info(
                 f"Generated answer: confidence={result.get('confidence')}, "
                 f"sources={len(result.get('sources', []))}"
+                f"result={result}"
             )
 
             return result

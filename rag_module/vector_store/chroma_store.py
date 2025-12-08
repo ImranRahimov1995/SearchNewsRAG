@@ -4,7 +4,7 @@ from typing import Any
 
 from chromadb import Collection, PersistentClient
 
-from settings import get_logger
+from settings import BASE_DIR, get_logger
 
 from .protocols import IEmbedding, VectorDocument, VectorSearchResult
 
@@ -22,7 +22,7 @@ class ChromaVectorStore:
         self,
         collection_name: str,
         embedding: IEmbedding,
-        persist_directory: str = "chroma_db",
+        persist_directory: str = str(BASE_DIR / "chroma_db"),
     ):
         """Initialize ChromaDB vector store.
 
