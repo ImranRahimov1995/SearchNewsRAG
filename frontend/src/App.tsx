@@ -1,0 +1,181 @@
+/**
+ * @fileoverview Main application component for NewsChat
+ */
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles, Menu, X } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
+import { useChat } from '@/hooks/useChat';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { useLanguage } from '@/hooks/useLanguage';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { ChatMessages } from '@/components/ChatMessages';
+import { ChatInput } from '@/components/ChatInput';
+import { TimeFilterSelector } from '@/components/TimeFilterSelector';
+import { QuickQueryTemplates } from '@/components/QuickQueryTemplates';
+import { IndexStatusPanel } from '@/components/IndexStatusPanel';
+import { TrendingTopicsPanel } from '@/components/TrendingTopicsPanel';
+
+const HEADER_ANIMATION = {
+  initial: { y: -100 },
+  animate: { y: 0 },
+};
+
+const FILTER_ANIMATION = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: { delay: 0.2 },
+};
+
+const INPUT_ANIMATION = {
+  initial: { y: 100 },
+  animate: { y: 0 },
+};
+
+const SIDEBAR_ANIMATION = {
+  initial: { x: 100, opacity: 0 },
+  animate: { x: 0, opacity: 1 },
+  transition: { delay: 0.3 },
+};
+
+const MOBILE_OVERLAY_ANIMATION = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+const MOBILE_SIDEBAR_ANIMATION = {
+  initial: { x: '100%' },
+  animate: { x: 0 },
+  exit: { x: '100%' },
+  transition: { type: 'spring' as const, damping: 25 },
+};
+
+/**
+ * Root application component.
+ * Manages layout, theme, chat state, and responsive sidebar navigation.
+ * 
+ * @returns Rendered application
+ */
+function App() {
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+  const { messages, isLoading, sendMessage, filter, setFilter, messagesEndRef } = useChat();
+  const { trendingTopics, indexStatus } = useAnalytics();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
+  return (
+    <div className="h-screen flex flex-col overflow-hidden">
+      <motion.header 
+        {...HEADER_ANIMATION}
+        className="glass-card-strong border-b border-white/20 dark:border-gray-700/30 shadow-xl z-10"
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <motion.div 
+            className="flex items-center gap-3"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 shadow-lg shadow-primary-500/50">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black gradient-text">
+                {t.app.title}
+              </h1>
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                {t.app.subtitle}
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1 p-1 rounded-xl glass-card">
+              {(['az', 'en', 'ru'] as const).map((lang) => (
+                <motion.button
+                  key={lang}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setLanguage(lang)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all duration-300 ${
+                    language === lang
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  }`}
+                >
+                  {lang}
+                </motion.button>
+              ))}
+            </div>
+            <ThemeToggle isDark={theme === 'dark'} onToggle={toggleTheme} />
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="lg:hidden p-3 rounded-2xl glass-card-strong shadow-lg"
+            >
+              {isSidebarOpen ? (
+                <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              ) : (
+                <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              )}
+            </motion.button>
+          </div>
+        </div>
+      </motion.header>
+
+      <div className="flex-1 flex overflow-hidden max-w-7xl w-full mx-auto">
+        <div className="flex-1 flex flex-col min-w-0">
+          <motion.div 
+            {...FILTER_ANIMATION}
+            className="px-6 py-4 glass-card border-b border-white/20 dark:border-gray-700/30"
+          >
+            <TimeFilterSelector currentFilter={filter} onFilterChange={setFilter} t={t} />
+          </motion.div>
+
+          <ChatMessages messages={messages} messagesEndRef={messagesEndRef} isLoading={isLoading} t={t} />
+
+          <motion.div 
+            {...INPUT_ANIMATION}
+            className="glass-card-strong border-t border-white/20 dark:border-gray-700/30 p-6 shadow-2xl"
+          >
+            <QuickQueryTemplates onSelectTemplate={sendMessage} t={t} />
+            <ChatInput onSendMessage={sendMessage} isLoading={isLoading} t={t} />
+          </motion.div>
+        </div>
+
+        <motion.aside 
+          {...SIDEBAR_ANIMATION}
+          className="hidden lg:block w-96 glass-card border-l border-white/20 dark:border-gray-700/30 p-6 overflow-y-auto scrollbar-custom"
+        >
+          <div className="space-y-4">
+            <IndexStatusPanel status={indexStatus} t={t} />
+            <TrendingTopicsPanel topics={trendingTopics} t={t} />
+          </div>
+        </motion.aside>
+
+        {isSidebarOpen && (
+          <motion.div
+            {...MOBILE_OVERLAY_ANIMATION}
+            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <motion.aside
+              {...MOBILE_SIDEBAR_ANIMATION}
+              onClick={(e) => e.stopPropagation()}
+              className="absolute right-0 top-0 h-full w-80 glass-card-strong border-l border-white/20 dark:border-gray-700/30 p-6 overflow-y-auto shadow-2xl"
+            >
+              <div className="space-y-4">
+                <IndexStatusPanel status={indexStatus} t={t} />
+                <TrendingTopicsPanel topics={trendingTopics} t={t} />
+              </div>
+            </motion.aside>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;

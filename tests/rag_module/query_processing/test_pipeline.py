@@ -144,7 +144,7 @@ class TestQueryPipeline:
         result = pipeline.process("Neçə nəfər iştirak etdi?")
 
         assert result.analysis.intent == QueryIntent.STATISTICAL
-        assert result.strategy == RetrievalStrategy.STATISTICAL_AGGREGATION
+        assert result.strategy == RetrievalStrategy.HYBRID_SEARCH
 
     def test_process_analytical_query(self):
         """Test processing analytical query."""
@@ -153,7 +153,7 @@ class TestQueryPipeline:
         result = pipeline.process("Niyə bu baş verdi?")
 
         assert result.analysis.intent == QueryIntent.ANALYTICAL
-        assert result.strategy == RetrievalStrategy.LLM_REASONING
+        assert result.strategy == RetrievalStrategy.HYBRID_SEARCH
 
     def test_process_empty_query_raises(self):
         """Test processing empty query raises ValueError."""

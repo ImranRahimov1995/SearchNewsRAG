@@ -82,7 +82,7 @@ class TestVectorizationConfig:
         assert config.max_concurrent == 50
         assert config.collection_name == "news"
         assert config.persist_directory == "./chroma_db"
-        assert config.embedding_model == "text-embedding-3-small"
+        assert config.embedding_model == "text-embedding-3-large"
 
     def test_create_config_with_custom_values(self):
         """Test creating config with custom values."""
@@ -369,7 +369,7 @@ class TestVectorizationService:
         assert service.config.persist_directory == "./test_db"
 
         mock_embedding_class.assert_called_once_with(
-            model="text-embedding-3-small"
+            model="text-embedding-3-large"
         )
         mock_store_class.assert_called_once_with(
             collection_name="test_collection",

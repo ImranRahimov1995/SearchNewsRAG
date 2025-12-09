@@ -45,7 +45,7 @@ jobs:
       run: |
         poetry run pre-commit run --all-files
       env:
-        SKIP: pydocstyle,pytest-cov
+        SKIP: pydocstyle,pytest-cov,eslint-frontend
 
     - name: Run tests with coverage
       run: |

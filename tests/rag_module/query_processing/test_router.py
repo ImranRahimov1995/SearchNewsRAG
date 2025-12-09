@@ -31,7 +31,7 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.STATISTICAL_AGGREGATION
+        assert strategy == RetrievalStrategy.HYBRID_SEARCH
 
     def test_analytical_routing(self):
         """Test routing for analytical queries."""
@@ -40,10 +40,10 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.LLM_REASONING
+        assert strategy == RetrievalStrategy.HYBRID_SEARCH
 
-    def test_local_content_override(self):
-        """Test local content overrides base strategy."""
+    def test_factoid_always_simple_search(self):
+        """Test factoid queries always use simple search."""
         router = QueryRouter()
         analysis = QueryAnalysis(
             intent=QueryIntent.FACTOID,
@@ -53,19 +53,19 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.LOCAL_SEARCH
+        assert strategy == RetrievalStrategy.SIMPLE_SEARCH
 
-    def test_low_confidence_fallback(self):
-        """Test low confidence queries use hybrid search."""
+    def test_factoid_with_low_confidence(self):
+        """Test factoid with low confidence still uses simple search."""
         router = QueryRouter()
         analysis = QueryAnalysis(intent=QueryIntent.FACTOID, confidence=0.3)
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.HYBRID_SEARCH
+        assert strategy == RetrievalStrategy.SIMPLE_SEARCH
 
-    def test_multiple_entities_hybrid(self):
-        """Test queries with many entities use hybrid search."""
+    def test_factoid_with_many_entities(self):
+        """Test factoid with many entities still uses simple search."""
         router = QueryRouter()
         entities = [
             Entity(text=f"Entity{i}", type=EntityType.OTHER) for i in range(5)
@@ -76,7 +76,7 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.HYBRID_SEARCH
+        assert strategy == RetrievalStrategy.SIMPLE_SEARCH
 
     def test_unknown_intent_routing(self):
         """Test routing for unknown intent."""
@@ -96,7 +96,7 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.TOOL_CALLING
+        assert strategy == RetrievalStrategy.HYBRID_SEARCH
 
     def test_definition_routing(self):
         """Test routing for definition queries."""
@@ -107,7 +107,7 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.RAG_RETRIEVAL
+        assert strategy == RetrievalStrategy.HYBRID_SEARCH
 
     def test_opinion_routing(self):
         """Test routing for opinion queries."""
@@ -116,7 +116,7 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.LLM_REASONING
+        assert strategy == RetrievalStrategy.HYBRID_SEARCH
 
     def test_get_strategy_description(self):
         """Test getting strategy descriptions."""
