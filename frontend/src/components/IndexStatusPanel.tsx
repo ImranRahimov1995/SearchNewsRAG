@@ -15,7 +15,7 @@ interface IndexStatusPanelProps {
 }
 
 interface StatusConfig {
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
   bg: string;
 }

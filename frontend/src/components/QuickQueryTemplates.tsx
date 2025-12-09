@@ -14,7 +14,7 @@ interface QuickQueryTemplatesProps {
 
 interface QueryTemplate {
   text: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 /**

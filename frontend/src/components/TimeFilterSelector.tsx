@@ -16,7 +16,7 @@ interface TimeFilterSelectorProps {
 
 interface FilterConfig {
   value: TimeFilter;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const TRANSITION_CONFIG = {

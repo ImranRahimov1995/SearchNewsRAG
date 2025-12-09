@@ -22,7 +22,7 @@ const MAX_TOPICS_DISPLAY = 5;
  * @returns Icon component for the trend
  * @private
  */
-function getTrendIcon(trend: ITrendingTopic['trend']): React.ComponentType<any> {
+function getTrendIcon(trend: ITrendingTopic['trend']): React.ComponentType<{ className?: string }> {
   switch (trend) {
     case 'up':
       return TrendingUp;

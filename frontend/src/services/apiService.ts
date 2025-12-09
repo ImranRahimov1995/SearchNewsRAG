@@ -67,13 +67,16 @@ class ApiService {
     try {
       const response = await this.api.post('/chat/ask', request);
       return response.data;
-    } catch (error: any) {
-      if (error.response?.data?.detail) {
-        console.error('API Error Details:', error.response.data.detail);
-        const errorMsg = error.response.data.detail
-          .map((err: any) => err.msg)
-          .join(', ');
-        throw new Error(errorMsg);
+    } catch (error) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { detail?: Array<{ msg: string }> } } };
+        if (axiosError.response?.data?.detail) {
+          console.error('API Error Details:', axiosError.response.data.detail);
+          const errorMsg = axiosError.response.data.detail
+            .map((err) => err.msg)
+            .join(', ');
+          throw new Error(errorMsg);
+        }
       }
       console.error('Failed to send message:', error);
       throw error;

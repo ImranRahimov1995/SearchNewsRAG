@@ -3,7 +3,7 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { IMessage, IChatRequest, TimeFilter, INewsEvent } from '@/types';
+import { IMessage, IChatRequest, TimeFilter, INewsEvent, ISource } from '@/types';
 import { apiService } from '@/services/apiService';
 
 const DEFAULT_LANGUAGE = 'ru';
@@ -14,13 +14,13 @@ const DEFAULT_FILTER: TimeFilter = 'all';
  * @param sources - Array of source objects from API response
  * @returns Array of formatted news events
  */
-const transformSourcesToEvents = (sources: any[]): INewsEvent[] => {
-  return sources.map((source: any, index: number) => ({
+const transformSourcesToEvents = (sources: ISource[]): INewsEvent[] => {
+  return sources.map((source: ISource, index: number) => ({
     id: `event-${Date.now()}-${index}`,
-    title: source.title || source.headline || 'Без заголовка',
-    category: source.category || 'Общее',
-    date: source.date || source.published_at || new Date().toISOString(),
-    summary: source.summary || source.description || '',
+    title: String(source.title || source.headline || 'Без заголовка'),
+    category: String(source.category || 'Общее'),
+    date: String(source.date || source.published_at || new Date().toISOString()),
+    summary: String(source.summary || source.description || ''),
     sentiment: (source.sentiment as 'positive' | 'neutral' | 'negative') || 'neutral',
   }));
 };
@@ -30,7 +30,7 @@ const transformSourcesToEvents = (sources: any[]): INewsEvent[] => {
  * @param error - Error object or message
  * @returns Formatted error message
  */
-const createErrorMessage = (error: any): IMessage => ({
+const createErrorMessage = (error: Error | { message?: string }): IMessage => ({
   id: `error-${Date.now()}`,
   type: 'bot',
   content: error.message || 'Извините, произошла ошибка. Попробуйте еще раз.',
@@ -95,15 +95,15 @@ export const useChat = () => {
         };
 
         setMessages((prev: IMessage[]) => [...prev, botMessage]);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Failed to send message:', error);
-        const errorMessage = createErrorMessage(error);
+        const errorMessage = createErrorMessage(error instanceof Error ? error : { message: String(error) });
         setMessages((prev: IMessage[]) => [...prev, errorMessage]);
       } finally {
         setIsLoading(false);
       }
     },
-    [filter]
+    []
   );
 
   return {

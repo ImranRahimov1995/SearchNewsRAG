@@ -18,7 +18,7 @@ interface SentimentConfig {
   bg: string;
   border: string;
   text: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const SENTIMENT_CONFIGS: Record<string, SentimentConfig> = {

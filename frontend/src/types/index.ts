@@ -38,11 +38,11 @@ export interface IChatRequest {
 }
 
 export interface ISource {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface IRetrievedDocument {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface IChatResponse {

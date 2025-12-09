@@ -12,7 +12,7 @@ interface WelcomeScreenProps {
 }
 
 interface Feature {
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
 }
