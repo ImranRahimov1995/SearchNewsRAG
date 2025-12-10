@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 from .batch_processor import BatchProcessor
 from .chroma_store import ChromaVectorStore

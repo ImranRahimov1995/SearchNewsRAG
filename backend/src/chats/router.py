@@ -1,16 +1,16 @@
 """Chat router for RAG-powered question answering."""
 
+import logging
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from rag_module.services.qa_service import QAResponse, QuestionAnsweringService
-from settings import get_logger
 
 from .dependencies import get_qa_service
 from .schemas import AskRequest, AskResponse
 
-logger = get_logger("chat_router")
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 

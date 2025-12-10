@@ -2,9 +2,10 @@
 
 from typing import Any
 
-from chromadb import Collection, PersistentClient
+from chromadb import Collection
+from chromadb.api import ClientAPI
 
-from settings import BASE_DIR, get_logger
+from rag_module.config import get_logger
 
 from .protocols import IEmbedding, VectorDocument, VectorSearchResult
 
@@ -16,34 +17,71 @@ class ChromaVectorStore:
 
     Implements CRUD operations for vector documents using ChromaDB.
     Separates chunk content (vectorized) from full document text (metadata).
+
+    Attributes:
+        collection_name: Name of the ChromaDB collection
+        embedding: Embedding function implementation
+        persist_directory: Directory for persistent storage
     """
 
     def __init__(
         self,
         collection_name: str,
         embedding: IEmbedding,
-        persist_directory: str = str(BASE_DIR / "chroma_db"),
+        persist_directory: str = "./chroma_db",
+        chroma_host: str | None = None,
+        chroma_port: int | None = None,
     ):
         """Initialize ChromaDB vector store.
 
         Args:
             collection_name: Name of the collection
             embedding: Embedding function implementation
-            persist_directory: Directory for persistent storage
+            persist_directory: Directory for persistent storage (embedded mode)
+            chroma_host: ChromaDB server host (client mode)
+            chroma_port: ChromaDB server port (client mode)
         """
         self.collection_name = collection_name
         self.embedding = embedding
         self.persist_directory = persist_directory
 
-        self._client = PersistentClient(path=persist_directory)
+        self._client: ClientAPI = self._create_client(
+            chroma_host, chroma_port, persist_directory
+        )
         self._collection: Collection = self._client.get_or_create_collection(
             name=collection_name
         )
 
         logger.info(
-            f"Initialized ChromaVectorStore: collection={collection_name}, "
-            f"path={persist_directory}"
+            f"Initialized ChromaVectorStore: collection={collection_name}"
         )
+
+    def _create_client(
+        self,
+        host: str | None,
+        port: int | None,
+        persist_directory: str,
+    ) -> ClientAPI:
+        """Create ChromaDB client (server or embedded mode).
+
+        Args:
+            host: ChromaDB server host (None for embedded mode)
+            port: ChromaDB server port (None for embedded mode)
+            persist_directory: Directory for persistent storage
+
+        Returns:
+            ChromaDB client instance
+        """
+        if host and port:
+            import chromadb
+
+            logger.info(f"Using ChromaDB client mode: {host}:{port}")
+            return chromadb.HttpClient(host=host, port=port)
+
+        import chromadb
+
+        logger.info(f"Using ChromaDB embedded mode: {persist_directory}")
+        return chromadb.PersistentClient(path=persist_directory)
 
     def add(self, document: VectorDocument) -> str:
         """Add single document to vector store.

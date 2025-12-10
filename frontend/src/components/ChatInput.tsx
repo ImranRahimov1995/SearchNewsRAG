@@ -16,7 +16,7 @@ interface ChatInputProps {
 /**
  * Text input field for composing and sending chat messages.
  * Features animated send button, loading state, and focus effects.
- * 
+ *
  * @param props - Component props
  * @param props.onSendMessage - Callback function to handle message submission
  * @param props.isLoading - Whether the chat is currently processing a message
@@ -50,7 +50,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
           disabled={isLoading}
           className="input-modern pr-24"
         />
-        
+
         <AnimatePresence>
           {isFocused && (
             <motion.div

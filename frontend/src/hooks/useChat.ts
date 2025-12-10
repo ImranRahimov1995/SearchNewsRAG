@@ -40,9 +40,9 @@ const createErrorMessage = (error: Error | { message?: string }): IMessage => ({
 /**
  * Custom hook for managing chat messages and communication with API.
  * Handles message state, loading state, auto-scrolling, and filter management.
- * 
+ *
  * @returns Object containing messages, loading state, send function, filter controls, and scroll ref
- * 
+ *
  * @example
  * const { messages, isLoading, sendMessage, filter, setFilter, messagesEndRef } = useChat();
  * sendMessage('Покажи новости');

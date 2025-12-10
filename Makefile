@@ -21,8 +21,8 @@ test-fast: ## Run tests with minimal output
 
 lint: ## Run all linters
 	poetry run ruff check .
-	poetry run mypy --config-file pyproject.toml telegram_fetcher/ rag_module/
-	poetry run bandit -c pyproject.toml -r telegram_fetcher/ rag_module/
+	poetry run mypy --config-file pyproject.toml telegram_fetcher/ rag_module/ backend/
+	poetry run bandit -c pyproject.toml -r telegram_fetcher/ rag_module/ backend/
 
 format: ## Format code with black and isort
 	poetry run black .

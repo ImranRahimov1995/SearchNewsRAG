@@ -12,9 +12,9 @@ const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 /**
  * Custom hook for fetching and managing analytics data.
  * Automatically refreshes data every 5 minutes.
- * 
+ *
  * @returns Object containing trending topics, index status, and loading state
- * 
+ *
  * @example
  * const { trendingTopics, indexStatus, isLoading } = useAnalytics();
  */

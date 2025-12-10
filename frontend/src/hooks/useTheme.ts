@@ -11,9 +11,9 @@ const DARK_THEME: Theme = 'dark';
 
 /**
  * Custom hook for managing light/dark theme with localStorage persistence.
- * 
+ *
  * @returns Object containing current theme and toggle function
- * 
+ *
  * @example
  * const { theme, toggleTheme } = useTheme();
  * toggleTheme();

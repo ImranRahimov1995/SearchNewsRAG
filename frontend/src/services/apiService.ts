@@ -20,7 +20,7 @@ class ApiService {
 
   constructor() {
     this.baseUrl = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_URL;
-    
+
     this.api = axios.create({
       baseURL: this.baseUrl,
       timeout: REQUEST_TIMEOUT,
@@ -89,7 +89,7 @@ class ApiService {
    */
   async getTrendingTopics(): Promise<ITrendingTopic[]> {
     const lang = localStorage.getItem('newschat-language') || 'az';
-    
+
     const topics: Record<string, ITrendingTopic[]> = {
       az: [
         { topic: 'Texnologiya', count: 245, trend: 'up' },
@@ -113,7 +113,7 @@ class ApiService {
         { topic: 'Наука', count: 98, trend: 'up' },
       ],
     };
-    
+
     return topics[lang] || topics.az;
   }
 

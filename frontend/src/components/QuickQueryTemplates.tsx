@@ -20,7 +20,7 @@ interface QueryTemplate {
 /**
  * Horizontal scrollable quick query buttons with icons.
  * Features staggered entrance animations and hover effects.
- * 
+ *
  * @param props - Component props
  * @param props.onSelectTemplate - Callback when template is selected
  * @returns Rendered quick query template buttons
@@ -45,7 +45,7 @@ export const QuickQueryTemplates: React.FC<QuickQueryTemplatesProps> = ({
           {t.quickQueries.title}
         </h3>
       </div>
-      
+
       <div className="flex gap-2 overflow-x-auto scrollbar-hide">
         {QUERY_TEMPLATES.map((template, index) => {
           const Icon = template.icon;

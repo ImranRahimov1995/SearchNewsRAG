@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 from .llm_processor import LLMQueryProcessor
 from .protocols import ProcessedQuery, QueryAnalysis, RetrievalStrategy

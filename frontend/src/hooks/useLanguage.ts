@@ -11,9 +11,9 @@ const DEFAULT_LANGUAGE: Language = 'az';
 /**
  * Hook for managing application language and translations.
  * Persists language selection to localStorage and provides translation utilities.
- * 
+ *
  * @returns Language state and translation functions
- * 
+ *
  * @example
  * ```tsx
  * const { language, setLanguage, t } = useLanguage();

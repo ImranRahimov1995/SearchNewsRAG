@@ -41,10 +41,10 @@ const TIME_TRANSLATIONS: Record<string, TimeUnit> = {
 
 /**
  * Formats a date to relative time string in current language.
- * 
+ *
  * @param date - The date to format
  * @returns Localized relative time string
- * 
+ *
  * @example
  * formatDistanceToNow(new Date(Date.now() - 60000))
  * // Returns: '1 dəqiqə əvvəl' (az) / '1 minute ago' (en) / '1 минута назад' (ru)
@@ -52,7 +52,7 @@ const TIME_TRANSLATIONS: Record<string, TimeUnit> = {
 export const formatDistanceToNow = (date: Date): string => {
   const lang = (localStorage.getItem('newschat-language') || 'az') as 'az' | 'en' | 'ru';
   const t = TIME_TRANSLATIONS[lang];
-  
+
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
@@ -80,13 +80,13 @@ export const formatDistanceToNow = (date: Date): string => {
     en: 'en-US',
     ru: 'ru-RU',
   };
-  
+
   return date.toLocaleDateString(locales[lang]);
 };
 
 /**
  * Returns correct plural form for a number based on language rules.
- * 
+ *
  * @param count - The number to check
  * @param forms - Array of forms [one, few, many]
  * @param lang - Language code

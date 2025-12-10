@@ -22,7 +22,7 @@ interface StatusConfig {
 
 /**
  * Gets status configuration for a given status type.
- * 
+ *
  * @param status - Status type string
  * @param t - Translation object
  * @returns Status configuration with icon, colors, and text
@@ -71,7 +71,7 @@ const ROTATION_TRANSITION = {
 /**
  * Panel displaying current index synchronization status.
  * Features status-specific icons, colors, and rotating animation for syncing state.
- * 
+ *
  * @param props - Component props
  * @param props.status - Current index status data, or null if unavailable
  * @returns Rendered status panel, or null if no status
@@ -83,7 +83,7 @@ export const IndexStatusPanel: React.FC<IndexStatusPanelProps> = ({ status, t })
   const StatusIcon = config.icon;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="card-modern p-4"
@@ -103,7 +103,7 @@ export const IndexStatusPanel: React.FC<IndexStatusPanelProps> = ({ status, t })
           </span>
         </div>
       </div>
-      
+
       <div className="space-y-2 text-xs">
         <div className="flex justify-between items-center">
           <span className="text-gray-600 dark:text-gray-400">{t.indexStatus.lastSync}</span>
@@ -111,7 +111,7 @@ export const IndexStatusPanel: React.FC<IndexStatusPanelProps> = ({ status, t })
             {formatDistanceToNow(status.lastSync)}
           </span>
         </div>
-        
+
         <div className="flex justify-between items-center">
           <span className="text-gray-600 dark:text-gray-400">{t.indexStatus.totalNews}</span>
           <span className="font-bold text-primary-600 dark:text-primary-400">

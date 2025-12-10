@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 from ..data_processing import (
     AsyncDocumentProcessingPipeline,

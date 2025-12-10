@@ -25,7 +25,7 @@ const TYPING_TRANSITION = {
 /**
  * Animated typing indicator shown when bot is processing a response.
  * Displays rotating loader icon and pulsing dots.
- * 
+ *
  * @param props - Component props
  * @param props.t - Translation object (optional, for future use)
  * @returns Rendered typing indicator component

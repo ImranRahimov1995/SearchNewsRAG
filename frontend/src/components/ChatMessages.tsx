@@ -21,15 +21,15 @@ interface ChatMessagesProps {
 /**
  * Container component for displaying chat messages with animations.
  * Shows welcome screen when no messages exist, typing indicator when loading.
- * 
+ *
  * @param props - Component props
  * @param props.messages - Array of chat messages to display
  * @param props.messagesEndRef - Ref for auto-scrolling to bottom
  * @param props.isLoading - Whether bot is currently generating response
  * @returns Rendered chat messages container
  */
-export const ChatMessages: React.FC<ChatMessagesProps> = ({ 
-  messages, 
+export const ChatMessages: React.FC<ChatMessagesProps> = ({
+  messages,
   messagesEndRef,
   isLoading = false,
   t,
@@ -44,7 +44,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
         {messages.map((message) => (
           <div key={message.id}>
             <MessageBubble message={message} />
-            
+
             {message.events && message.events.length > 0 && (
               <div className="mt-4">
                 <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-3 ml-2 flex items-center gap-2">
@@ -58,10 +58,10 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
             )}
           </div>
         ))}
-        
+
         {isLoading && <TypingIndicator key="typing" t={t} />}
       </AnimatePresence>
-      
+
       <div ref={messagesEndRef} />
     </div>
   );

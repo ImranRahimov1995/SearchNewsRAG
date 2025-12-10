@@ -2,13 +2,13 @@ import os
 from datetime import datetime
 from typing import Dict, Optional
 
-from settings import API_HASH, API_ID
 from telegram_fetcher.base import (
     BaseCollectionService,
     IMessageCollector,
     TelegramCollector,
     logger,
 )
+from telegram_fetcher.config import TelegramFetcherConfig
 
 
 class NewsCollectionService(BaseCollectionService):
@@ -22,11 +22,8 @@ class NewsCollectionService(BaseCollectionService):
         output_dir: str = ".",
     ):
         if collector is None:
-            if API_ID is None or API_HASH is None:
-                raise ValueError(
-                    "API_ID and API_HASH must be set in environment"
-                )
-            collector = TelegramCollector(API_ID, API_HASH)
+            config = TelegramFetcherConfig.from_env()
+            collector = TelegramCollector(str(config.api_id), config.api_hash)
 
         super().__init__(collector)
         self.sources = sources

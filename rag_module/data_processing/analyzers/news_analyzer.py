@@ -13,6 +13,7 @@ from typing import Any, cast
 
 from openai import AsyncOpenAI, OpenAI
 
+from rag_module.config import get_logger
 from rag_module.data_processing.analyzers.base import BaseTextAnalyzer
 from rag_module.prompts.news_analyzer_prompts import (
     ANALYZER_SYSTEM_PROMPT as SYSTEM_PROMPT,
@@ -20,7 +21,6 @@ from rag_module.prompts.news_analyzer_prompts import (
 from rag_module.prompts.news_analyzer_prompts import (
     ANALYZER_USER_PROMPT_TEMPLATE as USER_PROMPT_TEMPLATE,
 )
-from settings import get_logger
 
 logger = get_logger("news_analyzer")
 
