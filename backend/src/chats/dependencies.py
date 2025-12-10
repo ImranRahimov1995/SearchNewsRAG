@@ -1,16 +1,17 @@
 """Dependency injection for application services."""
 
-import os
 from typing import Annotated
 
+from config import get_settings
 from fastapi import Depends
 
+from rag_module.config import get_logger
 from rag_module.services.qa_service import QuestionAnsweringService
 from rag_module.vector_store import ChromaVectorStore
 from rag_module.vector_store.embedding import LangChainEmbedding
-from settings import get_logger
 
 logger = get_logger("dependencies")
+settings = get_settings()
 
 
 class ServiceContainer:
@@ -31,24 +32,39 @@ class ServiceContainer:
             RuntimeError: If OpenAI API key is not configured
         """
         if self._qa_service is None:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
+            if not settings.openai_api_key:
                 raise RuntimeError(
                     "OPENAI_API_KEY environment variable not set"
                 )
 
             embedding = LangChainEmbedding(model="text-embedding-3-large")
-            vector_store = ChromaVectorStore(
-                collection_name="news_analyzed_0_5k_800_200_large",
-                embedding=embedding,
-            )
+
+            if settings.chroma_host and settings.chroma_port:
+                logger.info(
+                    f"Using ChromaDB client mode: {settings.chroma_host}:{settings.chroma_port}"
+                )
+                vector_store = ChromaVectorStore(
+                    collection_name=settings.chroma_collection_name,
+                    embedding=embedding,
+                    chroma_host=settings.chroma_host,
+                    chroma_port=settings.chroma_port,
+                )
+            else:
+                logger.info(
+                    f"Using ChromaDB embedded mode: {settings.chroma_db_path}"
+                )
+                vector_store = ChromaVectorStore(
+                    collection_name=settings.chroma_collection_name,
+                    embedding=embedding,
+                    persist_directory=settings.chroma_db_path,
+                )
 
             self._qa_service = QuestionAnsweringService(
                 vector_store=vector_store,
-                llm_api_key=api_key,
+                llm_api_key=settings.openai_api_key,
                 llm_model="gpt-4o-mini",
                 temperature=0.3,
-                top_k=5,
+                top_k=settings.rag_top_k,
             )
 
             logger.info("QuestionAnsweringService initialized")
