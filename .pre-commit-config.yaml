@@ -22,15 +22,6 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
 
-  # Python code formatting with Black
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-      - id: black
-        name: black (Python code formatter)
-        language_version: python3.12
-        args: [--line-length=79]
-
   # Python import sorting
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -41,7 +32,7 @@ repos:
           - --profile=black
           - --line-length=79
 
-  # Ruff linter (extremely fast Python linter)
+  # Ruff linter and formatter (extremely fast)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.7.1
     hooks:

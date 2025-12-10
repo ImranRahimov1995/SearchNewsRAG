@@ -1,0 +1,64 @@
+services:
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: searchnewsrag-chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./chroma_db:/data
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+      ALLOW_RESET: "TRUE"
+    networks:
+      - searchnewsrag-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: searchnewsrag-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: prod
+      HOST: 0.0.0.0
+      PORT: 8000
+      LOG_LEVEL: INFO
+      LOG_FORMAT: json
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+      CHROMA_COLLECTION_NAME: ${CHROMA_COLLECTION_NAME:-news_analyzed_0_5k_800_200_large}
+      CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000"]'
+    depends_on:
+      - chromadb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - searchnewsrag-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    container_name: searchnewsrag-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - searchnewsrag-network
+
+networks:
+  searchnewsrag-network:
+    driver: bridge

@@ -56,4 +56,4 @@ class BackendSettings(BaseSettings):
 
 def get_settings() -> BackendSettings:
     """Get backend settings singleton."""
-    return BackendSettings(openai_api_key="")
+    return BackendSettings()
