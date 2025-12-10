@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from settings import get_logger
+from telegram_fetcher.config import get_logger
 from telegram_fetcher.parsers import get_processor
 from telegram_fetcher.parsers.base import BaseContentParser, NewsItem
 

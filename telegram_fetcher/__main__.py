@@ -8,8 +8,8 @@ import asyncio
 from datetime import datetime, timezone
 from typing import Optional
 
-from settings import SOURCES
 from telegram_fetcher.base import logger
+from telegram_fetcher.config import TelegramFetcherConfig
 from telegram_fetcher.services import NewsCollectionService
 
 
@@ -56,15 +56,18 @@ def parse_stop_date(date_string: str) -> datetime:
 
 def get_sources(source_name: Optional[str] = None) -> dict:
     """Get sources to collect from."""
+    config = TelegramFetcherConfig.from_env()
+    sources = config.sources or {}
+
     if source_name:
-        if source_name not in SOURCES:
+        if source_name not in sources:
             logger.error(
                 f"Unknown source: {source_name}. "
-                f"Available: {list(SOURCES.keys())}"
+                f"Available: {list(sources.keys())}"
             )
             raise SystemExit(1)
-        return {source_name: SOURCES[source_name]}
-    return SOURCES
+        return {source_name: sources[source_name]}
+    return sources
 
 
 async def main():

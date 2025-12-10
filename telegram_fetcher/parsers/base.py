@@ -9,7 +9,7 @@ from typing import Optional, Protocol
 import aiohttp
 from fake_useragent import UserAgent
 
-from settings import get_logger
+from telegram_fetcher.config import get_logger
 
 logger = get_logger("news_detail_fetcher")
 

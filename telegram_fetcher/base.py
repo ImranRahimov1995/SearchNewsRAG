@@ -8,7 +8,7 @@ from typing import Dict, Optional, Protocol
 
 from telethon import TelegramClient
 
-from settings import get_logger
+from telegram_fetcher.config import get_logger
 
 logger = get_logger("telegram_fetcher")
 
