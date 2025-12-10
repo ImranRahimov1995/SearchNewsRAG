@@ -27,14 +27,14 @@ const AVATAR_ANIMATION = {
 /**
  * Displays a single chat message with user/bot avatar and animations.
  * Supports keyword highlighting for bot messages.
- * 
+ *
  * @param props - Component props
  * @param props.message - Message object to display
  * @returns Rendered message bubble component
  */
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isUser = message.type === 'user';
-  
+
   const formattedContent = message.keywords && !isUser
     ? highlightKeywords(message.content, message.keywords)
     : message.content;
@@ -47,7 +47,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       className={`flex items-end gap-3 mb-6 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
       {!isUser && (
-        <motion.div 
+        <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={AVATAR_ANIMATION}
@@ -58,7 +58,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       )}
 
       <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} max-w-[75%]`}>
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           className={isUser ? 'message-bubble-user' : 'message-bubble-bot'}
@@ -68,7 +68,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             dangerouslySetInnerHTML={{ __html: formattedContent }}
           />
         </motion.div>
-        
+
         <span className={`text-xs mt-1.5 px-2 ${isUser ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'}`}>
           {message.timestamp.toLocaleTimeString('ru-RU', {
             hour: '2-digit',
@@ -78,7 +78,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       </div>
 
       {isUser && (
-        <motion.div 
+        <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={AVATAR_ANIMATION}

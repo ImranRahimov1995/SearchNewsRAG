@@ -32,7 +32,7 @@ const ICON_ANIMATION = {
 /**
  * Welcome screen shown before any messages are sent.
  * Features animated hero section, feature cards, and call-to-action.
- * 
+ *
  * @param props - Component props
  * @param props.t - Translation object
  * @returns Rendered welcome screen

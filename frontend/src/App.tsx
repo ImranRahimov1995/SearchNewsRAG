@@ -55,7 +55,7 @@ const MOBILE_SIDEBAR_ANIMATION = {
 /**
  * Root application component.
  * Manages layout, theme, chat state, and responsive sidebar navigation.
- * 
+ *
  * @returns Rendered application
  */
 function App() {
@@ -67,12 +67,12 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <motion.header 
+      <motion.header
         {...HEADER_ANIMATION}
         className="glass-card-strong border-b border-white/20 dark:border-gray-700/30 shadow-xl z-10"
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <motion.div 
+          <motion.div
             className="flex items-center gap-3"
             whileHover={{ scale: 1.02 }}
           >
@@ -108,7 +108,7 @@ function App() {
               ))}
             </div>
             <ThemeToggle isDark={theme === 'dark'} onToggle={toggleTheme} />
-            
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -127,7 +127,7 @@ function App() {
 
       <div className="flex-1 flex overflow-hidden max-w-7xl w-full mx-auto">
         <div className="flex-1 flex flex-col min-w-0">
-          <motion.div 
+          <motion.div
             {...FILTER_ANIMATION}
             className="px-6 py-4 glass-card border-b border-white/20 dark:border-gray-700/30"
           >
@@ -136,7 +136,7 @@ function App() {
 
           <ChatMessages messages={messages} messagesEndRef={messagesEndRef} isLoading={isLoading} t={t} />
 
-          <motion.div 
+          <motion.div
             {...INPUT_ANIMATION}
             className="glass-card-strong border-t border-white/20 dark:border-gray-700/30 p-6 shadow-2xl"
           >
@@ -145,7 +145,7 @@ function App() {
           </motion.div>
         </div>
 
-        <motion.aside 
+        <motion.aside
           {...SIDEBAR_ANIMATION}
           className="hidden lg:block w-96 glass-card border-l border-white/20 dark:border-gray-700/30 p-6 overflow-y-auto scrollbar-custom"
         >

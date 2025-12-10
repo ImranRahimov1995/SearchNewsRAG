@@ -45,7 +45,7 @@ const SENTIMENT_CONFIGS: Record<string, SentimentConfig> = {
 /**
  * Displays a news event card with category, date, title, and sentiment.
  * Features hover animations and gradient styling.
- * 
+ *
  * @param props - Component props
  * @param props.event - News event data to display
  * @param props.index - Index for staggered animation delay
@@ -71,8 +71,8 @@ export const NewsEventCard: React.FC<NewsEventCardProps> = ({ event, index = 0, 
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ 
-        duration: 0.4, 
+      transition={{
+        duration: 0.4,
         delay: index * 0.1,
         ease: [0.4, 0, 0.2, 1]
       }}
@@ -86,7 +86,7 @@ export const NewsEventCard: React.FC<NewsEventCardProps> = ({ event, index = 0, 
             {event.category}
           </span>
         </div>
-        
+
         <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
           <Calendar className="w-3.5 h-3.5" />
           <span className="text-xs font-medium">
@@ -97,11 +97,11 @@ export const NewsEventCard: React.FC<NewsEventCardProps> = ({ event, index = 0, 
           </span>
         </div>
       </div>
-      
+
       <h3 className="font-bold text-sm mb-2 text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors leading-snug">
         {event.title}
       </h3>
-      
+
       {event.summary && (
         <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
           {event.summary}

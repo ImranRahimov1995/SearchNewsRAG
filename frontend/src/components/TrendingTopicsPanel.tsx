@@ -17,7 +17,7 @@ const MAX_TOPICS_DISPLAY = 5;
 
 /**
  * Returns the appropriate icon component for a trend direction.
- * 
+ *
  * @param trend - Trend direction ('up', 'down', or 'neutral')
  * @returns Icon component for the trend
  * @private
@@ -35,7 +35,7 @@ function getTrendIcon(trend: ITrendingTopic['trend']): React.ComponentType<{ cla
 
 /**
  * Returns Tailwind CSS color classes for a trend direction.
- * 
+ *
  * @param trend - Trend direction ('up', 'down', or 'neutral')
  * @returns Tailwind color classes
  * @private
@@ -54,7 +54,7 @@ function getTrendColor(trend: ITrendingTopic['trend']): string {
 /**
  * Sidebar panel displaying top trending topics with trend indicators.
  * Features numbered badges, count displays, and staggered animations.
- * 
+ *
  * @param props - Component props
  * @param props.topics - Array of trending topics to display
  * @returns Rendered trending topics panel, or null if no topics
@@ -63,7 +63,7 @@ export const TrendingTopicsPanel: React.FC<TrendingTopicsPanelProps> = ({ topics
   if (topics.length === 0) return null;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="card-modern p-5"
@@ -76,11 +76,11 @@ export const TrendingTopicsPanel: React.FC<TrendingTopicsPanelProps> = ({ topics
           {t.trending.title}
         </h3>
       </div>
-      
+
       <div className="space-y-2">
         {topics.slice(0, MAX_TOPICS_DISPLAY).map((topic, index) => {
           const TrendIcon = getTrendIcon(topic.trend);
-          
+
           return (
             <motion.div
               key={index}
@@ -97,7 +97,7 @@ export const TrendingTopicsPanel: React.FC<TrendingTopicsPanelProps> = ({ topics
                   {topic.topic}
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-3 flex-shrink-0">
                 <span className="text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
                   {topic.count}

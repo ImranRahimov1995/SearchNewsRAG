@@ -19,12 +19,12 @@ const TRANSITION_CONFIG = {
 /**
  * Animated theme toggle button with sun/moon icons.
  * Features smooth scale and rotation transitions with glassmorphism styling.
- * 
+ *
  * @param props - Component props
  * @param props.isDark - Whether dark mode is currently active
  * @param props.onToggle - Callback function when theme is toggled
  * @returns Rendered theme toggle button
- * 
+ *
  * @example
  * ```tsx
  * <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
@@ -42,7 +42,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ isDark, onToggle }) =>
       <div className="relative w-6 h-6">
         <motion.div
           initial={false}
-          animate={{ 
+          animate={{
             scale: isDark ? 0 : 1,
             rotate: isDark ? 180 : 0,
             opacity: isDark ? 0 : 1
@@ -52,10 +52,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ isDark, onToggle }) =>
         >
           <Sun className="w-6 h-6 text-amber-500" />
         </motion.div>
-        
+
         <motion.div
           initial={false}
-          animate={{ 
+          animate={{
             scale: isDark ? 1 : 0,
             rotate: isDark ? 0 : -180,
             opacity: isDark ? 1 : 0

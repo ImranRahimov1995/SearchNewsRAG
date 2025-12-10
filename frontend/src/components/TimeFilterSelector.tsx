@@ -28,7 +28,7 @@ const TRANSITION_CONFIG = {
 /**
  * Horizontal scrollable filter chips for time range selection.
  * Features animated active state indicator and icon-label combinations.
- * 
+ *
  * @param props - Component props
  * @param props.currentFilter - Currently selected time filter
  * @param props.onFilterChange - Callback when filter selection changes
@@ -52,7 +52,7 @@ export const TimeFilterSelector: React.FC<TimeFilterSelectorProps> = ({
       {FILTER_OPTIONS.map((filter) => {
         const Icon = filter.icon;
         const isActive = currentFilter === filter.value;
-        
+
         return (
           <motion.button
             key={filter.value}
@@ -71,7 +71,7 @@ export const TimeFilterSelector: React.FC<TimeFilterSelectorProps> = ({
           >
             <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`} />
             {filter.label}
-            
+
             {isActive && (
               <motion.div
                 layoutId="activeFilter"
