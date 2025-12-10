@@ -5,12 +5,12 @@ from typing import Any
 
 from openai import OpenAI
 
+from rag_module.config import get_logger
 from rag_module.prompts import (
     ANSWER_GENERATION_SYSTEM,
     ANSWER_GENERATION_USER,
     format_context_for_llm,
 )
-from settings import get_logger
 
 from .protocols import SearchResult
 

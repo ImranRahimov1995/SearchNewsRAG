@@ -2,7 +2,7 @@
 
 from langchain_openai import OpenAIEmbeddings
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 logger = get_logger("embedding")
 

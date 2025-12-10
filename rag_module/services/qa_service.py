@@ -3,11 +3,11 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+from rag_module.config import get_logger
 from rag_module.query_processing import QueryPipeline
 from rag_module.retrieval import LLMResponseGenerator, RetrievalPipeline
 from rag_module.retrieval.protocols import SearchResult
 from rag_module.vector_store.protocols import IVectorStore
-from settings import get_logger
 
 logger = get_logger("qa_service")
 

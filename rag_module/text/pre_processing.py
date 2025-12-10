@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List, Protocol
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 logger = get_logger("text_processors")
 
