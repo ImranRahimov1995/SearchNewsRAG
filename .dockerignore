@@ -1,0 +1,97 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Poetry
+poetry.lock
+
+# Environments
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+.mypy_cache/
+.ruff_cache/
+tests/
+pytest.ini
+
+# Data files
+data/*.json
+*.csv
+
+# Jupyter
+*.ipynb
+notebooks/
+
+# Database
+chroma_db/
+*.sqlite3
+
+# Session files
+*.session
+
+# Git & CI/CD
+.git/
+.github/
+.gitignore
+.pre-commit-config.yaml
+Makefile
+
+# Documentation
+README.md
+CONTRIBUTING.md
+LICENSE
+docs/
+examples/
+
+# Frontend (when building backend)
+frontend/
+
+# Telegram fetcher (not needed in backend)
+telegram_fetcher/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# CI/CD
+.github/
+.pre-commit-config.yaml
+
+# Frontend
+frontend/
+
+# Examples
+examples/
+
+# Tests
+tests/
