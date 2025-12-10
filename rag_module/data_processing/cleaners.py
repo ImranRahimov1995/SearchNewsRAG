@@ -2,11 +2,11 @@
 
 from abc import ABC, abstractmethod
 
+from rag_module.config import get_logger
 from rag_module.text.pre_processing import (
     azerbaijani_news_processor,
     default_telegram_news_processor,
 )
-from settings import get_logger
 
 logger = get_logger("text_cleaners")
 

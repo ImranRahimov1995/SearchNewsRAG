@@ -32,14 +32,17 @@ class TestNewsCollectionService:
         self, sources, stop_date, tmp_path
     ):
         """Test initialization without collector and no API credentials."""
-        with patch("telegram_fetcher.services.API_ID", None):
-            with patch("telegram_fetcher.services.API_HASH", None):
-                with pytest.raises(ValueError, match="API_ID and API_HASH"):
-                    NewsCollectionService(
-                        sources=sources,
-                        stop_date=stop_date,
-                        output_dir=str(tmp_path),
-                    )
+        with patch.dict(
+            os.environ, {"API_ID": "", "API_HASH": ""}, clear=True
+        ):
+            with pytest.raises(
+                ValueError, match="API_ID environment variable"
+            ):
+                NewsCollectionService(
+                    sources=sources,
+                    stop_date=stop_date,
+                    output_dir=str(tmp_path),
+                )
 
     def test_init_creates_output_directory(
         self, sources, stop_date, mock_collector, tmp_path

@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 from .services import VectorizationService
 

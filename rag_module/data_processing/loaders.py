@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 logger = get_logger("data_loaders")
 

@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from settings import get_logger
+from rag_module.config import get_logger
 
 logger = get_logger("text_chunkers")
 

@@ -12,11 +12,11 @@ from typing import Any
 
 from openai import OpenAI
 
+from rag_module.config import get_logger
 from rag_module.prompts import (
     QUERY_ANALYZER_SYSTEM_PROMPT,
     QUERY_ANALYZER_USER_PROMPT,
 )
-from settings import get_logger
 
 from .protocols import (
     Entity,

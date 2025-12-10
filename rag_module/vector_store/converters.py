@@ -1,7 +1,7 @@
 """Converters for transforming data processing documents to vector documents."""
 
+from rag_module.config import get_logger
 from rag_module.data_processing.protocols import Document
-from settings import get_logger
 
 from .protocols import VectorDocument
 

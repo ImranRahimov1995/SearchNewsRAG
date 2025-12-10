@@ -167,10 +167,11 @@ htmlcov/
 
 # Session and data files
 *.session
-*.json
+# *.json
 !pyproject.json
 !package.json
 !tsconfig.json
 
 # Notebook checkpoints
 .ipynb_checkpoints
+notebooks/

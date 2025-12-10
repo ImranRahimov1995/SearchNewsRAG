@@ -1,7 +1,7 @@
 """Unknown query handler - fallback to simple search."""
 
+from rag_module.config import get_logger
 from rag_module.vector_store.protocols import IVectorStore
-from settings import get_logger
 
 from ..protocols import SearchResult
 
