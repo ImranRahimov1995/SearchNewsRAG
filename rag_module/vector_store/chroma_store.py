@@ -2,7 +2,8 @@
 
 from typing import Any
 
-from chromadb import Collection, PersistentClient
+from chromadb import Collection
+from chromadb.api import ClientAPI
 
 from rag_module.config import get_logger
 
@@ -44,7 +45,7 @@ class ChromaVectorStore:
         self.embedding = embedding
         self.persist_directory = persist_directory
 
-        self._client = self._create_client(
+        self._client: ClientAPI = self._create_client(
             chroma_host, chroma_port, persist_directory
         )
         self._collection: Collection = self._client.get_or_create_collection(
@@ -60,7 +61,7 @@ class ChromaVectorStore:
         host: str | None,
         port: int | None,
         persist_directory: str,
-    ) -> PersistentClient:
+    ) -> ClientAPI:
         """Create ChromaDB client (server or embedded mode).
 
         Args:
@@ -77,8 +78,10 @@ class ChromaVectorStore:
             logger.info(f"Using ChromaDB client mode: {host}:{port}")
             return chromadb.HttpClient(host=host, port=port)
 
+        import chromadb
+
         logger.info(f"Using ChromaDB embedded mode: {persist_directory}")
-        return PersistentClient(path=persist_directory)
+        return chromadb.PersistentClient(path=persist_directory)
 
     def add(self, document: VectorDocument) -> str:
         """Add single document to vector store.
