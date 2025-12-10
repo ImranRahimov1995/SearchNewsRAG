@@ -23,11 +23,11 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
-COPY backend/pyproject.toml backend/poetry.lock* ./
+COPY pyproject.toml poetry.lock* ./
 RUN poetry install --only main --no-root --no-ansi
 
-COPY rag_module/setup.py rag_module/pyproject.toml /tmp/rag-build/
-COPY rag_module/rag_module /tmp/rag-build/rag_module
+COPY rag_module/setup.py /tmp/rag-build/
+COPY rag_module/ /tmp/rag-build/rag_module
 
 WORKDIR /tmp/rag-build
 RUN /app/.venv/bin/pip install --no-cache-dir .
