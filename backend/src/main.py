@@ -4,13 +4,13 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from chats import router as chat_router
-from chats.dependencies import get_container
 from config import get_settings
+from dependencies import get_container
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from logging_config import get_logger, setup_logging
+from news import router as news_router
 
-# Initialize settings and logging
 settings = get_settings()
 setup_logging(
     log_level=settings.log_level,
@@ -39,12 +39,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     )
 
     container = get_container()
-    try:
-        container.qa_service
-        logger.info("Services initialized successfully")
-    except Exception as e:
-        logger.error(f"Service initialization failed: {e}", exc_info=True)
-        raise
 
     yield
 
@@ -69,6 +63,7 @@ app.add_middleware(
 )
 
 app.include_router(chat_router)
+app.include_router(news_router)
 
 
 @app.get("/health")
