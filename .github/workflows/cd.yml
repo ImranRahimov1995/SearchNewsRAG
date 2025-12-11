@@ -100,9 +100,10 @@ jobs:
           docker pull ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
           docker pull ${DOCKERHUB_USERNAME}/searchnewsrag-frontend:latest
           docker pull ${DOCKERHUB_USERNAME}/searchnewsrag-nginx:latest
+          docker pull chromadb/chroma:latest
 
           echo "Recreating services..."
-          docker compose up -d --force-recreate --no-deps backend frontend nginx
+          docker compose up -d --force-recreate
 
           echo "Cleaning up old images..."
           docker image prune -f
