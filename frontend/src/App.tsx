@@ -15,7 +15,8 @@ import { ChatInput } from '@/components/ChatInput';
 import { TimeFilterSelector } from '@/components/TimeFilterSelector';
 import { QuickQueryTemplates } from '@/components/QuickQueryTemplates';
 import { IndexStatusPanel } from '@/components/IndexStatusPanel';
-import { TrendingTopicsPanel } from '@/components/TrendingTopicsPanel';
+import { CategoriesPanel } from '@/components/TrendingTopicsPanel';
+import { LatestNewsPanel } from '@/components/LatestNewsPanel';
 
 const HEADER_ANIMATION = {
   initial: { y: -100 },
@@ -62,7 +63,7 @@ function App() {
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const { messages, isLoading, sendMessage, filter, setFilter, messagesEndRef } = useChat();
-  const { trendingTopics, indexStatus } = useAnalytics();
+  const { categories, latestNews, indexStatus, isLoading: analyticsLoading } = useAnalytics();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
@@ -151,7 +152,8 @@ function App() {
         >
           <div className="space-y-4">
             <IndexStatusPanel status={indexStatus} t={t} />
-            <TrendingTopicsPanel topics={trendingTopics} t={t} />
+            <CategoriesPanel categories={categories} loading={analyticsLoading} t={t} />
+            <LatestNewsPanel news={latestNews} loading={analyticsLoading} t={t} />
           </div>
         </motion.aside>
 
@@ -168,7 +170,8 @@ function App() {
             >
               <div className="space-y-4">
                 <IndexStatusPanel status={indexStatus} t={t} />
-                <TrendingTopicsPanel topics={trendingTopics} t={t} />
+                <CategoriesPanel categories={categories} loading={analyticsLoading} t={t} />
+                <LatestNewsPanel news={latestNews} loading={analyticsLoading} t={t} />
               </div>
             </motion.aside>
           </motion.div>
