@@ -11,6 +11,7 @@ jobs:
     name: Deploy to Production VPS
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
+    environment: test
 
     steps:
     - name: Checkout code
