@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { ITrendingTopic, IIndexStatus } from '@/types';
+import { ICategory, INewsItem, IIndexStatus } from '@/types';
 import { apiService } from '@/services/apiService';
 import { useLanguage } from './useLanguage';
 
@@ -13,14 +13,15 @@ const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
  * Custom hook for fetching and managing analytics data.
  * Automatically refreshes data every 5 minutes.
  *
- * @returns Object containing trending topics, index status, and loading state
+ * @returns Object containing categories, latest news, index status, and loading state
  *
  * @example
- * const { trendingTopics, indexStatus, isLoading } = useAnalytics();
+ * const { categories, latestNews, indexStatus, isLoading } = useAnalytics();
  */
 export const useAnalytics = () => {
   const { language } = useLanguage();
-  const [trendingTopics, setTrendingTopics] = useState<ITrendingTopic[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [latestNews, setLatestNews] = useState<INewsItem[]>([]);
   const [indexStatus, setIndexStatus] = useState<IIndexStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,12 +29,14 @@ export const useAnalytics = () => {
     const fetchAnalytics = async () => {
       setIsLoading(true);
       try {
-        const [topics, status] = await Promise.all([
-          apiService.getTrendingTopics(),
+        const [categoriesRes, newsRes, status] = await Promise.all([
+          apiService.getCategories(language),
+          apiService.getNews({ language, dateFilter: 'all', sortOrder: 'desc', page: 1, pageSize: 10 }),
           apiService.getIndexStatus(),
         ]);
 
-        setTrendingTopics(topics);
+        setCategories(categoriesRes.categories);
+        setLatestNews(newsRes.results.news);
         setIndexStatus(status);
       } catch (error) {
         console.error('Failed to fetch analytics:', error);
@@ -50,7 +53,8 @@ export const useAnalytics = () => {
   }, [language]);
 
   return {
-    trendingTopics,
+    categories,
+    latestNews,
     indexStatus,
     isLoading,
   };

@@ -3,7 +3,17 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { IChatRequest, IChatResponse, IChatSession, ITrendingTopic, IIndexStatus } from '@/types';
+import {
+  IChatRequest,
+  IChatResponse,
+  IChatSession,
+  ITrendingTopic,
+  IIndexStatus,
+  ICategoriesResponse,
+  INewsListResponse,
+  DateFilter,
+  SortOrder,
+} from '@/types';
 
 const DEFAULT_API_URL = 'http://0.0.0.0:8000';
 const REQUEST_TIMEOUT = 30000;
@@ -127,6 +137,60 @@ class ApiService {
       totalNews: MOCK_TOTAL_NEWS,
       status: 'synced',
     };
+  }
+
+  /**
+   * Retrieves news categories with document counts.
+   * @param language - Language code for translations
+   * @returns Promise resolving to categories response
+   */
+  async getCategories(language: string = 'az'): Promise<ICategoriesResponse> {
+    try {
+      const response = await this.api.get('/news/categories', {
+        params: { language },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get categories:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves paginated news list with filters.
+   * @param options - Query options for filtering and pagination
+   * @returns Promise resolving to paginated news list
+   */
+  async getNews(options: {
+    language?: string;
+    dateFilter?: DateFilter;
+    sortOrder?: SortOrder;
+    page?: number;
+    pageSize?: number;
+  } = {}): Promise<INewsListResponse> {
+    try {
+      const {
+        language = 'az',
+        dateFilter = 'all',
+        sortOrder = 'desc',
+        page = 1,
+        pageSize = 10,
+      } = options;
+
+      const response = await this.api.get('/news/', {
+        params: {
+          language,
+          date_filter: dateFilter,
+          sort_order: sortOrder,
+          page,
+          page_size: pageSize,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get news:', error);
+      throw error;
+    }
   }
 }
 

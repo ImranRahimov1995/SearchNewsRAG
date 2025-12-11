@@ -44,6 +44,17 @@ export interface Translations {
     title: string;
     mentions: string;
   };
+  categories: {
+    title: string;
+  };
+  latestNews: {
+    title: string;
+    important: string;
+    justNow: string;
+    hoursAgo: string;
+    yesterday: string;
+    daysAgo: string;
+  };
   sentiment: {
     positive: string;
     negative: string;
@@ -120,6 +131,17 @@ export const translations: Record<Language, Translations> = {
       title: 'İsti Mövzular',
       mentions: 'qeyd',
     },
+    categories: {
+      title: 'Kateqoriyalar',
+    },
+    latestNews: {
+      title: 'Son Xəbərlər',
+      important: 'Vacib',
+      justNow: 'İndicə',
+      hoursAgo: 's əvvəl',
+      yesterday: 'Dünən',
+      daysAgo: 'g əvvəl',
+    },
     sentiment: {
       positive: 'Pozitiv',
       negative: 'Neqativ',
@@ -194,6 +216,17 @@ export const translations: Record<Language, Translations> = {
       title: 'Hot Topics',
       mentions: 'mentions',
     },
+    categories: {
+      title: 'Categories',
+    },
+    latestNews: {
+      title: 'Latest News',
+      important: 'Important',
+      justNow: 'Just now',
+      hoursAgo: 'h ago',
+      yesterday: 'Yesterday',
+      daysAgo: 'd ago',
+    },
     sentiment: {
       positive: 'Positive',
       negative: 'Negative',
@@ -267,6 +300,17 @@ export const translations: Record<Language, Translations> = {
     trending: {
       title: 'Горячие темы',
       mentions: 'упоминаний',
+    },
+    categories: {
+      title: 'Категории',
+    },
+    latestNews: {
+      title: 'Последние новости',
+      important: 'Важно',
+      justNow: 'Только что',
+      hoursAgo: 'ч назад',
+      yesterday: 'Вчера',
+      daysAgo: 'д назад',
     },
     sentiment: {
       positive: 'Позитивно',

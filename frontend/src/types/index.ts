@@ -78,4 +78,37 @@ export interface IIndexStatus {
   status: 'synced' | 'syncing' | 'error';
 }
 
+export interface ICategory {
+  category: string;
+  count: number;
+}
+
+export interface ICategoriesResponse {
+  categories: ICategory[];
+  total_documents: number;
+}
+
+export interface INewsItem {
+  id: string;
+  content: string;
+  category: string | null;
+  date: string | null;
+  importance: number | null;
+}
+
+export interface IPaginationInfo {
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
+export interface INewsListResponse extends IPaginationInfo {
+  results: {
+    news: INewsItem[];
+  };
+}
+
+export type DateFilter = 'today' | 'week' | 'month' | 'all';
+export type SortOrder = 'desc' | 'asc';
+
 export type Theme = 'light' | 'dark';
