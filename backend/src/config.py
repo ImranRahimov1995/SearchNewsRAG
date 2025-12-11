@@ -21,7 +21,9 @@ class BackendSettings(BaseSettings):
     )
     debug: bool = Field(default=False, description="Debug mode")
 
-    openai_api_key: str = Field(..., description="OpenAI API key")
+    openai_api_key: str = Field(
+        default="", description="OpenAI API key (from OPENAI_API_KEY env var)"
+    )
 
     chroma_db_path: str = Field(
         default="./chroma_db", description="ChromaDB storage path"
