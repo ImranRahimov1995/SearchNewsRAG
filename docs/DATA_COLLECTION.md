@@ -143,7 +143,7 @@ class MySiteParser(BaseContentParser):
             fetcher=AsyncContentFetcher(),
             content_selector=".article-content"  # CSS selector
         )
-    
+
     def parse(self, html: str) -> str:
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(html, "html.parser")
