@@ -3,8 +3,6 @@ services:
     image: chromadb/chroma:latest
     container_name: searchnewsrag-chromadb
     restart: unless-stopped
-    ports:
-      - "8001:8000"
     volumes:
       - ./chroma_db:/data
     environment:
@@ -21,18 +19,8 @@ services:
     container_name: searchnewsrag-backend
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "8000:8000"
-    environment:
-      ENVIRONMENT: prod
-      HOST: 0.0.0.0
-      PORT: 8000
-      LOG_LEVEL: INFO
-      LOG_FORMAT: json
-      CHROMA_HOST: chromadb
-      CHROMA_PORT: 8000
-      CHROMA_COLLECTION_NAME: ${CHROMA_COLLECTION_NAME:-news_analyzed_0_5k_800_200_large}
-      CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000"]'
+    expose:
+      - "8000"
     depends_on:
       - chromadb
     healthcheck:
@@ -49,13 +37,40 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: http://localhost:8000
+        VITE_API_BASE_URL: /api
     container_name: searchnewsrag-frontend
     restart: unless-stopped
-    ports:
-      - "3000:80"
+    expose:
+      - "80"
     depends_on:
       - backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - searchnewsrag-network
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: searchnewsrag-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
       - searchnewsrag-network
 
