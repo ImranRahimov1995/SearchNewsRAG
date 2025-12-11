@@ -4,21 +4,33 @@ services:
     container_name: searchnewsrag-chromadb
     restart: unless-stopped
     volumes:
-      - ./chroma_db:/data
+      - /opt/searchnewsrag/data/chroma:/data
     environment:
       IS_PERSISTENT: "TRUE"
       ANONYMIZED_TELEMETRY: "FALSE"
-      ALLOW_RESET: "TRUE"
+      ALLOW_RESET: "FALSE"
     networks:
       - searchnewsrag-network
 
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
     container_name: searchnewsrag-backend
     restart: unless-stopped
-    env_file: .env
+    environment:
+      SETTINGS: prod
+      ENVIRONMENT: prod
+      HOST: 0.0.0.0
+      PORT: 8000
+      LOG_LEVEL: INFO
+      LOG_FORMAT: json
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      API_ID: ${TELEGRAM_API_ID}
+      API_HASH: ${TELEGRAM_API_HASH}
+      CHROMA_COLLECTION_NAME: news_analyzed_0_5k_800_200_large
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+      CHROMA_DB_PATH: ./chroma_db
+      CORS_ORIGINS: '["http://news.aitools.az","https://news.aitools.az"]'
     expose:
       - "8000"
     depends_on:
@@ -33,11 +45,7 @@ services:
       - searchnewsrag-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_BASE_URL: /api
+    image: ${DOCKERHUB_USERNAME}/searchnewsrag-frontend:latest
     container_name: searchnewsrag-frontend
     restart: unless-stopped
     expose:
@@ -54,14 +62,12 @@ services:
       - searchnewsrag-network
 
   nginx:
-    build:
-      context: ./docker/nginx
-      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME}/searchnewsrag-nginx:latest
     container_name: searchnewsrag-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     depends_on:
       - backend
       - frontend
