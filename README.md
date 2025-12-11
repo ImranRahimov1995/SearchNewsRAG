@@ -243,7 +243,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and code stand
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Open Source Non-Commercial License - see [LICENSE](LICENSE) for details.
+
+**Note**: Commercial use is prohibited. For commercial licensing inquiries, please contact the author.
 
 ---
 
