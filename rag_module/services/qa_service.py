@@ -130,10 +130,16 @@ class QuestionAnsweringService:
 
         retrieval_result = self.retrieval_pipeline.search(query, top_k=k)
 
+        # Extract original language from query analysis metadata
+        original_language = retrieval_result.query_result.analysis.metadata.get(
+            "original_language", 
+            retrieval_result.query_result.processed.language
+        )
+
         llm_response = self.llm_generator.generate(
             query=query,
             search_results=retrieval_result.search_results,
-            language=retrieval_result.query_result.processed.language,
+            language=original_language,
         )
 
         sources = self._extract_sources(
@@ -142,7 +148,7 @@ class QuestionAnsweringService:
 
         response = QAResponse(
             query=query,
-            language=retrieval_result.query_result.processed.language,
+            language=original_language,
             intent=retrieval_result.query_result.analysis.intent.value,
             answer=llm_response.get("answer", "Cavab yaradıla bilmədi"),
             sources=sources,

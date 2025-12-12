@@ -128,14 +128,14 @@ class LLMQueryProcessor:
         content = response.choices[0].message.content
         data = json.loads(content)
 
-        detected_lang = data.get("detected_language", "az")
+        original_lang = data.get("original_language", "az")
         translated = data.get("translated_to_az", original_query)
 
         processed = ProcessedQuery(
             original=original_query,
             cleaned=data.get("cleaned", translated.lower()),
             corrected=data.get("corrected", data.get("cleaned", translated)),
-            language=detected_lang,
+            language=original_lang,
         )
 
         entities = []
@@ -167,13 +167,13 @@ class LLMQueryProcessor:
             requires_temporal_filter=False,
             metadata={
                 "reasoning": data.get("reasoning", ""),
-                "detected_language": detected_lang,
+                "original_language": original_lang,
                 "translated_to_az": translated,
             },
         )
 
         logger.debug(
-            f"Parsed: lang={detected_lang}, "
+            f"Parsed: lang={original_lang}, "
             f"corrected='{processed.corrected}', intent={analysis.intent}"
         )
 

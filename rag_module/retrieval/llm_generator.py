@@ -67,7 +67,9 @@ class LLMResponseGenerator:
         context = format_context_for_llm(search_results)
 
         user_prompt = ANSWER_GENERATION_USER.format(
-            query=query, context=context
+            query=query, 
+            context=context,
+            original_language=language
         )
 
         try:
