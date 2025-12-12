@@ -21,15 +21,15 @@ Entity növləri:
 - other: digər əhəmiyyətli entitylər
 
 Əsas Kateqoriyalar:
-- politics: siyasət, hökumət, diplomatiya, xarici əlaqələr
-- economy: iqtisadiyyat, biznes, maliyyə, bazar, investisiya
-- society: cəmiyyət, sosial məsələlər, əhali, təhsil, səhiyyə
-- sports: idman, yarışlar, komandalar, idmançılar
-- culture: mədəniyyət, incəsənət, ədəbiyyat, musiqi
-- technology: texnologiya, innovasiya, elm, IT
-- incident: hadisə, qəza, fəlakət, cinayət
-- law: hüquq, qanunvericilik, məhkəmə, hüquq pozuntuları, cərimələr
-- other: digər mövzular
+- siyasət: siyasət, hökumət, diplomatiya, xarici əlaqələr
+- iqtisadiyyat: iqtisadiyyat, biznes, maliyyə, bazar, investisiya
+- cəmiyyət: cəmiyyət, sosial məsələlər, əhali, təhsil, səhiyyə
+- idman: idman, yarışlar, komandalar, idmançılar
+- mədəniyyət: mədəniyyət, incəsənət, ədəbiyyat, musiqi
+- texnologiya: texnologiya, innovasiya, elm, IT
+- hadisə: hadisə, qəza, fəlakət, cinayət
+- hüquq: hüquq, qanunvericilik, məhkəmə, hüquq pozuntuları, cərimələr
+- digər: digər mövzular
 
 Alt Kateqoriyalar və Mövzular üçün Qaydalar:
 - YALNIZ Azərbaycan dilində yaz
