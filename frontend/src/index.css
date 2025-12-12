@@ -22,11 +22,11 @@
   }
 
   .message-bubble-user {
-    @apply rounded-3xl rounded-br-md bg-gradient-to-br from-primary-500 to-primary-600 text-white px-5 py-3 shadow-lg shadow-primary-500/30;
+    @apply rounded-2xl sm:rounded-3xl rounded-br-md bg-gradient-to-br from-primary-500 to-primary-600 text-white px-3 py-2 sm:px-5 sm:py-3 shadow-lg shadow-primary-500/30;
   }
 
   .message-bubble-bot {
-    @apply rounded-3xl rounded-bl-md glass-card-strong text-gray-800 dark:text-gray-100 px-5 py-3 shadow-xl;
+    @apply rounded-2xl sm:rounded-3xl rounded-bl-md glass-card-strong text-gray-800 dark:text-gray-100 px-3 py-2 sm:px-5 sm:py-3 shadow-xl;
   }
 
   .btn-primary {
@@ -38,7 +38,7 @@
   }
 
   .input-modern {
-    @apply w-full px-5 py-4 rounded-2xl glass-card-strong focus:outline-none focus:ring-2 focus:ring-primary-500/50 placeholder-gray-400 dark:placeholder-gray-500 shadow-md;
+    @apply w-full px-3 py-3 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl glass-card-strong focus:outline-none focus:ring-2 focus:ring-primary-500/50 placeholder-gray-400 dark:placeholder-gray-500 shadow-md text-base;
   }
 
   .card-modern {

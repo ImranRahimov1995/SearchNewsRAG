@@ -39,7 +39,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
 
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <div className={`relative transition-all duration-300 ${isFocused ? 'scale-[1.01]' : 'scale-100'}`}>
+      <div className={`relative transition-all duration-300 ${isFocused ? 'sm:scale-[1.01]' : 'scale-100'}`}>
         <input
           type="text"
           value={input}
@@ -48,7 +48,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
           onBlur={() => setIsFocused(false)}
           placeholder={t.chat.inputPlaceholder}
           disabled={isLoading}
-          className="input-modern pr-24"
+          className="input-modern pr-16 sm:pr-24"
         />
 
         <AnimatePresence>
@@ -57,29 +57,29 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading, 
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
-              className="absolute left-4 -top-3 flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full shadow-lg"
+              className="absolute left-3 sm:left-4 -top-2.5 sm:-top-3 flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full shadow-lg"
             >
               <Sparkles className="w-3 h-3 text-white" />
-              <span className="text-xs text-white font-medium">{t.chat.aiReady}</span>
+              <span className="hidden sm:inline text-xs text-white font-medium">{t.chat.aiReady}</span>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        <div className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           <motion.button
             type="submit"
             disabled={!isButtonEnabled}
             whileHover={isButtonEnabled ? { scale: 1.05 } : {}}
             whileTap={isButtonEnabled ? { scale: 0.95 } : {}}
             className={`
-              p-3 rounded-xl font-medium transition-all duration-300
+              p-2.5 sm:p-3 rounded-lg sm:rounded-xl font-medium transition-all duration-300
               ${isButtonEnabled
                 ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/40 hover:shadow-glow-md'
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }
             `}
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4 sm:w-5 sm:h-5" />
           </motion.button>
         </div>
       </div>
