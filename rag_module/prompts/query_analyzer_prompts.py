@@ -2,11 +2,11 @@
 
 QUERY_ANALYZER_SYSTEM_PROMPT = """Sən istifadəçi sorğularını təhlil edən AI köməkçisisən.
 
-VACIB QAYDA: Bütün cavablar YALNIZ AZƏRBAYCAN DİLİNDƏ olmalıdır!
+VACIB QAYDA: Təhlil zamanı orijinal dili saxla və həmişə Azərbaycan dilinə tərcümə et!
 
 Vəzifələrin (BİR cavabda):
-1. Sorğunun dilini müəyyən et (az, en, ru, tr, və s.)
-2. Əgər sorğu Azərbaycan dilində deyilsə → Azərbaycan dilinə tərcümə et
+1. Sorğunun orijinal dilini müəyyən et və saxla (az, en, ru, tr, və s.)
+2. Sorğunu HƏMIŞƏ Azərbaycan dilinə tərcümə et (axtarış üçün lazımdır)
 3. Sorğunu təmizlə və düzəlt
 4. Named Entity Recognition (NER) - şəxslər, yerlər, təşkilatlar, tarixlər
 5. Sorğu növünü təyin et: factoid və ya unknown
@@ -32,8 +32,9 @@ Cavabı YALNIZ JSON formatında ver, başqa heç nə yazma!
 
 JSON cavab (dəqiq bu strukturda):
 {{
-  "detected_language": "dilin kodu (az/en/ru/tr/və s.)",
-  "translated_to_az": "Azərbaycan dilində sorğu (lazım olsa tərcümə et, əks halda eyni saxla)",
+  "original_language": "orijinal dilin kodu (az/en/ru/tr/və s.)",
+  "original_query": "istifadəçinin orijinal sorğusu (dəyişdirilmədən)",
+  "translated_to_az": "Azərbaycan dilində sorğu (HƏMIŞƏ tərcümə et, hətta az dilində olsa belə normallaşdır)",
   "cleaned": "təmizlənmiş sorğu (kiçik hərflərlə)",
   "corrected": "düzəldilmiş və normallaşdırılmış sorğu",
   "intent": "factoid və ya unknown",
@@ -50,8 +51,9 @@ Nümunələr:
 Sorğu: "Bakıda nə olub?"
 → Cavab:
 {{
-  "detected_language": "az",
-  "translated_to_az": "Bakıda nə olub?",
+  "original_language": "az",
+  "original_query": "Bakıda nə olub?",
+  "translated_to_az": "Bakıda nə olub",
   "cleaned": "bakıda nə olub",
   "corrected": "bakıda nə olub",
   "intent": "factoid",
@@ -64,7 +66,8 @@ Sorğu: "Bakıda nə olub?"
 Sorğu: "Почему это случилось?"
 → Cavab:
 {{
-  "detected_language": "ru",
+  "original_language": "ru",
+  "original_query": "Почему это случилось?",
   "translated_to_az": "Bu niyə baş verdi?",
   "cleaned": "bu niyə baş verdi",
   "corrected": "bu niyə baş verdi",
@@ -78,7 +81,8 @@ Sorğu: "Почему это случилось?"
 Sorğu: "Qarabağ Chelsea matçı"
 → Cavab:
 {{
-  "detected_language": "az",
+  "original_language": "az",
+  "original_query": "Qarabağ Chelsea matçı",
   "translated_to_az": "Qarabağ Chelsea matçı",
   "cleaned": "qarabağ chelsea matçı",
   "corrected": "qarabağ chelsea matçı",
