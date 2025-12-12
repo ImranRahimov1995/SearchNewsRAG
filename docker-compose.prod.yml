@@ -26,7 +26,7 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       API_ID: ${TELEGRAM_API_ID}
       API_HASH: ${TELEGRAM_API_HASH}
-      CHROMA_COLLECTION_NAME: news_analyzed_0_5k_800_200_large
+      CHROMA_COLLECTION_NAME: news_analyzed_2025_800_200_large
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
       CHROMA_DB_PATH: ./chroma_db
