@@ -23,11 +23,11 @@ const HERO_ANIMATION = {
   transition: { duration: 0.5 },
 };
 
-const ICON_ANIMATION = {
-  initial: { scale: 0 },
-  animate: { scale: 1 },
-  transition: { delay: 0.2, type: 'spring' as const, stiffness: 200 },
-};
+// const ICON_ANIMATION = {
+//   initial: { scale: 0 },
+//   animate: { scale: 1 },
+//   transition: { delay: 0.2, type: 'spring' as const, stiffness: 200 },
+// };
 
 /**
  * Welcome screen shown before any messages are sent.
@@ -62,21 +62,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ t }) => {
   ];
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8">
+    <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
       <motion.div {...HERO_ANIMATION} className="max-w-2xl w-full">
-        <div className="text-center mb-12">
-          <motion.div
-            {...ICON_ANIMATION}
-            className="inline-block p-6 rounded-3xl bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 shadow-2xl shadow-primary-500/30 mb-6"
-          >
-            <Sparkles className="w-16 h-16 text-white" />
-          </motion.div>
-
+        <div className="text-center mb-8 sm:mb-12">
           <motion.h2
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl font-black mb-4"
+            className="text-3xl sm:text-4xl font-black mb-3 sm:mb-4"
           >
             <span className="gradient-text">{t.welcome.title}</span>
           </motion.h2>
@@ -85,13 +78,13 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ t }) => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto"
+            className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto"
           >
             {t.welcome.subtitle}
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {FEATURES.map((feature, index) => {
             const Icon = feature.icon;
             return (
@@ -101,17 +94,17 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ t }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="card-modern p-6 group cursor-pointer"
+                className="card-modern p-4 sm:p-6 group cursor-pointer"
               >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 shadow-lg group-hover:shadow-glow-sm transition-all">
-                    <Icon className="w-6 h-6 text-white" />
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 shadow-lg group-hover:shadow-glow-sm transition-all">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">
+                    <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100 mb-1">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       {feature.description}
                     </p>
                   </div>
@@ -127,7 +120,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ t }) => {
           transition={{ delay: 0.9 }}
           className="text-center"
         >
-          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse-dot"></span>
             {t.welcome.cta}
           </p>

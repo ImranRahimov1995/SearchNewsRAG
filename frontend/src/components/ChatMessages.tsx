@@ -34,35 +34,37 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   isLoading = false,
   t,
 }) => {
-  if (messages.length === 0 && !isLoading) {
-    return <WelcomeScreen t={t} />;
-  }
-
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-8 scrollbar-custom">
-      <AnimatePresence mode="popLayout">
-        {messages.map((message) => (
-          <div key={message.id}>
-            <MessageBubble message={message} />
+    <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-3 sm:px-6 py-4 sm:py-8 pb-[calc(env(safe-area-inset-bottom)+16px)] scrollbar-custom">
+      {messages.length === 0 && !isLoading ? (
+        <WelcomeScreen t={t} />
+      ) : (
+        <>
+          <AnimatePresence mode="popLayout">
+            {messages.map((message) => (
+              <div key={message.id}>
+                <MessageBubble message={message} />
 
-            {message.events && message.events.length > 0 && (
-              <div className="mt-4">
-                <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-3 ml-2 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
-                  {t.topEvents}
-                </p>
-                {message.events.map((event, index) => (
-                  <NewsEventCard key={event.id} event={event} index={index} t={t} />
-                ))}
+                {message.events && message.events.length > 0 && (
+                  <div className="mt-3 sm:mt-4">
+                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 sm:mb-3 ml-1 sm:ml-2 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
+                      {t.topEvents}
+                    </p>
+                    {message.events.map((event, index) => (
+                      <NewsEventCard key={event.id} event={event} index={index} t={t} />
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            ))}
 
-        {isLoading && <TypingIndicator key="typing" t={t} />}
-      </AnimatePresence>
+            {isLoading && <TypingIndicator key="typing" t={t} />}
+          </AnimatePresence>
 
-      <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </>
+      )}
     </div>
   );
 };

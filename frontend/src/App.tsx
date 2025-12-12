@@ -67,38 +67,38 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden" style={{ height: '100dvh' }}>
       <motion.header
         {...HEADER_ANIMATION}
-        className="glass-card-strong border-b border-white/20 dark:border-gray-700/30 shadow-xl z-10"
+        className="flex-shrink-0 glass-card-strong border-b border-white/20 dark:border-gray-700/30 shadow-xl z-10"
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <motion.div
-            className="flex items-center gap-3"
+            className="flex items-center gap-2 sm:gap-3"
             whileHover={{ scale: 1.02 }}
           >
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 shadow-lg shadow-primary-500/50">
-              <Sparkles className="w-6 h-6 text-white" />
+            <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 shadow-lg shadow-primary-500/50">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-black gradient-text">
+              <h1 className="text-lg sm:text-2xl font-black gradient-text">
                 {t.app.title}
               </h1>
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
+              <p className="hidden sm:block text-xs font-medium text-gray-600 dark:text-gray-400">
                 {t.app.subtitle}
               </p>
             </div>
           </motion.div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1 p-1 rounded-xl glass-card">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex gap-1 p-1 rounded-lg sm:rounded-xl glass-card">
               {(['az', 'en', 'ru'] as const).map((lang) => (
                 <motion.button
                   key={lang}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setLanguage(lang)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all duration-300 ${
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-xs font-bold uppercase transition-all duration-300 ${
                     language === lang
                       ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
@@ -114,23 +114,23 @@ function App() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="lg:hidden p-3 rounded-2xl glass-card-strong shadow-lg"
+              className="lg:hidden p-2 sm:p-3 rounded-xl sm:rounded-2xl glass-card-strong shadow-lg"
             >
               {isSidebarOpen ? (
-                <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                <X className="w-5 h-5 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
               ) : (
-                <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                <Menu className="w-5 h-5 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
               )}
             </motion.button>
           </div>
         </div>
       </motion.header>
 
-      <div className="flex-1 flex overflow-hidden max-w-7xl w-full mx-auto">
-        <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex overflow-hidden max-w-7xl w-full mx-auto min-h-0">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
           <motion.div
             {...FILTER_ANIMATION}
-            className="px-6 py-4 glass-card border-b border-white/20 dark:border-gray-700/30"
+            className="flex-shrink-0 px-3 sm:px-6 py-3 sm:py-4 glass-card border-b border-white/20 dark:border-gray-700/30"
           >
             <TimeFilterSelector currentFilter={filter} onFilterChange={setFilter} t={t} />
           </motion.div>
@@ -139,7 +139,7 @@ function App() {
 
           <motion.div
             {...INPUT_ANIMATION}
-            className="glass-card-strong border-t border-white/20 dark:border-gray-700/30 p-6 shadow-2xl"
+            className="flex-shrink-0 glass-card-strong border-t border-white/20 dark:border-gray-700/30 p-3 sm:p-4 md:p-6 shadow-2xl"
           >
             <QuickQueryTemplates onSelectTemplate={sendMessage} t={t} />
             <ChatInput onSendMessage={sendMessage} isLoading={isLoading} t={t} />
@@ -166,7 +166,7 @@ function App() {
             <motion.aside
               {...MOBILE_SIDEBAR_ANIMATION}
               onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-0 h-full w-80 glass-card-strong border-l border-white/20 dark:border-gray-700/30 p-6 overflow-y-auto shadow-2xl"
+              className="absolute right-0 top-0 h-full w-[85vw] max-w-sm glass-card-strong border-l border-white/20 dark:border-gray-700/30 p-4 sm:p-6 overflow-y-auto shadow-2xl"
             >
               <div className="space-y-4">
                 <IndexStatusPanel status={indexStatus} t={t} />

@@ -38,15 +38,15 @@ export const QuickQueryTemplates: React.FC<QuickQueryTemplatesProps> = ({
   ];
 
   return (
-    <div className="mb-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Zap className="w-4 h-4 text-primary-500" />
-        <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">
+    <div className="mb-3 sm:mb-4">
+      <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+        <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-500" />
+        <h3 className="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300">
           {t.quickQueries.title}
         </h3>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide pb-1">
         {QUERY_TEMPLATES.map((template, index) => {
           const Icon = template.icon;
           return (
@@ -59,7 +59,7 @@ export const QuickQueryTemplates: React.FC<QuickQueryTemplatesProps> = ({
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               className="
-                flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium whitespace-nowrap
+                flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-medium whitespace-nowrap
                 glass-card hover:glass-card-strong
                 text-gray-700 dark:text-gray-300
                 shadow-md hover:shadow-lg
@@ -67,8 +67,8 @@ export const QuickQueryTemplates: React.FC<QuickQueryTemplatesProps> = ({
                 border border-gray-300/60 dark:border-gray-600/60
               "
             >
-              <Icon className="w-3.5 h-3.5 text-primary-500" />
-              {template.text}
+              <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary-500 flex-shrink-0" />
+              <span className="line-clamp-1">{template.text}</span>
             </motion.button>
           );
         })}
