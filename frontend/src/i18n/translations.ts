@@ -24,6 +24,7 @@ export interface Translations {
     inputPlaceholder: string;
     send: string;
     typing: string;
+    aiReady: string;
   };
   filters: {
     today: string;
@@ -86,7 +87,7 @@ export const translations: Record<Language, Translations> = {
     },
     welcome: {
       title: 'NewsChat-a xoş gəlmisiniz!',
-      subtitle: 'Xəbərləri təhlil etmək üçün şəxsi AI köməkçiniz. Dünyada baş verən hadisələr haqqında istənilən sual verin.',
+      subtitle: 'Xəbərləri təhlil etmək üçün şəxsi AI köməkçiniz. Azərbaycanda baş verən hadisələr haqqında istənilən sual verin.',
       cta: 'Sualdan başlayın və ya aşağıdan sürətli sorğu seçin',
       features: {
         ai: {
@@ -111,6 +112,7 @@ export const translations: Record<Language, Translations> = {
       inputPlaceholder: 'Xəbərlər haqqında sual verin...',
       send: 'Göndər',
       typing: 'yazır',
+      aiReady: 'AI kömək etməyə hazırdır',
     },
     filters: {
       today: 'Bu gün',
@@ -121,11 +123,11 @@ export const translations: Record<Language, Translations> = {
     },
     quickQueries: {
       title: 'Sürətli sorğular',
-      positive: 'Həftənin pozitiv xəbərlərini göstər',
-      loudest: 'Hansı hadisələr ən səs-küylü idi?',
-      today: 'Bu gün dünyada nə baş verdi?',
-      politics: 'Ayın əsas siyasi xəbərləri',
-      tech: 'Həftənin texnoloji yenilikləri',
+      positive: 'Qarabağ - Ayaks matçı haqqında',
+      loudest: 'Qarabağ - Çelsi matçı haqqında',
+      today: '"Qobu Park"dakı yanğın haqqında',
+      politics: 'Generalın oğlunun həbs edilməsi haqqında',
+      tech: 'İtkin balıqçıların xilas edilməsi haqqında',
     },
     trending: {
       title: 'İsti Mövzular',
@@ -162,7 +164,7 @@ export const translations: Record<Language, Translations> = {
       light: 'İşıqlı tema',
       dark: 'Qaranlıq tema',
     },
-    topEvents: 'Top hadisələr',
+    topEvents: 'Mənbələr',
   },
   en: {
     app: {
@@ -171,7 +173,7 @@ export const translations: Record<Language, Translations> = {
     },
     welcome: {
       title: 'Welcome to NewsChat!',
-      subtitle: 'Your personal AI assistant for news analysis. Ask any question about world events.',
+      subtitle: 'Your personal AI assistant for news analysis. Ask any question about events in Azerbaijan.',
       cta: 'Start with a question or select a quick query below',
       features: {
         ai: {
@@ -196,6 +198,7 @@ export const translations: Record<Language, Translations> = {
       inputPlaceholder: 'Ask about news...',
       send: 'Send',
       typing: 'typing',
+      aiReady: 'AI is ready to help',
     },
     filters: {
       today: 'Today',
@@ -206,11 +209,11 @@ export const translations: Record<Language, Translations> = {
     },
     quickQueries: {
       title: 'Quick queries',
-      positive: 'Show positive news of the week',
-      loudest: 'What events were the loudest?',
-      today: 'What happened in the world today?',
-      politics: 'Main political news of the month',
-      tech: 'Tech innovations of the week',
+      positive: 'About Qarabag - Ajax match',
+      loudest: 'About Qarabag - Chelsea match',
+      today: 'About "Qobu Park" fire',
+      politics: 'About general\'s son arrest',
+      tech: 'About missing fishermen rescue',
     },
     trending: {
       title: 'Hot Topics',
@@ -256,7 +259,7 @@ export const translations: Record<Language, Translations> = {
     },
     welcome: {
       title: 'Добро пожаловать в NewsChat!',
-      subtitle: 'Ваш персональный AI-ассистент для анализа новостей. Задайте любой вопрос о событиях в мире.',
+      subtitle: 'Ваш персональный AI-ассистент для анализа новостей. Задайте любой вопрос о событиях в Азербайджане.',
       cta: 'Начните с вопроса или выберите быстрый запрос ниже',
       features: {
         ai: {
@@ -281,6 +284,7 @@ export const translations: Record<Language, Translations> = {
       inputPlaceholder: 'Задайте вопрос о новостях...',
       send: 'Отправить',
       typing: 'печатает',
+      aiReady: 'AI готов помочь',
     },
     filters: {
       today: 'Сегодня',
@@ -291,11 +295,11 @@ export const translations: Record<Language, Translations> = {
     },
     quickQueries: {
       title: 'Быстрые запросы',
-      positive: 'Покажи позитивные новости недели',
-      loudest: 'Какие события были самыми громкими?',
-      today: 'Что произошло сегодня в мире?',
-      politics: 'Главные новости политики за месяц',
-      tech: 'Технологические новинки недели',
+      positive: 'О матче Карабах - Аякс',
+      loudest: 'О матче Карабах - Челси',
+      today: 'О пожаре в "Qobu Park"',
+      politics: 'Об аресте сына генерала',
+      tech: 'О спасении пропавших рыбаков',
     },
     trending: {
       title: 'Горячие темы',

@@ -18,6 +18,8 @@ export interface INewsEvent {
   date: string;
   summary?: string;
   sentiment?: 'positive' | 'neutral' | 'negative';
+  url?: string;
+  source?: string;
 }
 
 export type TimeFilter = 'today' | 'week' | 'month' | 'year' | 'all';
@@ -38,10 +40,29 @@ export interface IChatRequest {
 }
 
 export interface ISource {
+  id: string;
+  name: string;
+  url?: string;
+  category?: string;
+  title?: string;
+  headline?: string;
+  date?: string;
+  published_at?: string;
+  summary?: string;
+  description?: string;
+  sentiment?: 'positive' | 'neutral' | 'negative';
   [key: string]: unknown;
 }
 
 export interface IRetrievedDocument {
+  doc_id: number;
+  score: number;
+  category?: string;
+  importance?: number;
+  source?: string;
+  url?: string;
+  preview?: string;
+  sentiment?: 'positive' | 'neutral' | 'negative';
   [key: string]: unknown;
 }
 

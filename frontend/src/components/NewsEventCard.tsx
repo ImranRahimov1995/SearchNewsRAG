@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, TrendingUp, TrendingDown, Minus, Newspaper } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Newspaper, ExternalLink } from 'lucide-react';
 import { INewsEvent } from '@/types';
 import { Translations } from '@/i18n/translations';
 
@@ -67,6 +67,12 @@ export const NewsEventCard: React.FC<NewsEventCardProps> = ({ event, index = 0, 
     }
   };
 
+  const handleClick = () => {
+    if (event.url) {
+      window.open(event.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -76,46 +82,53 @@ export const NewsEventCard: React.FC<NewsEventCardProps> = ({ event, index = 0, 
         delay: index * 0.1,
         ease: [0.4, 0, 0.2, 1]
       }}
-      whileHover={{ scale: 1.02, y: -2 }}
-      className="card-modern p-4 mb-3 border border-white/20 dark:border-gray-700/30 cursor-pointer group"
+      whileHover={event.url ? { scale: 1.01, y: -1 } : {}}
+      onClick={handleClick}
+      className={`
+        bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm
+        rounded-xl p-3.5 mb-2.5
+        border border-gray-200/50 dark:border-gray-700/50
+        ${event.url ? 'cursor-pointer hover:bg-white/60 dark:hover:bg-gray-800/60 hover:border-primary-400/50' : ''}
+        transition-all duration-200
+        group
+      `}
     >
-      <div className="flex justify-between items-start mb-3">
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${config.bg} border ${config.border}`}>
-          <Newspaper className={`w-3.5 h-3.5 ${config.text}`} />
-          <span className={`text-xs font-semibold ${config.text}`}>
-            {event.category}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
-          <Calendar className="w-3.5 h-3.5" />
-          <span className="text-xs font-medium">
-            {new Date(event.date).toLocaleDateString('ru-RU', {
-              day: 'numeric',
-              month: 'short'
-            })}
-          </span>
-        </div>
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <h3 className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors leading-snug flex-1">
+          {event.title}
+        </h3>
+        {event.url && (
+          <ExternalLink className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5 group-hover:text-primary-600" />
+        )}
       </div>
 
-      <h3 className="font-bold text-sm mb-2 text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors leading-snug">
-        {event.title}
-      </h3>
-
       {event.summary && (
-        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed mb-2.5">
           {event.summary}
         </p>
       )}
 
-      {event.sentiment && (
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">
-          <SentimentIcon className={`w-4 h-4 ${config.text}`} />
-          <span className={`text-xs font-medium ${config.text} capitalize`}>
-            {getSentimentLabel(event.sentiment)}
-          </span>
+      <div className="flex items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-2">
+          {event.sentiment && (
+            <div className="flex items-center gap-1.5">
+              <SentimentIcon className={`w-3.5 h-3.5 ${config.text}`} />
+              <span className={`font-medium ${config.text} capitalize`}>
+                {getSentimentLabel(event.sentiment)}
+              </span>
+            </div>
+          )}
         </div>
-      )}
+        
+        {event.source && (
+          <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+            <Newspaper className="w-3 h-3" />
+            <span className="font-medium truncate max-w-[120px]">
+              {event.source}
+            </span>
+          </div>
+        )}
+      </div>
     </motion.div>
   );
 };

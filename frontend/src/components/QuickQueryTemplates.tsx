@@ -64,7 +64,7 @@ export const QuickQueryTemplates: React.FC<QuickQueryTemplatesProps> = ({
                 text-gray-700 dark:text-gray-300
                 shadow-md hover:shadow-lg
                 transition-all duration-300
-                border border-white/30 dark:border-gray-700/30
+                border border-gray-300/60 dark:border-gray-600/60
               "
             >
               <Icon className="w-3.5 h-3.5 text-primary-500" />
@@ -75,4 +75,4 @@ export const QuickQueryTemplates: React.FC<QuickQueryTemplatesProps> = ({
       </div>
     </div>
   );
-};
+}
