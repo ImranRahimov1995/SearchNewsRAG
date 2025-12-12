@@ -2,8 +2,8 @@
  * @fileoverview React hook for managing chat state and messages
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { IMessage, IChatRequest, TimeFilter, INewsEvent, ISource } from '@/types';
+import { useState, useCallback, useEffect, useRef, useReducer } from 'react';
+import { IMessage, IChatRequest, TimeFilter, INewsEvent, ISource, IRetrievedDocument } from '@/types';
 import { apiService } from '@/services/apiService';
 
 const DEFAULT_LANGUAGE = 'ru';
@@ -14,15 +14,29 @@ const DEFAULT_FILTER: TimeFilter = 'all';
  * @param sources - Array of source objects from API response
  * @returns Array of formatted news events
  */
-const transformSourcesToEvents = (sources: ISource[]): INewsEvent[] => {
-  return sources.map((source: ISource, index: number) => ({
-    id: `event-${Date.now()}-${index}`,
-    title: String(source.title || source.headline || 'Без заголовка'),
-    category: String(source.category || 'Общее'),
-    date: String(source.date || source.published_at || new Date().toISOString()),
-    summary: String(source.summary || source.description || ''),
-    sentiment: (source.sentiment as 'positive' | 'neutral' | 'negative') || 'neutral',
-  }));
+const transformSourcesToEvents = (
+  sources: ISource[], 
+  retrievedDocs: IRetrievedDocument[] = []
+): INewsEvent[] => {
+  return sources.map((source: ISource, index: number) => {
+    // Find matching document by URL or doc_id
+    const matchingDoc = retrievedDocs.find(
+      (doc: IRetrievedDocument) => 
+        doc.url === source.url || 
+        String(doc.doc_id) === String(source.id)
+    );
+    
+    return {
+      id: source.id || `event-${Date.now()}-${index}`,
+      title: String(source.title || source.headline || source.name || 'Без заголовка'),
+      category: String(matchingDoc?.category || source.category || 'Общее'),
+      date: String(source.date || source.published_at || new Date().toISOString()),
+      summary: String(matchingDoc?.preview || source.summary || source.description || ''),
+      sentiment: (matchingDoc?.sentiment || source.sentiment as 'positive' | 'neutral' | 'negative') || 'neutral',
+      url: source.url || matchingDoc?.url,
+      source: source.name || 'Неизвестный источник',
+    };
+  });
 };
 
 /**
@@ -49,9 +63,12 @@ const createErrorMessage = (error: Error | { message?: string }): IMessage => ({
  */
 export const useChat = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState<TimeFilter>(DEFAULT_FILTER);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Use ref for loading state to avoid closure issues in async callbacks
+  const isLoadingRef = useRef(false);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,7 +90,8 @@ export const useChat = () => {
       };
 
       setMessages((prev: IMessage[]) => [...prev, userMessage]);
-      setIsLoading(true);
+      isLoadingRef.current = true;
+      forceUpdate();
 
       try {
         const request: IChatRequest = {
@@ -83,7 +101,10 @@ export const useChat = () => {
 
         const response = await apiService.sendMessage(request);
 
-        const events = transformSourcesToEvents(response.sources);
+        const events = transformSourcesToEvents(
+          response.sources, 
+          response.retrieved_documents
+        );
 
         const botMessage: IMessage = {
           id: `bot-${Date.now()}`,
@@ -100,7 +121,8 @@ export const useChat = () => {
         const errorMessage = createErrorMessage(error instanceof Error ? error : { message: String(error) });
         setMessages((prev: IMessage[]) => [...prev, errorMessage]);
       } finally {
-        setIsLoading(false);
+        isLoadingRef.current = false;
+        forceUpdate();
       }
     },
     []
@@ -108,7 +130,7 @@ export const useChat = () => {
 
   return {
     messages,
-    isLoading,
+    isLoading: isLoadingRef.current,
     sendMessage,
     filter,
     setFilter,
