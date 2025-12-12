@@ -130,10 +130,11 @@ class QuestionAnsweringService:
 
         retrieval_result = self.retrieval_pipeline.search(query, top_k=k)
 
-        # Extract original language from query analysis metadata
-        original_language = retrieval_result.query_result.analysis.metadata.get(
-            "original_language", 
-            retrieval_result.query_result.processed.language
+        original_language = (
+            retrieval_result.query_result.analysis.metadata.get(
+                "original_language",
+                retrieval_result.query_result.processed.language,
+            )
         )
 
         llm_response = self.llm_generator.generate(
