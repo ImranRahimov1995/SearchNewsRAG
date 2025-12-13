@@ -176,3 +176,4 @@ htmlcov/
 # Notebook checkpoints
 .ipynb_checkpoints
 notebooks/
+temp/
