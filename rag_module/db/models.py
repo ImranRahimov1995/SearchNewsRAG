@@ -55,6 +55,7 @@ class Article(Base):
     doc_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     message_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     url: Mapped[str | None] = mapped_column(String(512))
+    image_url: Mapped[str | None] = mapped_column(String(512))
     date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     has_detail: Mapped[bool] = mapped_column(Boolean, default=False)
     short_preview: Mapped[str | None] = mapped_column(Text)

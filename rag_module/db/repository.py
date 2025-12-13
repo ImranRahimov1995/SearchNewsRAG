@@ -110,6 +110,7 @@ class NewsDataRepository:
         resolved_message_id = self._safe_int(metadata.get("message_id"))
         article.message_id = article.message_id or resolved_message_id
         article.url = metadata.get("url")
+        article.image_url = metadata.get("image_url")
         article.date = self._parse_datetime(metadata.get("date"))
         article.has_detail = bool(metadata.get("has_detail"))
         article.short_preview = metadata.get("short_preview")
