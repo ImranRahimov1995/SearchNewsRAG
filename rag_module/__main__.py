@@ -1,11 +1,12 @@
 """RAG module CLI interface."""
 
 import argparse
+import os
 import sys
 
 from rag_module.config import get_logger
 
-from .services import VectorizationService
+from .services import VectorizationService, VectorizationServiceV2
 
 logger = get_logger("rag_cli")
 
@@ -25,17 +26,34 @@ def vectorize_command(args: argparse.Namespace) -> int:
             f"collection={args.collection}, mode={args.analyzer_mode}"
         )
 
-        service = VectorizationService.create_default(
-            collection_name=args.collection,
-            persist_directory=args.persist_dir,
-            analyzer_mode=args.analyzer_mode,
-            api_key=args.api_key,
-            model=args.model,
-            temperature=args.temperature,
-            chunk_size=args.chunk_size,
-            overlap=args.overlap,
-            max_concurrent=args.max_concurrent,
-        )
+        service: VectorizationService
+
+        if args.vectorization_version == "v2":
+            service = VectorizationServiceV2.create_default(
+                collection_name=args.collection,
+                persist_directory=args.persist_dir,
+                analyzer_mode=args.analyzer_mode,
+                api_key=args.api_key,
+                model=args.model,
+                temperature=args.temperature,
+                chunk_size=args.chunk_size,
+                overlap=args.overlap,
+                max_concurrent=args.max_concurrent,
+                db_url=args.db_url,
+                persist_db=not args.no_persist_db,
+            )
+        else:
+            service = VectorizationService.create_default(
+                collection_name=args.collection,
+                persist_directory=args.persist_dir,
+                analyzer_mode=args.analyzer_mode,
+                api_key=args.api_key,
+                model=args.model,
+                temperature=args.temperature,
+                chunk_size=args.chunk_size,
+                overlap=args.overlap,
+                max_concurrent=args.max_concurrent,
+            )
 
         result = service.vectorize(
             source=args.source,
@@ -210,6 +228,27 @@ Examples:
         type=int,
         default=50,
         help="Max concurrent requests for async mode (default: 50)",
+    )
+
+    vectorize_parser.add_argument(
+        "--vectorization-version",
+        type=str,
+        choices=["v1", "v2"],
+        default="v1",
+        help="Select vectorization implementation (v1 default, v2 adds relational persistence)",
+    )
+
+    vectorize_parser.add_argument(
+        "--db-url",
+        type=str,
+        default=os.getenv("DATABASE_URL"),
+        help="Database URL for v2 persistence (defaults to env settings)",
+    )
+
+    vectorize_parser.add_argument(
+        "--no-persist-db",
+        action="store_true",
+        help="Disable relational persistence when using v2",
     )
 
     return parser
