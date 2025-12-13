@@ -23,6 +23,7 @@ class NewsItem:
     text: str
     url: Optional[str] = None
     detail: Optional[str] = None
+    image_url: Optional[str] = None
 
 
 class IURLExtractor(Protocol):
@@ -38,6 +39,10 @@ class IContentParser(Protocol):
 
     def parse(self, html: str) -> str:
         """Parse content from HTML."""
+        ...
+
+    async def parse_img_url(self, url: str) -> Optional[str]:
+        """Parse image URL from article."""
         ...
 
 
@@ -201,5 +206,5 @@ class SiteProcessor:
                 return item
 
         item.detail = await self.content_parser.parse(item.url)  # type: ignore[misc]
-
+        item.image_url = await self.content_parser.parse_img_url(item.url)  # type: ignore[misc]
         return item
