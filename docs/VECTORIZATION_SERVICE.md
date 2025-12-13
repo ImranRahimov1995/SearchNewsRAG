@@ -24,6 +24,11 @@ Comprehensive vectorization service with **three analyzer modes** and LangChain 
 
 ## Quick Start
 
+### 0. Choose Version (v1 default, v2 adds DB persistence)
+- CLI flag: `--vectorization-version v2` enables relational persistence.
+- Extras for v2: `--db-url` (defaults to `DATABASE_URL` env) and `--no-persist-db` to disable relational writes.
+- Python: use `VectorizationServiceV2.create_default()` for v2 or `VectorizationService.create_default()` for v1.
+
 ### 1. Async Mode (Default - Recommended)
 ```bash
 # Full LLM analysis with concurrent processing
@@ -57,6 +62,24 @@ python -m rag_module vectorize \\
   --analyzer-mode none
 ```
 
+### 4. V2 with DB Persistence (CLI)
+```bash
+python -m rag_module vectorize \
+  --source data/qafqazfull.json \
+  --source-name qafqazinfo_v2 \
+  --collection news_v2 \
+  --vectorization-version v2 \
+  --db-url "postgresql+psycopg2://user:pass@localhost:5432/news" \
+  --analyzer-mode async
+
+# Disable relational writes while still using v2 pipeline
+python -m rag_module vectorize \
+  --source data/news.json \
+  --source-name news_no_db \
+  --vectorization-version v2 \
+  --no-persist-db
+```
+
 ---
 
 ## Python API Usage
@@ -65,7 +88,10 @@ python -m rag_module vectorize \\
 
 ```python
 from typing import Literal
-from rag_module.services import VectorizationService
+from rag_module.services import (
+  VectorizationService,
+  VectorizationServiceV2,
+)
 
 # Async mode (default)
 service = VectorizationService.create_default(
@@ -87,6 +113,20 @@ result = service.vectorize(
 )
 
 print(f"✅ Vectorized {result.total_chunks} chunks from {result.total_documents} docs")
+
+# V2 with relational persistence
+service_v2 = VectorizationServiceV2.create_default(
+  collection_name="news_v2",
+  persist_directory="./chroma_db",
+  analyzer_mode="async",
+  api_key=OPENAI_API_KEY,
+  db_url=os.getenv("DATABASE_URL"),
+)
+
+service_v2.vectorize(
+  source="data/news.json",
+  source_name="qafqazinfo_v2",
+)
 ```
 
 ### Using Config Object
@@ -184,6 +224,9 @@ python -m rag_module vectorize --help
 - `--chunk-size` - Chunk size in characters (default: `600`)
 - `--overlap` - Overlap between chunks (default: `100`)
 - `--max-concurrent` - Max concurrent requests (default: `50`)
+- `--vectorization-version` - Select implementation: `v1` (default) or `v2` (adds relational persistence)
+- `--db-url` - Database URL for v2 (defaults to `DATABASE_URL` env)
+- `--no-persist-db` - Disable relational persistence when using v2
 
 ---
 

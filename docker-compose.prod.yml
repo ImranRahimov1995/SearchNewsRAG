@@ -1,10 +1,29 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: searchnewsrag-postgres-prod
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - searchnewsrag-network
+
   chromadb:
     image: chromadb/chroma:latest
     container_name: searchnewsrag-chromadb
     restart: unless-stopped
     volumes:
-      - /opt/searchnewsrag/data/chroma:/data
+      - chroma_data:/chroma/chroma
     environment:
       IS_PERSISTENT: "TRUE"
       ANONYMIZED_TELEMETRY: "FALSE"
@@ -26,7 +45,8 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       API_ID: ${TELEGRAM_API_ID}
       API_HASH: ${TELEGRAM_API_HASH}
-      CHROMA_COLLECTION_NAME: news_analyzed_2025_800_200_large
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CHROMA_COLLECTION_NAME: news_analyzed_2025_900_150_large
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
       CHROMA_DB_PATH: ./chroma_db
@@ -34,7 +54,10 @@ services:
     expose:
       - "8000"
     depends_on:
-      - chromadb
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -83,3 +106,9 @@ services:
 networks:
   searchnewsrag-network:
     driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  chroma_data:
+    driver: local

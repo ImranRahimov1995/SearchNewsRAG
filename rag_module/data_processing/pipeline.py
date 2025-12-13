@@ -156,6 +156,7 @@ class DocumentProcessingPipeline:
             "date": item.get("date"),
             "message_id": item.get("id"),
             "has_detail": bool(item.get("detail")),
+            "image_url": item.get("image_url"),
         }
 
         if item.get("detail") and item.get("text"):
@@ -400,6 +401,7 @@ class AsyncDocumentProcessingPipeline:
                     "date": item.get("date"),
                     "message_id": item.get("id"),
                     "has_detail": bool(item.get("detail")),
+                    "image_url": item.get("image_url"),
                 }
 
                 if item.get("detail") and item.get("text"):
