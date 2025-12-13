@@ -173,6 +173,20 @@ class VectorizationServiceV2(VectorizationService):
         data_repository: NewsDataRepository | None = None,
         **config_kwargs: Any,
     ) -> "VectorizationServiceV2":
+        """Create service with default configuration and optional DB persistence.
+
+        Args:
+            collection_name: ChromaDB collection name
+            persist_directory: Directory for ChromaDB persistence
+            api_key: OpenAI API key (optional)
+            db_url: Database URL for relational persistence
+            persist_db: Enable relational persistence
+            data_repository: Optional pre-configured repository
+            **config_kwargs: Additional parameters for VectorizationConfigV2
+
+        Returns:
+            Configured vectorization service v2
+        """
         config = VectorizationConfigV2(
             api_key=api_key,
             collection_name=collection_name,
