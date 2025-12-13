@@ -104,19 +104,25 @@ python -m telegram_fetcher.parsers \
     "date": "2024-11-24T10:30:00+00:00",
     "text": "Breaking news...",
     "url": "https://qafqazinfo.az/news/detail/12345",
-    "detail": "Full article content extracted from webpage..."
+    "detail": "Full article content extracted from webpage...",
+    "image_url": "https://qafqazinfo.az/uploads/1234567890/image.jpg"
   }
 ]
 ```
+
+**Note**: `image_url` field is automatically extracted from article pages when available.
 
 ### Architecture
 
 - `parsers/base.py` - Abstract interfaces and base implementations
   - `IURLExtractor` - Extract URLs from text
   - `IContentFetcher` - Async HTTP fetching
-  - `IContentParser` - Parse HTML content
+  - `IContentParser` - Parse HTML content and image URLs
   - `BaseContentParser` - Base parser class
+  - `NewsItem` - Data class with id, date, text, url, detail, image_url
 - `parsers/qafqazinfo.py` - Site-specific parser implementations
+  - `parse()` - Extract article text
+  - `parse_img_url()` - Extract image URL from article
 - `parsers/__main__.py` - CLI for batch processing
 
 ## Adding New Parser
@@ -143,12 +149,33 @@ class MySiteParser(BaseContentParser):
             fetcher=AsyncContentFetcher(),
             content_selector=".article-content"  # CSS selector
         )
+        self.image_selector = ".article-image img"  # Image selector
 
     def parse(self, html: str) -> str:
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(html, "html.parser")
         content = soup.select_one(self.content_selector)
         return content.get_text(strip=True) if content else ""
+
+    async def parse_img_url(self, url: str) -> str | None:
+        """Extract image URL from article page."""
+        html = await self.fetcher.fetch(url)
+        if html.startswith(("Error", "Failed")):
+            return None
+
+        from bs4 import BeautifulSoup
+        from urllib.parse import urljoin
+
+        soup = BeautifulSoup(html, "html.parser")
+        img = soup.select_one(self.image_selector)
+        if not img:
+            return None
+
+        src = img.get("src")
+        if not src or not isinstance(src, str):
+            return None
+
+        return urljoin(url, src) if not src.startswith("http") else src
 ```
 
 2. **Register in CLI**:
