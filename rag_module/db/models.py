@@ -8,6 +8,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -48,6 +49,9 @@ class Article(Base):
         UniqueConstraint(
             "source_id", "message_id", name="uq_article_source_message"
         ),
+        # Essential indexes for common queries
+        Index("ix_article_date", "date"),
+        Index("ix_article_category", "category"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
