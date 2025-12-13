@@ -123,3 +123,8 @@ def get_logger(name: str) -> logging.Logger:
         logger.setLevel(getattr(logging, log_level))
 
     return logger
+
+
+def get_database_url() -> str | None:
+    """Return database URL from environment if available."""
+    return os.getenv("DATABASE_URL")
