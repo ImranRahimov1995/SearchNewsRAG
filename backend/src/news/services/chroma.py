@@ -1,4 +1,4 @@
-"""Service for news operations."""
+"""ChromaDB-based news service."""
 
 import logging
 from collections import Counter
@@ -6,9 +6,9 @@ from typing import Any
 
 from rag_module.vector_store import ChromaVectorStore
 
-from .filters import calculate_date_threshold
-from .schemas import DateFilter, SortOrder
-from .utils import parse_date, sort_by_date
+from ..filters import calculate_date_threshold
+from ..schemas import DateFilter, SortOrder
+from ..utils import parse_date, sort_by_date
 
 logger = logging.getLogger(__name__)
 

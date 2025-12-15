@@ -51,32 +51,40 @@ def paginate(
     page_size: int,
     base_url: str,
     query_params: dict[str, Any],
+    total: int | None = None,
 ) -> dict[str, Any]:
     """Paginate items and build response.
 
     Args:
-        items: All items to paginate
+        items: Items for current page (or all items if total is None)
         page: Current page number (1-indexed)
         page_size: Items per page
         base_url: Base endpoint URL for building next/previous links
         query_params: Additional query parameters to preserve
+        total: Total number of items across all pages (optional).
+               If provided, items is treated as current page only.
+               If None, items is treated as all items and will be sliced.
 
     Returns:
         Dictionary with count, next, previous, and results
     """
-    total_items = len(items)
+    if total is not None:
+        # Database-paginated mode: items are already sliced for current page
+        total_items = total
+        page_items = items
+    else:
+        # In-memory pagination mode: slice items for current page
+        total_items = len(items)
+        start_index = (page - 1) * page_size
+        end_index = start_index + page_size
+        page_items = items[start_index:end_index]
+
     total_pages = (
         (total_items + page_size - 1) // page_size if total_items > 0 else 0
     )
 
     if page < 1:
         page = 1
-    if page > total_pages and total_pages > 0:
-        page = total_pages
-
-    start_index = (page - 1) * page_size
-    end_index = start_index + page_size
-    page_items = items[start_index:end_index]
 
     has_next = page < total_pages
     has_previous = page > 1

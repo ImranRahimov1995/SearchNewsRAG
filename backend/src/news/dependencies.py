@@ -7,13 +7,13 @@ from fastapi import Depends
 
 from rag_module.vector_store import ChromaVectorStore
 
-from .service import ChromaNewsService
+from .services import ChromaNewsService, PostgresNewsService
 
 
-def get_news_service(
+def get_chroma_service(
     vector_store: Annotated[ChromaVectorStore, Depends(get_vector_store)],
 ) -> ChromaNewsService:
-    """Get news service instance.
+    """Get ChromaDB news service instance.
 
     Args:
         vector_store: Shared vector store instance
@@ -22,3 +22,12 @@ def get_news_service(
         Initialized ChromaNewsService instance
     """
     return ChromaNewsService(vector_store=vector_store)
+
+
+def get_postgres_service() -> PostgresNewsService:
+    """Get PostgreSQL news service instance.
+
+    Returns:
+        PostgresNewsService instance
+    """
+    return PostgresNewsService()

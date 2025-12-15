@@ -5,6 +5,7 @@ from typing import AsyncGenerator
 
 from chats import router as chat_router
 from config import get_settings
+from database import get_db_manager
 from dependencies import get_container
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,6 +45,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
 
     logger.info("Shutting down SearchNewsRAG API...")
     container.cleanup()
+
+    if settings.async_database_url:
+        logger.info("Closing database connections...")
+        db_manager = get_db_manager()
+        await db_manager.close()
 
 
 app = FastAPI(
