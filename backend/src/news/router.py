@@ -13,7 +13,7 @@ from .schemas import (
     NewsListResponse,
     SortOrder,
 )
-from .service import NewsService
+from .service import ChromaNewsService
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/news", tags=["news"])
 
 @router.get("/categories", response_model=CategoriesResponse)
 async def get_categories(
-    service: Annotated[NewsService, Depends(get_news_service)],
+    service: Annotated[ChromaNewsService, Depends(get_news_service)],
 ) -> dict:
     """Get all news categories with document counts.
 
@@ -58,7 +58,7 @@ async def get_categories(
 @router.get("/", response_model=NewsListResponse)
 async def get_news(
     request: Request,
-    service: Annotated[NewsService, Depends(get_news_service)],
+    service: Annotated[ChromaNewsService, Depends(get_news_service)],
     date_filter: DateFilter = Query(
         DateFilter.ALL, description="Filter by date range"
     ),

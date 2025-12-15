@@ -13,7 +13,7 @@ from .utils import parse_date, sort_by_date
 logger = logging.getLogger(__name__)
 
 
-class NewsService:
+class ChromaNewsService:
     """Service for retrieving news data from vector store."""
 
     def __init__(self, vector_store: ChromaVectorStore) -> None:
