@@ -25,6 +25,10 @@ class BackendSettings(BaseSettings):
         default="", description="OpenAI API key (from OPENAI_API_KEY env var)"
     )
 
+    async_database_url: str | None = Field(
+        default=None, description="PostgreSQL async connection URL"
+    )
+
     chroma_db_path: str = Field(
         default="./chroma_db", description="ChromaDB storage path"
     )
