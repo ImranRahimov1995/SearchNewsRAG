@@ -3,6 +3,7 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+from admin import setup_admin
 from chats import router as chat_router
 from config import get_settings
 from database import get_db_manager
@@ -59,6 +60,8 @@ app = FastAPI(
     lifespan=lifespan,
     debug=settings.debug,
 )
+
+setup_admin(app)
 
 app.add_middleware(
     CORSMiddleware,
