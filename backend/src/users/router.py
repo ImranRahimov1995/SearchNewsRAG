@@ -20,7 +20,7 @@ from users.schemas import (
     UserResponse,
     UserUpdate,
 )
-from users.services import AuthService
+from auth.services import AuthService
 
 router = APIRouter(prefix="/users", tags=["users"])
 

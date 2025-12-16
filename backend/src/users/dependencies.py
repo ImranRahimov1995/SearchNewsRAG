@@ -10,8 +10,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.src.auth.services.email_service import SMTPEmailSender
-from backend.src.auth.services.otp_service import OTPService
+from auth.services.email_service import SMTPEmailSender
+from auth.services.otp_service import OTPService
 from users.models import User
 from users.repository import UserRepository
 from users.security import JWTHandler, PasswordHasher
