@@ -59,6 +59,34 @@ class BackendSettings(BaseSettings):
         default=2000, description="Max tokens for LLM response"
     )
 
+    jwt_secret_key: str = Field(
+        default="", description="Secret key for JWT token encoding/decoding"
+    )
+    jwt_algorithm: str = Field(default="HS256", description="JWT algorithm")
+    jwt_access_token_expire_minutes: int = Field(
+        default=30, description="Access token expiration in minutes"
+    )
+    jwt_refresh_token_expire_days: int = Field(
+        default=7, description="Refresh token expiration in days"
+    )
+
+    smtp_host: str = Field(default="smtp.gmail.com", description="SMTP host")
+    smtp_port: int = Field(default=587, description="SMTP port")
+    smtp_user: str = Field(default="", description="SMTP username")
+    smtp_password: str = Field(default="", description="SMTP password")
+    smtp_from_email: str = Field(default="", description="From email address")
+    smtp_from_name: str = Field(
+        default="SearchNewsRAG", description="From name"
+    )
+
+    otp_length: int = Field(default=6, description="OTP code length")
+    otp_expire_minutes: int = Field(
+        default=10, description="OTP expiration in minutes"
+    )
+    otp_max_attempts: int = Field(
+        default=3, description="Maximum OTP verification attempts"
+    )
+
 
 def get_settings() -> BackendSettings:
     """Get backend settings singleton."""
