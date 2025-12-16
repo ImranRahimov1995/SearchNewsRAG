@@ -2,6 +2,7 @@ FROM nginx:1.25-alpine
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY conf.d/ /etc/nginx/conf.d/
+COPY includes/ /etc/nginx/includes/
 
 RUN mkdir -p /var/cache/nginx/client_temp && \
     chown -R nginx:nginx /var/cache/nginx && \
