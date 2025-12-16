@@ -2,6 +2,7 @@
 
 from typing import Annotated
 
+from auth.services import AuthService
 from config import get_settings
 from database import get_db_session
 from fastapi import Depends, HTTPException, status
@@ -10,11 +11,10 @@ from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.auth.services.email_service import SMTPEmailSender
-from users.models import User
 from backend.src.auth.services.otp_service import OTPService
+from users.models import User
 from users.repository import UserRepository
 from users.security import JWTHandler, PasswordHasher
-from auth.services import AuthService
 
 settings = get_settings()
 

@@ -5,11 +5,11 @@ from typing import Any
 from fastapi import HTTPException, status
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from auth.services.otp_service import OTPService
 from users.repository import GroupRepository, ProfileRepository, UserRepository
 from users.schemas import UserCreate
 from users.security import JWTHandler, PasswordHasher
+
+from auth.services.otp_service import OTPService
 
 
 class AuthService:

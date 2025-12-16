@@ -9,9 +9,7 @@ from users.dependencies import (
     get_otp_service,
 )
 from users.models import User
-from backend.src.auth.services.otp_service import OTPService
 from users.schemas import UserResponse
-from auth.services import AuthService
 
 from auth.schemas import (
     ChangePasswordOTPRequest,
@@ -25,6 +23,8 @@ from auth.schemas import (
     TokenResponse,
     TokenVerifyResponse,
 )
+from auth.services import AuthService
+from backend.src.auth.services.otp_service import OTPService
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

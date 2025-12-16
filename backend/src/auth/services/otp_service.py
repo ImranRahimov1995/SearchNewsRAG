@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException, status
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from users.models import OTP, User
 
 from auth.services.email_service import EmailTemplateService, IEmailSender
-from users.models import OTP, User
 
 
 class OTPService:

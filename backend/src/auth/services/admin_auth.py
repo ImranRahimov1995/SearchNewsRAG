@@ -1,10 +1,9 @@
 """SQLAdmin authentication backend for superuser-only access."""
 
-from src.database import get_db_manager
 from fastapi import Request
 from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy import select
-
+from src.database import get_db_manager
 from users.models import User
 from users.security import JWTHandler
 
@@ -94,7 +93,7 @@ class AdminAuthBackend(AuthenticationBackend):
             if not user_id or not is_superuser:
                 return False
 
-            async with db_manager.get_session() as session:
+            async with get_db_manager.get_session() as session:
                 result = await session.execute(
                     select(User).where(User.id == int(user_id))
                 )
