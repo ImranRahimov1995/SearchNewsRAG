@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from admin import setup_admin
+from auth import router as auth_router
 from chats import router as chat_router
 from config import get_settings
 from database import get_db_manager
@@ -11,7 +12,9 @@ from dependencies import get_container
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from logging_config import get_logger, setup_logging
+from migrations import run_migrations_on_startup
 from news import router as news_router
+from users import router as users_router
 
 settings = get_settings()
 setup_logging(
@@ -39,6 +42,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
             "chroma_mode": "client" if settings.chroma_host else "embedded",
         },
     )
+
+    try:
+        await run_migrations_on_startup()
+    except Exception as e:
+        logger.error(f"Migration failed during startup: {e}", exc_info=True)
 
     container = get_container()
 
@@ -71,6 +79,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
+app.include_router(users_router)
 app.include_router(chat_router)
 app.include_router(news_router)
 
