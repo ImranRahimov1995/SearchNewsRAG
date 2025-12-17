@@ -76,9 +76,7 @@ class BackendSettings(BaseSettings):
         validation_alias="EMAIL_HOST",
     )
     smtp_port: int = Field(
-        default=587, 
-        description="SMTP port",
-        validation_alias="EMAIL_PORT"
+        default=587, description="SMTP port", validation_alias="EMAIL_PORT"
     )
     smtp_user: str = Field(
         default="",

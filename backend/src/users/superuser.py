@@ -4,7 +4,6 @@ from config import get_settings
 from database import get_db_manager
 from logging_config import get_logger
 from sqlalchemy import select
-
 from users.models import User
 from users.security import PasswordHasher
 
@@ -12,6 +11,10 @@ logger = get_logger("superuser")
 
 
 async def create_superuser_if_not_exists() -> None:
+    """Create superuser if it does not exist.
+
+    Updates password if user exists.
+    """
     settings = get_settings()
 
     if not settings.superuser_password:
