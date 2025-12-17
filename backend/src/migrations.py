@@ -2,10 +2,15 @@
 
 import asyncio
 import logging
+import sys
 from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
+from alembic.runtime.migration import MigrationContext
+from alembic.script import ScriptDirectory
+from config import get_settings
+from sqlalchemy import create_engine
 
 logger = logging.getLogger(__name__)
 
@@ -16,28 +21,19 @@ def get_alembic_config() -> Config:
     Returns:
         Alembic config object
     """
-    # Get the backend directory (where alembic.ini is located)
-    # In Docker: /app (WORKDIR), locally: backend/
     backend_dir = Path(__file__).parent.parent
-
-    # Try Docker path first (/app/alembic.ini), then local path
     alembic_ini = backend_dir / "alembic.ini"
     if not alembic_ini.exists():
-        # Try parent directory (for local development)
         alembic_ini = backend_dir.parent / "alembic.ini"
-
     if not alembic_ini.exists():
         raise FileNotFoundError(
             f"alembic.ini not found at {backend_dir / 'alembic.ini'} or {backend_dir.parent / 'alembic.ini'}"
         )
-
     config = Config(str(alembic_ini))
-    # Set the script location to migrations directory
     migrations_dir = backend_dir / "migrations"
     if not migrations_dir.exists():
         migrations_dir = backend_dir.parent / "migrations"
     config.set_main_option("script_location", str(migrations_dir))
-
     return config
 
 
@@ -81,13 +77,16 @@ def get_current_revision() -> str | None:
     """
     try:
         config = get_alembic_config()
-        from alembic.runtime.migration import MigrationContext
+        settings = get_settings()
+        if settings.async_database_url:
+            db_url = settings.async_database_url.replace(
+                "postgresql+asyncpg://", "postgresql+psycopg://"
+            )
+            config.set_main_option("sqlalchemy.url", db_url)
 
         def get_revision(connection):
             context = MigrationContext.configure(connection)
             return context.get_current_revision()
-
-        from sqlalchemy import create_engine
 
         engine = create_engine(config.get_main_option("sqlalchemy.url"))
         with engine.connect() as connection:
@@ -105,15 +104,11 @@ def check_migrations_pending() -> bool:
     """
     try:
         config = get_alembic_config()
-        from alembic.script import ScriptDirectory
-
         script = ScriptDirectory.from_config(config)
         current = get_current_revision()
         head = script.get_current_head()
-
         logger.info(f"Current revision: {current}")
         logger.info(f"Head revision: {head}")
-
         return current != head
     except Exception as e:
         logger.error(f"Failed to check migrations: {e}")
@@ -127,8 +122,6 @@ async def run_migrations_on_startup() -> None:
     database is up-to-date before handling requests.
     """
     logger.info("Checking database migrations...")
-
-    # Check if migrations are pending
     if check_migrations_pending():
         logger.info("Pending migrations found, upgrading database...")
         await asyncio.to_thread(run_migrations_upgrade)
@@ -137,15 +130,10 @@ async def run_migrations_on_startup() -> None:
 
 
 if __name__ == "__main__":
-    # Setup logging
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-
-    # Run migrations
-    import sys
-
     if len(sys.argv) > 1:
         command_name = sys.argv[1]
         if command_name == "upgrade":
@@ -165,5 +153,4 @@ if __name__ == "__main__":
                 "Usage: python -m backend.src.migrations [upgrade|downgrade|current|pending]"
             )
     else:
-        # Default: upgrade to head
         run_migrations_upgrade()
