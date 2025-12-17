@@ -3,13 +3,18 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from chats import router as chat_router
+from admin import setup_admin
+from auth.router import router as auth_router
+from chats.router import router as chat_router
 from config import get_settings
+from database import get_db_manager
 from dependencies import get_container
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from logging_config import get_logger, setup_logging
-from news import router as news_router
+from migrations import run_migrations_on_startup
+from news.router import router as news_router
+from users.router import router as users_router
 
 settings = get_settings()
 setup_logging(
@@ -18,6 +23,55 @@ setup_logging(
     log_file=None,
 )
 logger = get_logger("main")
+
+
+async def startup_handler() -> None:
+    """Execute startup tasks.
+
+    Handles:
+    - Database migrations
+    - Superuser creation
+    - Container initialization
+    """
+    logger.info(
+        "Starting SearchNewsRAG API",
+        extra={
+            "environment": settings.environment,
+            "chroma_mode": "client" if settings.chroma_host else "embedded",
+        },
+    )
+
+    try:
+        await run_migrations_on_startup()
+    except Exception as e:
+        logger.error(f"Migration failed during startup: {e}", exc_info=True)
+
+    try:
+        from users.superuser import create_superuser_if_not_exists
+
+        await create_superuser_if_not_exists()
+    except Exception as e:
+        logger.error(
+            f"Superuser creation failed during startup: {e}", exc_info=True
+        )
+
+
+async def shutdown_handler() -> None:
+    """Execute shutdown tasks.
+
+    Handles:
+    - Container cleanup
+    - Database connection cleanup
+    """
+    logger.info("Shutting down SearchNewsRAG API...")
+
+    container = get_container()
+    container.cleanup()
+
+    if settings.async_database_url:
+        logger.info("Closing database connections...")
+        db_manager = get_db_manager()
+        await db_manager.close()
 
 
 @asynccontextmanager
@@ -30,20 +84,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     Yields:
         Control to the application
     """
-    logger.info(
-        "Starting SearchNewsRAG API",
-        extra={
-            "environment": settings.environment,
-            "chroma_mode": "client" if settings.chroma_host else "embedded",
-        },
-    )
-
-    container = get_container()
-
+    await startup_handler()
     yield
-
-    logger.info("Shutting down SearchNewsRAG API...")
-    container.cleanup()
+    await shutdown_handler()
 
 
 app = FastAPI(
@@ -54,6 +97,8 @@ app = FastAPI(
     debug=settings.debug,
 )
 
+setup_admin(app)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -62,6 +107,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
+app.include_router(users_router)
 app.include_router(chat_router)
 app.include_router(news_router)
 
