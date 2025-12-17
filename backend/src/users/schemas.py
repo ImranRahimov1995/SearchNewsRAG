@@ -82,7 +82,7 @@ class UserBase(BaseModel):
     """Base schema for User."""
 
     email: EmailStr
-    phone: str = Field(..., min_length=10, max_length=20)
+    phone: str | None = Field(None, min_length=10, max_length=20)
     username: str | None = Field(None, min_length=3, max_length=100)
     full_name: str | None = None
 
@@ -91,7 +91,6 @@ class UserCreate(UserBase):
     """Schema for creating a new user."""
 
     password: str = Field(..., min_length=8, max_length=100)
-    group_ids: list[int] = Field(default_factory=list)
 
 
 class UserRegisterRequest(BaseModel):

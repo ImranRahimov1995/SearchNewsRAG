@@ -6,7 +6,7 @@ from typing import Any
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 class PasswordHasher:
@@ -120,7 +120,9 @@ class JWTHandler:
         return jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
 
     def verify_token(
-        self, token: str, token_type: str = "access"
+        self,
+        token: str,
+        token_type: str = "access",  # nosec B107
     ) -> dict[str, Any]:
         """Verify and decode JWT token.
 
