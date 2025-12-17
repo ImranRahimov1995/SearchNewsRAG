@@ -2,10 +2,10 @@
 
 from typing import Annotated
 
+from auth.services.auth_service import AuthService
 from database import get_db_session
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from users.dependencies import (
     get_auth_service,
     get_current_active_user,
@@ -20,7 +20,6 @@ from users.schemas import (
     UserResponse,
     UserUpdate,
 )
-from auth.services import AuthService
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -61,14 +60,12 @@ async def get_user(
 )
 async def create_user(
     user_data: UserCreate,
-    current_user: Annotated[User, Depends(get_current_superuser)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> UserResponse:
-    """Create a new user (superuser only).
+    """Create a new user (open access).
 
     Args:
         user_data: User creation data
-        current_user: Current superuser
         auth_service: Authentication service
 
     Returns:

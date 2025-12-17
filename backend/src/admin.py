@@ -1,4 +1,4 @@
-from auth.services.admin_auth import AdminAuthBackend
+from auth.services.admin_auth_service import AdminAuthBackend
 from config import get_settings
 from database import get_db_manager
 from fastapi import FastAPI

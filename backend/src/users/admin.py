@@ -1,7 +1,6 @@
 """SQLAdmin views for user management."""
 
 from sqladmin import ModelView
-
 from users.models import OTP, Group, Permission, Profile, User
 
 

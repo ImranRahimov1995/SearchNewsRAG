@@ -2,15 +2,6 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from users.dependencies import (
-    get_auth_service,
-    get_current_active_user,
-    get_otp_service,
-)
-from users.models import User
-from users.schemas import UserResponse
-
 from auth.schemas import (
     ChangePasswordOTPRequest,
     ChangePasswordRequest,
@@ -23,8 +14,16 @@ from auth.schemas import (
     TokenResponse,
     TokenVerifyResponse,
 )
-from auth.services import AuthService
-from backend.src.auth.services.otp_service import OTPService
+from auth.services.auth_service import AuthService
+from auth.services.otp_service import OTPService
+from fastapi import APIRouter, Depends, HTTPException, status
+from users.dependencies import (
+    get_auth_service,
+    get_current_active_user,
+    get_otp_service,
+)
+from users.models import User
+from users.schemas import UserResponse
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

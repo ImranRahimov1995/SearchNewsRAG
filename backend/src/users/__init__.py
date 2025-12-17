@@ -1,7 +1,6 @@
 """Users management module."""
 
 from users.models import Group, Permission, Profile, User
-from users.router import router
 from users.schemas import (
     ProfileResponse,
     ProfileUpdate,
@@ -15,7 +14,6 @@ __all__ = [
     "Permission",
     "Group",
     "Profile",
-    "router",
     "UserCreate",
     "UserResponse",
     "UserUpdate",

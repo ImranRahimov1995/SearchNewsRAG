@@ -2,16 +2,15 @@
 
 from typing import Annotated
 
-from auth.services import AuthService
+from auth.services.auth_service import AuthService
+from auth.services.email_service import SMTPEmailSender
+from auth.services.otp_service import OTPService
 from config import get_settings
 from database import get_db_session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from auth.services.email_service import SMTPEmailSender
-from auth.services.otp_service import OTPService
 from users.models import User
 from users.repository import UserRepository
 from users.security import JWTHandler, PasswordHasher
@@ -129,7 +128,7 @@ async def get_current_user(
     token = credentials.credentials
 
     try:
-        payload = jwt_handler.verify_token(token, token_type="access")
+        payload = jwt_handler.verify_token(token, token_type="access")  # nosec B106
         user_id = payload.get("sub")
 
         if user_id is None:

@@ -5,7 +5,6 @@ from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy import select
 from src.database import get_db_manager
 from users.models import User
-from users.security import JWTHandler
 
 
 class AdminAuthBackend(AuthenticationBackend):
@@ -15,10 +14,9 @@ class AdminAuthBackend(AuthenticationBackend):
         """Initialize admin authentication backend.
 
         Args:
-            secret_key: JWT secret key for token verification
+            secret_key: Secret key for session management
         """
         super().__init__(secret_key)
-        self.jwt_handler = JWTHandler(secret_key=secret_key)
 
     async def login(self, request: Request) -> bool:
         """Handle admin login.
@@ -36,7 +34,7 @@ class AdminAuthBackend(AuthenticationBackend):
         if not username or not password:
             return False
 
-        async with get_db_manager().get_session() as session:
+        async for session in get_db_manager().get_session():
             result = await session.execute(
                 select(User).where(User.username == username)
             )
@@ -53,10 +51,7 @@ class AdminAuthBackend(AuthenticationBackend):
             ):
                 return False
 
-            token = self.jwt_handler.create_access_token(
-                data={"sub": user.id, "is_superuser": True}
-            )
-            request.session.update({"token": token})
+            request.session["user_id"] = user.id
             return True
 
     async def logout(self, request: Request) -> bool:
@@ -72,28 +67,20 @@ class AdminAuthBackend(AuthenticationBackend):
         return True
 
     async def authenticate(self, request: Request) -> bool:
-        """Verify user has valid superuser token.
+        """Verify user has valid superuser session.
 
         Args:
-            request: HTTP request with session token
+            request: HTTP request with session
 
         Returns:
             True if user is authenticated superuser, False otherwise
         """
-        token = request.session.get("token")
-
-        if not token:
+        user_id = request.session.get("user_id")
+        if not user_id:
             return False
 
         try:
-            payload = self.jwt_handler.verify_token(token, token_type="access")
-            user_id = payload.get("sub")
-            is_superuser = payload.get("is_superuser", False)
-
-            if not user_id or not is_superuser:
-                return False
-
-            async with get_db_manager.get_session() as session:
+            async for session in get_db_manager().get_session():
                 result = await session.execute(
                     select(User).where(User.id == int(user_id))
                 )

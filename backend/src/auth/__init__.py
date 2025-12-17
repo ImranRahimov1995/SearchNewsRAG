@@ -1,6 +1,5 @@
 """Authentication module for JWT tokens and OTP verification."""
 
-from auth.router import router
 from auth.schemas import (
     ChangePasswordOTPRequest,
     ChangePasswordRequest,
@@ -15,7 +14,6 @@ from auth.schemas import (
 )
 
 __all__ = [
-    "router",
     "LoginRequest",
     "TokenResponse",
     "TokenVerifyResponse",

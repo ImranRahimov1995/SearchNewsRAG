@@ -1,15 +1,14 @@
 """OTP (One-Time Password) service for verification."""
 
-import random
+import secrets
 import string
 from datetime import datetime, timedelta, timezone
 
+from auth.services.email_service import EmailTemplateService, IEmailSender
 from fastapi import HTTPException, status
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from users.models import OTP, User
-
-from auth.services.email_service import EmailTemplateService, IEmailSender
 
 
 class OTPService:
@@ -45,7 +44,9 @@ class OTPService:
         Returns:
             Random numeric OTP code
         """
-        return "".join(random.choices(string.digits, k=self.otp_length))
+        return "".join(
+            secrets.choice(string.digits) for _ in range(self.otp_length)
+        )
 
     async def create_otp(
         self,
@@ -240,6 +241,7 @@ class OTPService:
             user: User instance
 
         Returns:
+            True if email sent successfully, False otherwise
         """
         html_body = self.template_service.get_welcome_template(
             username=user.username or user.email.split("@")[0]

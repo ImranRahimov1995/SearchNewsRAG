@@ -9,7 +9,7 @@ from users.repository import GroupRepository, ProfileRepository, UserRepository
 from users.schemas import UserCreate
 from users.security import JWTHandler, PasswordHasher
 
-from auth.services.otp_service import OTPService
+from .otp_service import OTPService
 
 
 class AuthService:
@@ -57,14 +57,15 @@ class AuthService:
                 detail="Email already registered",
             )
 
-        existing_username = await self.user_repo.get_by_username(
-            user_data.username
-        )
-        if existing_username:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already taken",
+        if user_data.username:
+            existing_username = await self.user_repo.get_by_username(
+                user_data.username
             )
+            if existing_username:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Username already taken",
+                )
 
         hashed_password = self.password_hasher.hash_password(
             user_data.password
@@ -73,12 +74,10 @@ class AuthService:
         user = await self.user_repo.create(
             email=user_data.email,
             username=user_data.username,
+            phone=user_data.phone,
             hashed_password=hashed_password,
             full_name=user_data.full_name,
         )
-
-        for group_id in user_data.group_ids:
-            await self.user_repo.add_to_group(user.id, group_id)
 
         user = await self.user_repo.get_by_id(user.id)
 
@@ -144,7 +143,8 @@ class AuthService:
         """
         try:
             payload = self.jwt_handler.verify_token(
-                refresh_token, token_type="refresh"
+                refresh_token,
+                token_type="refresh",  # nosec B106
             )
             user_id = payload.get("sub")
 
@@ -185,7 +185,7 @@ class AuthService:
             Token verification result
         """
         try:
-            payload = self.jwt_handler.verify_token(token, token_type="access")
+            payload = self.jwt_handler.verify_token(token, token_type="access")  # nosec B106
             user_id = payload.get("sub")
 
             if user_id is None:
@@ -272,12 +272,13 @@ class AuthService:
                 detail="Email already registered",
             )
 
-        existing_phone = await self.user_repo.get_by_phone(phone)
-        if existing_phone:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Phone already registered",
-            )
+        if phone:
+            existing_phone = await self.user_repo.get_by_phone(phone)
+            if existing_phone:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Phone already registered",
+                )
 
         hashed_password = self.password_hasher.hash_password(password)
 
