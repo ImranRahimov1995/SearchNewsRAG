@@ -70,11 +70,31 @@ class BackendSettings(BaseSettings):
         default=7, description="Refresh token expiration in days"
     )
 
-    smtp_host: str = Field(default="smtp.gmail.com", description="SMTP host")
-    smtp_port: int = Field(default=587, description="SMTP port")
-    smtp_user: str = Field(default="", description="SMTP username")
-    smtp_password: str = Field(default="", description="SMTP password")
-    smtp_from_email: str = Field(default="", description="From email address")
+    smtp_host: str = Field(
+        default="smtp.gmail.com",
+        description="SMTP host",
+        validation_alias="EMAIL_HOST",
+    )
+    smtp_port: int = Field(
+        default=587, 
+        description="SMTP port",
+        validation_alias="EMAIL_PORT"
+    )
+    smtp_user: str = Field(
+        default="",
+        description="SMTP username",
+        validation_alias="EMAIL_HOST_USER",
+    )
+    smtp_password: str = Field(
+        default="",
+        description="SMTP password",
+        validation_alias="EMAIL_HOST_PASSWORD",
+    )
+    smtp_from_email: str = Field(
+        default="",
+        description="From email address",
+        validation_alias="DEFAULT_FROM_EMAIL",
+    )
     smtp_from_name: str = Field(
         default="SearchNewsRAG", description="From name"
     )
@@ -85,6 +105,14 @@ class BackendSettings(BaseSettings):
     )
     otp_max_attempts: int = Field(
         default=3, description="Maximum OTP verification attempts"
+    )
+
+    superuser_email: str = Field(
+        default="admin@searchnewsrag.com",
+        description="Default superuser email",
+    )
+    superuser_password: str = Field(
+        default="", description="Default superuser password"
     )
 
 
