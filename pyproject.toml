@@ -33,30 +33,37 @@ requests = "2.32.5"
 aiohttp = "3.13.2"
 fake-useragent = "2.2.0"
 beautifulsoup4 = "4.14.2"
-fastapi = "0.115.6"
-uvicorn = {extras = ["standard"], version = "0.34.0"}
-pydantic = "2.10.6"
-pydantic-settings = "^2.10.1"
+fastapi = {version = "0.124.4", extras = ["email"]}
+uvicorn = {version = "0.34.0", extras = ["standard"]}
+pydantic = {version = "2.12.5", extras = ["email"]}
+pydantic-settings = "2.12.0"
 sqlalchemy = "2.0.36"
-psycopg = {extras = ["binary"], version = "3.2.3"}
+psycopg = {version = "3.2.3", extras = ["binary"]}
+asyncpg = "0.30.0"
+sqladmin = "0.22.0"
+python-jose = {version = "3.3.0", extras = ["cryptography"]}
+passlib = "1.7.4"
+bcrypt = "5.0.0"
+alembic = "1.17.2"
+itsdangerous = "^2.2.0"
+argon2-cffi = "^25.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.2"
 pytest-asyncio = "0.23.7"
-pytest-mock = "^3.15.1"
-pytest-cov = "^6.0.0"
-coverage = "^7.10.6"
-aioresponses = "^0.7.6"
+pytest-mock = "3.15.1"
+pytest-cov = "6.0.0"
+coverage = "7.10.6"
+aioresponses = "0.7.6"
 ruff = "0.7.1"
 mypy = "1.11.2"
 black = "24.10.0"
-pre-commit = "^3.5.0"
-bandit = {extras = ["toml"], version = "^1.7.10"}
-isort = "^5.13.2"
-pydocstyle = "^6.3.0"
-ipython = "^9.7.0"
-ipykernel = "^7.1.0"
-alembic = "^1.17.2"
+pre-commit = "3.5.0"
+bandit = {version = "1.7.10", extras = ["toml"]}
+isort = "5.13.2"
+pydocstyle = "6.3.0"
+ipython = "9.7.0"
+ipykernel = "7.1.0"
 
 [tool.black]
 line-length = 79
@@ -67,7 +74,7 @@ line-length = 79
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W", "N"]
+select = ["E", "F", "W", "N"]
 ignore = ["E501", "F403", "F405"]
 
 [tool.isort]
