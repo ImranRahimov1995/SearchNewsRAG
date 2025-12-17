@@ -51,7 +51,7 @@ services:
       API_HASH: ${TELEGRAM_API_HASH}
 
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-
+      ASYNC_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       CHROMA_COLLECTION_NAME: news_analyzed_2025_900_150_large
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
