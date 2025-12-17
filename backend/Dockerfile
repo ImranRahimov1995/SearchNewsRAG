@@ -52,6 +52,8 @@ ENV PATH="/app/.venv/bin:$PATH" \
     HOST=${HOST}
 
 COPY --chown=appuser:appuser backend/src ./src
+COPY --chown=appuser:appuser backend/alembic.ini ./alembic.ini
+COPY --chown=appuser:appuser backend/migrations ./migrations
 
 RUN mkdir -p logs chroma_db && \
     chown -R appuser:appuser logs chroma_db

@@ -165,6 +165,7 @@ data/
 datanew/
 logs/
 htmlcov/
+pgdata/
 
 # Session and data files
 *.session
@@ -176,3 +177,4 @@ htmlcov/
 # Notebook checkpoints
 .ipynb_checkpoints
 notebooks/
+temp/

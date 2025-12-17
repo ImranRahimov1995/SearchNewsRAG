@@ -47,7 +47,7 @@ jobs:
         file: ./frontend/Dockerfile
         push: true
         build-args: |
-          VITE_API_BASE_URL=/api
+          VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/searchnewsrag-frontend:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/searchnewsrag-frontend:${{ github.sha }}
@@ -78,21 +78,62 @@ jobs:
       uses: appleboy/ssh-action@v1.0.3
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
         TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+        JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRE_MINUTES }}
+        JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRE_DAYS }}
+        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+        EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+        OTP_LENGTH: ${{ secrets.OTP_LENGTH }}
+        OTP_EXPIRE_MINUTES: ${{ secrets.OTP_EXPIRE_MINUTES }}
+        OTP_MAX_ATTEMPTS: ${{ secrets.OTP_MAX_ATTEMPTS }}
+        SUPERUSER_EMAIL: ${{ secrets.SUPERUSER_EMAIL }}
+        SUPERUSER_PASSWORD: ${{ secrets.SUPERUSER_PASSWORD }}
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        envs: DOCKERHUB_USERNAME,OPENAI_API_KEY,TELEGRAM_API_ID,TELEGRAM_API_HASH
+        envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN,OPENAI_API_KEY,TELEGRAM_API_ID,TELEGRAM_API_HASH,POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD,JWT_SECRET_KEY,JWT_ALGORITHM,JWT_ACCESS_TOKEN_EXPIRE_MINUTES,JWT_REFRESH_TOKEN_EXPIRE_DAYS,EMAIL_HOST,EMAIL_PORT,EMAIL_USE_TLS,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD,DEFAULT_FROM_EMAIL,OTP_LENGTH,OTP_EXPIRE_MINUTES,OTP_MAX_ATTEMPTS,SUPERUSER_EMAIL,SUPERUSER_PASSWORD
         script: |
           cd /opt/searchnewsrag
 
-          export DOCKERHUB_USERNAME="${DOCKERHUB_USERNAME}"
-          export OPENAI_API_KEY="${OPENAI_API_KEY}"
-          export TELEGRAM_API_ID="${TELEGRAM_API_ID}"
-          export TELEGRAM_API_HASH="${TELEGRAM_API_HASH}"
+          # Create .env file with all environment variables
+          cat > .env << EOF
+          DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME}
+          DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN}
+          OPENAI_API_KEY=${OPENAI_API_KEY}
+          TELEGRAM_API_ID=${TELEGRAM_API_ID}
+          TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+          POSTGRES_DB=${POSTGRES_DB}
+          POSTGRES_USER=${POSTGRES_USER}
+          POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+          JWT_SECRET_KEY=${JWT_SECRET_KEY}
+          JWT_ALGORITHM=${JWT_ALGORITHM}
+          JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+          JWT_REFRESH_TOKEN_EXPIRE_DAYS=${JWT_REFRESH_TOKEN_EXPIRE_DAYS}
+          EMAIL_HOST=${EMAIL_HOST}
+          EMAIL_PORT=${EMAIL_PORT}
+          EMAIL_USE_TLS=${EMAIL_USE_TLS}
+          EMAIL_HOST_USER=${EMAIL_HOST_USER}
+          EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+          DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+          OTP_LENGTH=${OTP_LENGTH}
+          OTP_EXPIRE_MINUTES=${OTP_EXPIRE_MINUTES}
+          OTP_MAX_ATTEMPTS=${OTP_MAX_ATTEMPTS}
+          SUPERUSER_EMAIL=${SUPERUSER_EMAIL}
+          SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+          EOF
 
           mv docker-compose.prod.yml docker-compose.yml
 
@@ -101,6 +142,7 @@ jobs:
           docker pull ${DOCKERHUB_USERNAME}/searchnewsrag-frontend:latest
           docker pull ${DOCKERHUB_USERNAME}/searchnewsrag-nginx:latest
           docker pull chromadb/chroma:latest
+          docker pull postgres:16-alpine
 
           echo "Recreating services..."
           docker compose up -d --force-recreate

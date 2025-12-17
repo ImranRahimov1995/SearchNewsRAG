@@ -67,6 +67,7 @@ class NewsParsingService:
                     text=item_data.get("text", ""),
                     url=item_data.get("url"),
                     detail=item_data.get("detail"),
+                    image_url=item_data.get("image_url"),
                 )
             )
 
@@ -99,6 +100,7 @@ class NewsParsingService:
             if item.id in processed_dict:
                 item.url = processed_dict[item.id].url
                 item.detail = processed_dict[item.id].detail
+                item.image_url = processed_dict[item.id].image_url
 
         await self._save_results(items, output_file)
 
@@ -171,6 +173,7 @@ class NewsParsingService:
                 "text": item.text,
                 "url": item.url,
                 "detail": item.detail,
+                "image_url": item.image_url,
             }
             for item in items
         ]

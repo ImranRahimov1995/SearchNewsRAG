@@ -71,3 +71,19 @@ setup: ## First-time setup
 
 # Development workflow shortcuts
 dev-check: format lint test-fast ## Quick development check
+
+# Database migrations
+migrate-up: ## Run database migrations to latest version
+	cd backend && poetry run python -m src.migrations upgrade
+
+migrate-down: ## Rollback last migration
+	cd backend && poetry run python -m src.migrations downgrade
+
+migrate-current: ## Show current migration revision
+	cd backend && poetry run python -m src.migrations current
+
+migrate-pending: ## Check if migrations are pending
+	cd backend && poetry run python -m src.migrations pending
+
+migrate-create: ## Create new migration (use: make migrate-create name="your_migration_name")
+	cd backend && poetry run alembic revision --autogenerate -m "$(name)"

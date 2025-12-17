@@ -1,10 +1,31 @@
+version: '3.8'
+
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: searchnewsrag-postgres-prod
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - searchnewsrag-network
+
   chromadb:
     image: chromadb/chroma:latest
     container_name: searchnewsrag-chromadb
     restart: unless-stopped
     volumes:
-      - /opt/searchnewsrag/data/chroma:/data
+      - chroma_data:/data
     environment:
       IS_PERSISTENT: "TRUE"
       ANONYMIZED_TELEMETRY: "FALSE"
@@ -23,18 +44,46 @@ services:
       PORT: 8000
       LOG_LEVEL: INFO
       LOG_FORMAT: json
+
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+
       API_ID: ${TELEGRAM_API_ID}
       API_HASH: ${TELEGRAM_API_HASH}
-      CHROMA_COLLECTION_NAME: news_analyzed_2025_800_200_large
+
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      ASYNC_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CHROMA_COLLECTION_NAME: news_analyzed_2025_900_150_large
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
       CHROMA_DB_PATH: ./chroma_db
-      CORS_ORIGINS: '["http://news.aitools.az","https://news.aitools.az"]'
+
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+      JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${JWT_REFRESH_TOKEN_EXPIRE_DAYS}
+
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL}
+
+      OTP_LENGTH: ${OTP_LENGTH}
+      OTP_EXPIRE_MINUTES: ${OTP_EXPIRE_MINUTES}
+      OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS}
+
+      SUPERUSER_EMAIL: ${SUPERUSER_EMAIL}
+      SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
+
+      CORS_ORIGINS: '["http://news.aitools.az","https://news.aitools.az","http://backend-news.aitools.az","https://backend-news.aitools.az"]'
     expose:
       - "8000"
     depends_on:
-      - chromadb
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -83,3 +132,9 @@ services:
 networks:
   searchnewsrag-network:
     driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  chroma_data:
+    driver: local
