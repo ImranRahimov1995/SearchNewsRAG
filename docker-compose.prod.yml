@@ -50,7 +50,7 @@ services:
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
       CHROMA_DB_PATH: ./chroma_db
-      CORS_ORIGINS: '["http://news.aitools.az","https://news.aitools.az"]'
+      CORS_ORIGINS: '["http://news.aitools.az","https://news.aitools.az","http://backend-news.aitools.az","https://backend-news.aitools.az"]'
     expose:
       - "8000"
     depends_on:
