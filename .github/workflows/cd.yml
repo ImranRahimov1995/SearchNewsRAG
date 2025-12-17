@@ -47,7 +47,7 @@ jobs:
         file: ./frontend/Dockerfile
         push: true
         build-args: |
-          VITE_API_BASE_URL=/api
+          VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/searchnewsrag-frontend:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/searchnewsrag-frontend:${{ github.sha }}
