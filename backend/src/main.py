@@ -4,8 +4,8 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from admin import setup_admin
-from auth import router as auth_router
-from chats import router as chat_router
+from auth.router import router as auth_router
+from chats.router import router as chat_router
 from config import get_settings
 from database import get_db_manager
 from dependencies import get_container
@@ -13,8 +13,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from logging_config import get_logger, setup_logging
 from migrations import run_migrations_on_startup
-from news import router as news_router
-from users import router as users_router
+from news.router import router as news_router
+from users.router import router as users_router
 
 settings = get_settings()
 setup_logging(
@@ -25,15 +25,13 @@ setup_logging(
 logger = get_logger("main")
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator:
-    """Application lifespan handler.
+async def startup_handler() -> None:
+    """Execute startup tasks.
 
-    Args:
-        app: FastAPI application instance
-
-    Yields:
-        Control to the application
+    Handles:
+    - Database migrations
+    - Superuser creation
+    - Container initialization
     """
     logger.info(
         "Starting SearchNewsRAG API",
@@ -48,17 +46,47 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     except Exception as e:
         logger.error(f"Migration failed during startup: {e}", exc_info=True)
 
-    container = get_container()
+    try:
+        from users.superuser import create_superuser_if_not_exists
 
-    yield
+        await create_superuser_if_not_exists()
+    except Exception as e:
+        logger.error(
+            f"Superuser creation failed during startup: {e}", exc_info=True
+        )
 
+
+async def shutdown_handler() -> None:
+    """Execute shutdown tasks.
+
+    Handles:
+    - Container cleanup
+    - Database connection cleanup
+    """
     logger.info("Shutting down SearchNewsRAG API...")
+
+    container = get_container()
     container.cleanup()
 
     if settings.async_database_url:
         logger.info("Closing database connections...")
         db_manager = get_db_manager()
         await db_manager.close()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator:
+    """Application lifespan handler.
+
+    Args:
+        app: FastAPI application instance
+
+    Yields:
+        Control to the application
+    """
+    await startup_handler()
+    yield
+    await shutdown_handler()
 
 
 app = FastAPI(
