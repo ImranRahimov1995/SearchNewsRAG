@@ -10,7 +10,14 @@ from pagination import paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .dependencies import get_postgres_service
-from .schemas import CategoriesResponse, NewsItem, NewsListResponse
+from .schemas import (
+    CategoriesResponse,
+    CategoryTreeResponse,
+    EntityListResponse,
+    GraphResponse,
+    NewsItem,
+    NewsListResponse,
+)
 from .services import PostgresNewsService
 
 logger = logging.getLogger(__name__)
@@ -168,6 +175,237 @@ async def get_news(
 
     except Exception as e:
         logger.error(f"Failed to fetch news: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve news: {str(e)}",
+        ) from e
+
+
+@router.get("/graph", response_model=GraphResponse)
+async def get_news_graph(
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+    service: Annotated[PostgresNewsService, Depends(get_postgres_service)],
+    category: str | None = Query(None, description="Filter by category"),
+    entity: str | None = Query(None, description="Filter by entity name"),
+    limit: int = Query(
+        30, ge=5, le=100, description="Max news items in graph"
+    ),
+) -> dict:
+    """Get news graph data for visualization.
+
+    Returns nodes (news articles + entities) and edges (connections).
+
+    Args:
+        session: Database session
+        service: PostgreSQL news service
+        category: Optional category filter
+        entity: Optional entity name filter
+        limit: Maximum number of news items
+
+    Returns:
+        Graph data with nodes and edges for visualization
+
+    Raises:
+        HTTPException: If failed to retrieve graph data
+    """
+    try:
+        logger.info(
+            f"Fetching graph data: category={category}, entity={entity}, limit={limit}"
+        )
+
+        graph_data = await service.get_graph_data(
+            session,
+            category=category,
+            entity_name=entity,
+            limit=limit,
+        )
+
+        logger.info(
+            f"Graph data retrieved: {graph_data['total_news']} news, "
+            f"{graph_data['total_entities']} entities"
+        )
+
+        return graph_data
+
+    except Exception as e:
+        logger.error(f"Failed to fetch graph data: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve graph data: {str(e)}",
+        ) from e
+
+
+@router.get("/category-tree", response_model=CategoryTreeResponse)
+async def get_category_tree(
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+    service: Annotated[PostgresNewsService, Depends(get_postgres_service)],
+    limit_per_category: int = Query(
+        20, ge=5, le=50, description="Max news per category"
+    ),
+) -> dict:
+    """Get hierarchical category tree with subcategories and news.
+
+    Args:
+        session: Database session
+        service: PostgreSQL news service
+        limit_per_category: Maximum news items per category
+
+    Returns:
+        Category tree structure
+
+    Raises:
+        HTTPException: If failed to retrieve category tree
+    """
+    try:
+        logger.info(
+            f"Fetching category tree, limit_per_category={limit_per_category}"
+        )
+
+        tree_data = await service.get_category_tree(
+            session, limit_per_category
+        )
+
+        logger.info(
+            f"Category tree retrieved: {len(tree_data['categories'])} categories"
+        )
+
+        return tree_data
+
+    except Exception as e:
+        logger.error(f"Failed to fetch category tree: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve category tree: {str(e)}",
+        ) from e
+
+
+@router.get("/entities", response_model=EntityListResponse)
+async def get_entities(
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+    service: Annotated[PostgresNewsService, Depends(get_postgres_service)],
+    min_news: int = Query(
+        2, ge=1, le=10, description="Min news count to include entity"
+    ),
+    limit: int = Query(
+        100, ge=10, le=500, description="Max entities to return"
+    ),
+) -> dict:
+    """Get list of entities with their connected news counts.
+
+    Args:
+        session: Database session
+        service: PostgreSQL news service
+        min_news: Minimum news count to include entity
+        limit: Maximum entities to return
+
+    Returns:
+        Entity list with news connections
+
+    Raises:
+        HTTPException: If failed to retrieve entities
+    """
+    try:
+        logger.info(f"Fetching entities, min_news={min_news}, limit={limit}")
+
+        entity_data = await service.get_entity_list(session, min_news, limit)
+
+        logger.info(f"Entities retrieved: {entity_data['total']} entities")
+
+        return entity_data
+
+    except Exception as e:
+        logger.error(f"Failed to fetch entities: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve entities: {str(e)}",
+        ) from e
+
+
+@router.get("/entity-graph", response_model=GraphResponse)
+async def get_entity_graph(
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+    service: Annotated[PostgresNewsService, Depends(get_postgres_service)],
+    entity_id: int | None = Query(None, description="Filter by entity ID"),
+    limit: int = Query(50, ge=5, le=100, description="Max news items"),
+) -> dict:
+    """Get graph of news connected by shared entities.
+
+    Args:
+        session: Database session
+        service: PostgreSQL news service
+        entity_id: Optional entity ID to filter news
+        limit: Maximum news items
+
+    Returns:
+        Graph with news connected by shared entities
+
+    Raises:
+        HTTPException: If failed to retrieve entity graph
+    """
+    try:
+        logger.info(
+            f"Fetching entity graph, entity_id={entity_id}, limit={limit}"
+        )
+
+        graph_data = await service.get_entity_graph(
+            session,
+            entity_id=entity_id,
+            limit=limit,
+        )
+
+        logger.info(
+            f"Entity graph retrieved: {graph_data['total_news']} news, "
+            f"{graph_data['total_entities']} entities"
+        )
+
+        return graph_data
+
+    except Exception as e:
+        logger.error(f"Failed to fetch entity graph: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve entity graph: {str(e)}",
+        ) from e
+
+
+@router.get("/by-ids", response_model=GraphResponse)
+async def get_news_by_ids(
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+    service: Annotated[PostgresNewsService, Depends(get_postgres_service)],
+    ids: str = Query(..., description="Comma-separated news IDs"),
+) -> dict:
+    """Get graph of news by specific IDs.
+
+    Args:
+        session: Database session
+        service: PostgreSQL news service
+        ids: Comma-separated news IDs
+
+    Returns:
+        Graph with specified news items
+
+    Raises:
+        HTTPException: If failed to retrieve news
+    """
+    try:
+        news_ids = [int(x.strip()) for x in ids.split(",") if x.strip()]
+        logger.info(
+            f"Fetching news by ids: {news_ids[:5]}... (total: {len(news_ids)})"
+        )
+
+        graph_data = await service.get_news_by_ids(session, news_ids)
+
+        logger.info(f"News by ids retrieved: {graph_data['total_news']} news")
+
+        return graph_data
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid IDs format: {str(e)}",
+        ) from e
+    except Exception as e:
+        logger.error(f"Failed to fetch news by ids: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve news: {str(e)}",

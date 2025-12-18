@@ -1,252 +1,491 @@
-# SearchNewsRAG - AI-Powered News Search & Analytics
+# SearchNewsRAG - AI-Powered News Search, Analytics & Visualization
 
 [![Production](https://img.shields.io/badge/production-news.aitools.az-blue)](https://news.aitools.az)
 [![GitHub](https://img.shields.io/badge/github-SearchNewsRAG-black)](https://github.com/ImranRahimov1995/SearchNewsRAG)
+[![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.124-green)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61dafb)](https://react.dev/)
 
-**Semantic search engine and analytics platform for Azerbaijani news using RAG (Retrieval-Augmented Generation) with vector embeddings and LLM-powered metadata analysis.**
+**Enterprise-grade semantic search engine and analytics platform for Azerbaijani news using RAG (Retrieval-Augmented Generation) technology with vector embeddings, LLM-powered metadata analysis, and interactive visualization.**
 
-## Description
+---
 
-SearchNewsRAG enables intelligent search across large-scale Azerbaijani news archives by combining vector similarity search with AI-powered content analysis. The system automatically collects news from Telegram channels, processes and analyzes articles using OpenAI, stores them with rich metadata in a vector database, and provides both semantic search and conversational Q&A interface.
+## 🎯 Project Overview
 
-**Key Capabilities**:
-- Semantic search across thousands of news articles
-- Real-time news analytics and categorization
-- Statistical analysis (trends, frequencies, distributions)
-- Predictive insights based on historical patterns
-- Conversational Q&A interface
+SearchNewsRAG is a full-stack application that transforms how users interact with news data. It combines:
+- **Automated data collection** from Telegram channels
+- **AI-powered analysis** using OpenAI GPT models
+- **Vector semantic search** with ChromaDB
+- **Interactive visualization** with news universe graph
+- **Conversational Q&A** interface
 
-## System Architecture
+### Key Capabilities
 
-### Telegram Module
-Asynchronous data collection system that:
-- Fetches news messages from configured Telegram channels
-- Extracts full article content from news URLs
-- Handles rate limiting and retries automatically
-- Outputs structured JSON with metadata
+| Feature | Description |
+|---------|-------------|
+| 🔍 **Semantic Search** | Find news by meaning, not just keywords |
+| 📊 **Auto-categorization** | AI classifies news (politics, economy, sports, etc.) |
+| 🏷️ **Entity Extraction** | Identifies people, organizations, locations |
+| 💬 **Sentiment Analysis** | Detects positive/neutral/negative tone |
+| 📈 **Importance Scoring** | Ranks news by significance (1-10) |
+| 🌐 **Multi-language** | Supports Azerbaijani, English, Russian |
+| 🌌 **News Universe** | Interactive graph visualization |
 
-### RAG Module
-Advanced document processing pipeline that:
-- Analyzes articles using OpenAI (categories, entities, sentiment, importance)
-- Splits documents into semantic chunks (600 chars, 150 overlap)
-- Generates embeddings via OpenAI text-embedding-3-small
-- Stores vectors in ChromaDB with metadata for enhanced search
-- Enables hybrid search (semantic + keyword + metadata filtering)
+---
 
-**Analysis Features**:
-- Content categorization (politics, economy, sports, etc.)
-- Named entity extraction (people, organizations, locations)
-- Sentiment analysis and importance scoring
-- Geographic and temporal tagging
+## 🏗️ System Architecture
 
-### Backend
-FastAPI service providing:
-- RESTful API for news search and filtering
-- Conversational Q&A endpoint powered by RAG
-- Metadata aggregation (categories, date ranges, entities)
-- Pagination and advanced filtering
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DATA COLLECTION LAYER                              │
+│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐       │
+│  │ Telegram Fetcher │ -> │ Content Parser   │ -> │ JSON Storage     │       │
+│  │ (Telethon)       │    │ (BeautifulSoup)  │    │ (Raw Articles)   │       │
+│  └──────────────────┘    └──────────────────┘    └──────────────────┘       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DATA PROCESSING LAYER                              │
+│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐       │
+│  │ Text Cleaner     │ -> │ LLM Analyzer     │ -> │ Text Chunker     │       │
+│  │ (Telegram MD)    │    │ (OpenAI GPT-4)   │    │ (LangChain)      │       │
+│  └──────────────────┘    └──────────────────┘    └──────────────────┘       │
+│                                      │                                       │
+│                    Extracted Metadata:                                       │
+│                    • Category, Entities, Sentiment                           │
+│                    • Importance, Summary, Geographic scope                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           STORAGE LAYER                                      │
+│  ┌──────────────────────────┐    ┌──────────────────────────────┐           │
+│  │ ChromaDB                 │    │ PostgreSQL                   │           │
+│  │ • Vector embeddings      │    │ • Articles, Entities         │           │
+│  │ • Semantic search        │    │ • Sources, Relations         │           │
+│  │ • Metadata filtering     │    │ • User data, Analytics       │           │
+│  └──────────────────────────┘    └──────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           APPLICATION LAYER                                  │
+│  ┌──────────────────────────────────────────────────────────────────┐       │
+│  │                        FastAPI Backend                            │       │
+│  │  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐     │       │
+│  │  │ News API   │ │ Search API │ │ Chat API   │ │ Graph API  │     │       │
+│  │  └────────────┘ └────────────┘ └────────────┘ └────────────┘     │       │
+│  └──────────────────────────────────────────────────────────────────┘       │
+│  ┌──────────────────────────────────────────────────────────────────┐       │
+│  │                        React Frontend                             │       │
+│  │  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐     │       │
+│  │  │ News Feed  │ │ Chat UI    │ │ Universe   │ │ Analytics  │     │       │
+│  │  └────────────┘ └────────────┘ └────────────┘ └────────────┘     │       │
+│  └──────────────────────────────────────────────────────────────────┘       │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
-**Scalability**:
-- Stateless design for horizontal scaling
-- Async I/O for high throughput
-- Connection pooling for ChromaDB
-- Ready for load balancing and Redis caching
-- Future: PostgreSQL for structured analytics data
+---
 
-**Background Tasks** (Coming Soon):
-- Scheduled news collection via Celery workers
-- Automatic article processing and vectorization
-- Periodic database reindexing
-- Analytics computation and caching
+## 📦 Module Deep Dive
 
-### Frontend
-React/TypeScript single-page application with:
-- News browsing interface with filtering by category, date, importance
-- Conversational chat interface for natural language queries
-- Real-time search with highlighting
-- Responsive design for mobile and desktop
+### 1. Telegram Fetcher Module (`telegram_fetcher/`)
 
-## Tech Stack
+**Purpose**: Asynchronous data collection from Telegram news channels.
 
-- **Vector Database**: ChromaDB (persistent, scalable)
-- **Embeddings**: OpenAI text-embedding-3-small
-- **LLM**: OpenAI GPT-4 (analysis and Q&A)
-- **Backend**: FastAPI, Python 3.12
-- **Frontend**: React, Vite, TypeScript, Tailwind CSS
-- **Data Collection**: Telethon (Telegram), aiohttp (async scraping)
-- **Infrastructure**: Docker, Nginx, GitHub Actions CI/CD
+```
+telegram_fetcher/
+├── base.py           # TelegramCollector - Telethon client wrapper
+├── services.py       # NewsCollectionService - multi-source orchestration
+├── config.py         # API credentials management
+└── parsers/
+    ├── base.py       # Abstract interfaces (IURLExtractor, IContentParser)
+    ├── qafqazinfo.py # Site-specific parser implementation
+    └── __main__.py   # CLI entry point for batch processing
+```
 
-## Documentation
+**Data Flow**:
+```
+Telegram Channel → Fetch Messages → Extract URLs → Parse Full Article → JSON Output
+```
 
-- **[Data Collection Guide](docs/DATA_COLLECTION.md)** - Telegram fetcher and content parsers
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - CI/CD pipeline and production setup
-- **[QA Service](docs/QA_SERVICE.md)** - Question answering system architecture
-- **[Vectorization Service](docs/VECTORIZATION_SERVICE.md)** - Document processing pipeline
+**Key Technical Decisions**:
+- **Telethon** for Telegram API (async, efficient)
+- **aiohttp** for concurrent HTTP requests (2-3x faster than threading)
+- **Semaphore** for rate limiting (configurable concurrency)
+- **BeautifulSoup** for HTML parsing
 
-## Local Development
+**Output Format**:
+```json
+{
+  "id": 12345,
+  "date": "2024-11-24T10:30:00+00:00",
+  "text": "Preview from Telegram...",
+  "url": "https://qafqazinfo.az/news/detail/12345",
+  "detail": "Full article content extracted from webpage...",
+  "image_url": "https://qafqazinfo.az/uploads/image.jpg"
+}
+```
+
+---
+
+### 2. RAG Module (`rag_module/`)
+
+**Purpose**: Complete document processing and retrieval pipeline.
+
+```
+rag_module/
+├── data_processing/       # Document transformation
+│   ├── protocols.py       # Interfaces (ITextAnalyzer, IChunker, ITextCleaner)
+│   ├── analyzers/         # OpenAI-powered content analysis
+│   ├── chunkers.py        # Text splitting strategies
+│   ├── cleaners.py        # Telegram markdown cleanup
+│   ├── loaders.py         # JSON data loading
+│   └── pipeline.py        # Processing orchestration
+│
+├── vector_store/          # Vector database operations
+│   ├── chroma_store.py    # ChromaDB implementation
+│   ├── embedding.py       # OpenAI embeddings wrapper
+│   ├── batch_processor.py # Efficient batch operations
+│   └── protocols.py       # Storage interfaces
+│
+├── query_processing/      # User query handling
+│   ├── router.py          # Intent classification
+│   ├── pipeline.py        # Query transformation
+│   └── llm_processor.py   # Language detection, NER
+│
+├── retrieval/             # Search and generation
+│   ├── pipeline.py        # Search orchestration
+│   ├── llm_generator.py   # Answer synthesis
+│   └── handlers/          # Intent-specific handlers
+│
+└── services/              # High-level APIs
+    ├── vectorization.py   # Document vectorization service
+    ├── vectorization_v2.py# With PostgreSQL persistence
+    └── qa_service.py      # Question answering service
+```
+
+#### 2.1 Data Processing Pipeline
+
+**Critical Pattern: "Analyze ONCE, Chunk MANY"**
+
+This is the key optimization that saves 90%+ on LLM costs:
+
+```python
+# ✅ CORRECT: Analyze full article ONCE, then chunk
+full_article = article["detail"]           # Full text
+metadata = analyzer.analyze(full_article)  # 1 LLM call
+
+chunks = chunker.chunk(full_article)       # Split into pieces
+for chunk in chunks:
+    chunk.metadata = metadata              # All chunks share same metadata
+
+# ❌ WRONG: Analyzing each chunk separately
+for chunk in chunks:
+    metadata = analyzer.analyze(chunk)     # N LLM calls - expensive!
+```
+
+**LLM Analysis Output**:
+```json
+{
+  "category": "politics",
+  "entities": ["İlham Əliyev", "Azərbaycan", "Bakı"],
+  "sentiment": "neutral",
+  "sentiment_score": 0.1,
+  "importance": 8,
+  "summary": "Prezident İlham Əliyev Bakıda keçirilən...",
+  "is_breaking": false,
+  "geographic_scope": "national"
+}
+```
+
+#### 2.2 Vector Store
+
+**Embedding Strategy**:
+- Model: `text-embedding-3-small` (cost-effective) or `text-embedding-3-large` (higher quality)
+- Chunk size: 600 characters with 100 character overlap
+- Chunking: LangChain RecursiveCharacterTextSplitter
+
+**ChromaDB Configuration**:
+- Persistent storage in `./chroma_db`
+- Supports both embedded and client modes
+- Metadata filtering for hybrid search
+
+#### 2.3 Query Processing
+
+**Intent Classification**:
+| Intent | Example | Strategy |
+|--------|---------|----------|
+| FACTOID | "Who is the president?" | Semantic search |
+| STATISTICAL | "How many protests?" | Aggregation + count |
+| ANALYTICAL | "Why did prices rise?" | Multi-doc analysis |
+| TASK | "Summarize today's news" | Custom handler |
+
+#### 2.4 Question Answering Service
+
+Complete RAG pipeline:
+```
+User Query → Language Detection → Translation → NER → 
+Intent Classification → Vector Search → LLM Generation → 
+Structured Response with Sources
+```
+
+---
+
+### 3. Backend (`backend/`)
+
+**Purpose**: FastAPI REST API serving frontend and external integrations.
+
+```
+backend/src/
+├── main.py            # Application entry, lifespan, middleware
+├── config.py          # Settings from environment
+├── database.py        # Async SQLAlchemy setup
+├── dependencies.py    # Dependency injection container
+├── news/
+│   ├── router.py      # News endpoints (/news, /categories, /graph)
+│   ├── schemas.py     # Pydantic models
+│   └── services/
+│       ├── postgres.py # PostgreSQL queries
+│       └── chroma.py   # Vector search
+├── chats/             # Chat history management
+├── auth/              # JWT authentication
+└── users/             # User management
+```
+
+**Key Endpoints**:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/news/` | GET | Paginated news list |
+| `/news/categories` | GET | Categories with counts |
+| `/news/graph` | GET | Graph visualization data |
+| `/news/entity-graph` | GET | Entity-based graph |
+| `/news/search` | POST | Semantic search |
+| `/chats/ask` | POST | Q&A with RAG |
+
+**Scalability Design**:
+- Stateless architecture (horizontal scaling ready)
+- Async I/O throughout (high throughput)
+- Connection pooling for databases
+- Docker-ready with health checks
+
+---
+
+### 4. Frontend (`frontend/`)
+
+**Purpose**: React SPA with news browsing, chat, and visualization.
+
+```
+frontend/src/
+├── App.tsx              # Root component, routing
+├── components/
+│   ├── ChatMessages.tsx # Message history display
+│   ├── ChatInput.tsx    # Message input with send
+│   ├── NewsEventCard.tsx# News card component
+│   └── ...
+├── universe/
+│   ├── UniversePage.tsx # Interactive news graph
+│   ├── types.ts         # Graph data types
+│   └── api.ts           # Graph API calls
+├── hooks/
+│   ├── useChat.ts       # Chat state management
+│   ├── useTheme.ts      # Dark/light theme
+│   └── useLanguage.ts   # i18n support
+└── i18n/                # Translations (az, en, ru)
+```
+
+**Key Features**:
+- **News Feed**: Filterable, paginated news list
+- **Chat Interface**: Natural language Q&A
+- **News Universe**: Interactive graph with:
+  - Draggable nodes (touch + mouse support)
+  - Pan/zoom navigation
+  - Entity-based connections
+  - Date filtering
+  - Sentiment coloring
+
+---
+
+### 5. Infrastructure (`docker/`)
+
+**Docker Compose Services**:
+```yaml
+services:
+  chromadb:    # Vector database
+  postgres:    # Relational database
+  backend:     # FastAPI application
+  frontend:    # React application (nginx)
+  nginx:       # Reverse proxy, SSL
+```
+
+**Network Architecture**:
+```
+Internet → Nginx (80/443) → Frontend (static)
+                         → Backend (API /api/*)
+                         
+Backend → ChromaDB (8000)
+       → PostgreSQL (5432)
+```
+
+---
+
+## 🔧 Technical Challenges Solved
+
+### 1. LLM Cost Optimization
+**Problem**: Analyzing each text chunk separately = expensive  
+**Solution**: "Analyze ONCE, Chunk MANY" pattern - 90%+ cost reduction
+
+### 2. Async Processing at Scale
+**Problem**: Processing thousands of articles efficiently  
+**Solution**: 
+- Semaphore-controlled concurrency (max 50 parallel)
+- Batch processing with progress tracking
+- Exponential backoff for rate limits
+
+### 3. Multilingual Search
+**Problem**: Users query in different languages  
+**Solution**: 
+- Language detection at query time
+- Translation to Azerbaijani for search
+- Response in original language
+
+### 4. Real-time Graph Visualization
+**Problem**: Smooth interaction with many nodes  
+**Solution**:
+- React + Framer Motion for animations
+- Virtual positioning with viewOffset
+- Touch event support for mobile
+
+### 5. Data Quality
+**Problem**: Telegram messages contain markdown, emojis, artifacts  
+**Solution**: Custom cleaners for:
+- Telegram markdown removal
+- Emoji normalization
+- URL extraction
+- Whitespace normalization
+
+---
+
+## 🚀 Local Development
 
 ### Prerequisites
 
 - Docker and Docker Compose
-- Python 3.12+ (for local development without Docker)
+- Python 3.12+ (for local development)
+- Node.js 20+ (for frontend development)
 - OpenAI API key
 - Telegram API credentials
 
-### Setup
+### Quick Start
 
-1. **Clone repository**:
 ```bash
+# 1. Clone repository
 git clone https://github.com/ImranRahimov1995/SearchNewsRAG.git
 cd SearchNewsRAG
+
+# 2. Copy environment template
+cp .env.example .env
+# Edit .env with your API keys
+
+# 3. Start all services
+docker-compose up --build
+
+# 4. Access application
+# Frontend: http://localhost
+# API: http://localhost/api
+# API Docs: http://localhost/api/docs
 ```
 
-2. **Configure environment**:
-```bash
-# Create .env file in project root
-cat > .env << EOF
-SETTINGS=local
-ENVIRONMENT=local
-
-# OpenAI
-OPENAI_API_KEY=sk-proj-your-key-here
-
-# Telegram API (get from https://my.telegram.org/apps)
-API_ID=12345678
-API_HASH=your_telegram_api_hash
-
-# ChromaDB
-CHROMA_COLLECTION_NAME=news_analyzed_0_5k_800_200_large
-CHROMA_HOST=chromadb
-CHROMA_PORT=8000
-
-# CORS (for local development)
-CORS_ORIGINS='["http://localhost:5173","http://localhost:3000"]'
-EOF
-```
-
-3. **Start services**:
-```bash
-docker-compose up -d
-```
-
-Services will be available at:
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
-- **ChromaDB**: http://localhost:8001
-
-### Data Collection & Processing
-
-**Step 1: Collect news from Telegram**:
-```bash
-python -m telegram_fetcher --stop-date 2025-11-23 --output-dir ./data
-```
-
-**Step 2: Extract full article content**:
-```bash
-python -m telegram_fetcher.parsers --site qafqazinfo --input data/qafqazinfo.json
-```
-
-**Step 3: Process and vectorize**:
-```bash
-python -m rag_module --source data/qafqazinfo.json --collection news_v1
-```
-
-### Running Tests
+### Development Commands
 
 ```bash
-# All tests
+# Install dependencies
+make install
+
+# Run tests
 make test
 
-# With coverage
-make test-cov
+# Run linters
+make lint
 
-# Fast tests only
-make test-fast
-```
-
-### Code Quality
-
-```bash
 # Format code
 make format
 
-# Lint
-make lint
-
-# Full CI checks
+# Full CI check
 make ci
+
+# Database migrations
+make migrate-up
+make migrate-create name="add_new_table"
 ```
 
-## Production Deployment
+### Data Pipeline
 
-Automated CI/CD pipeline deploys to production on PR merge to `main` branch.
+```bash
+# 1. Collect news from Telegram
+python -m telegram_fetcher --stop-date 2025-01-01
 
-**Live Site**: [https://news.aitools.az](https://news.aitools.az)
+# 2. Parse full article content
+python -m telegram_fetcher.parsers --site qafqazinfo --input data/qafqazinfo.json
 
-See [Deployment Guide](docs/DEPLOYMENT.md) for details.
+# 3. Vectorize with LLM analysis
+python -m rag_module vectorize \
+  --source data/qafqazinfo.json \
+  --source-name qafqazinfo_2025 \
+  --collection news_v1
 
-## Project Structure
-
+# 4. Verify collection
+python -m rag_module info --collection news_v1
 ```
-SearchNewsRAG/
-├── telegram_fetcher/       # Async data collection from Telegram
-│   ├── base.py            # Core abstractions
-│   ├── services.py        # Collection orchestration
-│   └── parsers/           # Site-specific HTML parsers
-├── rag_module/            # RAG pipeline and vectorization
-│   ├── data_processing/   # Text cleaning, chunking, analysis
-│   ├── vector_store/      # ChromaDB interface
-│   ├── query_processing/  # Query understanding and routing
-│   └── retrieval/         # Search strategies
-├── backend/               # FastAPI service
-│   └── src/
-│       ├── news/          # News search endpoints
-│       ├── chats/         # Q&A chat endpoints
-│       └── main.py        # Application entry point
-├── frontend/              # React SPA
-│   └── src/
-│       ├── components/    # UI components
-│       └── services/      # API clients
-├── docker/                # Docker configurations
-├── docs/                  # Documentation
-└── tests/                 # Comprehensive test suite
-```
-
-## Roadmap
-
-### Upcoming Features
-
-1. **Statistical Analytics**:
-   - Trend analysis and visualization
-   - Frequency distributions by category/entity
-   - Time-series forecasting
-
-2. **Predictive Capabilities**:
-   - Event prediction based on historical patterns
-   - Topic emergence detection
-   - Sentiment trend forecasting
-
-3. **Background Processing**:
-   - Celery workers for scheduled tasks
-   - Automatic news ingestion pipeline
-   - Real-time notifications for breaking news
-
-4. **Database Expansion**:
-   - PostgreSQL for analytics and user data
-   - Redis for caching and rate limiting
-   - Elasticsearch for advanced full-text search
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and code standards.
-
-## License
-
-Open Source Non-Commercial License - see [LICENSE](LICENSE) for details.
-
-**Note**: Commercial use is prohibited. For commercial licensing inquiries, please contact the author.
 
 ---
 
-**Built with ❤️ for Azerbaijani news consumers**
+## 📈 Production Deployment
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions.
+
+**Key Points**:
+- GitHub Actions CI/CD pipeline
+- Docker multi-stage builds
+- Nginx reverse proxy with SSL
+- Health checks for all services
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [DATA_COLLECTION.md](docs/DATA_COLLECTION.md) | Telegram fetcher and content parsers |
+| [VECTORIZATION_SERVICE.md](docs/VECTORIZATION_SERVICE.md) | Document processing pipeline |
+| [QA_SERVICE.md](docs/QA_SERVICE.md) | Question answering system |
+| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | CI/CD and production setup |
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technologies |
+|----------|-------------|
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy, Pydantic |
+| **Frontend** | React 18, TypeScript, Vite, Tailwind CSS, Framer Motion |
+| **AI/ML** | OpenAI GPT-4, text-embedding-3-small, LangChain |
+| **Databases** | PostgreSQL 16, ChromaDB |
+| **Data Collection** | Telethon, aiohttp, BeautifulSoup |
+| **Infrastructure** | Docker, Nginx, GitHub Actions |
+| **Code Quality** | Ruff, MyPy, Black, Pytest, Pre-commit |
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE)
+
+---
+
+## 👤 Author
+
+**Imran Rahimov**  
+Email: mr.rahimov.imran@gmail.com  
+GitHub: [@ImranRahimov1995](https://github.com/ImranRahimov1995)

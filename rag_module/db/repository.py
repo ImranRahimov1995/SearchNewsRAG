@@ -15,6 +15,20 @@ from rag_module.data_processing.protocols import Document
 from .models import Article, Chunk, Entity, Keyword, Source, Subcategory, Topic
 
 
+def normalize_text(value: str | None) -> str:
+    """Normalize text for consistent storage: lowercase and strip whitespace."""
+    if value is None:
+        return ""
+    return str(value).strip().lower()
+
+
+def normalize_entity_text(value: str | None) -> str:
+    """Normalize entity text: strip whitespace, preserve case for proper nouns."""
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
 class NewsDataRepository:
     """Persist processed documents and analysis metadata."""
 
@@ -117,14 +131,21 @@ class NewsDataRepository:
         article.full_content = document.content
         article.summary = metadata.get("summary")
         article.reasoning = metadata.get("reasoning")
-        article.category = metadata.get("category")
-        article.sentiment = metadata.get("sentiment")
+        raw_category = metadata.get("category")
+        article.category = (
+            normalize_text(raw_category) if raw_category else None
+        )
+        article.sentiment = normalize_text(metadata.get("sentiment")) or None
         article.sentiment_score = self._safe_float(
             metadata.get("sentiment_score")
         )
         article.importance = self._safe_int(metadata.get("importance"))
-        article.geographic_scope = metadata.get("geographic_scope")
-        article.temporal_relevance = metadata.get("temporal_relevance")
+        article.geographic_scope = (
+            normalize_text(metadata.get("geographic_scope")) or None
+        )
+        article.temporal_relevance = (
+            normalize_text(metadata.get("temporal_relevance")) or None
+        )
         article.target_audience = self._join_list(
             metadata.get("target_audience")
         )
@@ -144,7 +165,7 @@ class NewsDataRepository:
             document.metadata.get("subcategories")
         )
         for name in subcategories:
-            normalized = str(name).strip()
+            normalized = normalize_text(name)
             if not normalized:
                 continue
             item = self._get_or_create_subcategory(session, normalized)
@@ -157,7 +178,7 @@ class NewsDataRepository:
         """Attach topics to article."""
         topics = self._ensure_list(document.metadata.get("topics"))
         for name in topics:
-            normalized = str(name).strip()
+            normalized = normalize_text(name)
             if not normalized:
                 continue
             item = self._get_or_create_topic(session, normalized)
@@ -170,7 +191,7 @@ class NewsDataRepository:
         """Attach keywords to article."""
         keywords = self._ensure_list(document.metadata.get("keywords"))
         for name in keywords:
-            normalized = str(name).strip()
+            normalized = normalize_text(name)
             if not normalized:
                 continue
             item = self._get_or_create_keyword(session, normalized)
@@ -255,12 +276,16 @@ class NewsDataRepository:
     def _get_or_create_entity(
         self, session: Session, data: dict[str, Any]
     ) -> Entity:
-        """Get or create entity using identity fields."""
-        text = str(data.get("text", "")).strip()
-        normalized = str(data.get("normalized", text)).strip()
-        entity_type = data.get("type")
-        role = data.get("role")
+        """Get or create entity using identity fields with normalization."""
+        text = normalize_entity_text(data.get("text", ""))
+        normalized = normalize_text(data.get("normalized", text))
+        entity_type = normalize_text(data.get("type")) or None
+        role = normalize_entity_text(data.get("role")) or None
         confidence = self._safe_float(data.get("confidence"))
+
+        if not text:
+            raise ValueError("Entity text cannot be empty")
+
         existing = session.scalar(
             select(Entity).where(
                 Entity.text == text,
