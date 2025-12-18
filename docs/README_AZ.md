@@ -226,8 +226,8 @@ for chunk in chunks:
 
 Tam RAG konveyeri:
 ```
-İstifadəçi sorğusu → Dil aşkarlanması → Tərcümə → NER → 
-Intent təsnifatı → Vektor axtarış → LLM generasiyası → 
+İstifadəçi sorğusu → Dil aşkarlanması → Tərcümə → NER →
+Intent təsnifatı → Vektor axtarış → LLM generasiyası →
 Mənbələrlə strukturlaşdırılmış cavab
 ```
 
@@ -323,7 +323,7 @@ services:
 ```
 İnternet → Nginx (80/443) → Frontend (statik)
                          → Backend (API /api/*)
-                         
+
 Backend → ChromaDB (8000)
        → PostgreSQL (5432)
 ```
@@ -338,14 +338,14 @@ Backend → ChromaDB (8000)
 
 ### 2. Miqyasda Asinxron Emal
 **Problem**: Minlərlə məqalənin səmərəli emalı  
-**Həll**: 
+**Həll**:
 - Semaphore-kontrollü paralellik (maks. 50 paralel)
 - Progress tracking ilə batch emal
 - Rate limit-lər üçün eksponensial backoff
 
 ### 3. Çoxdilli Axtarış
 **Problem**: İstifadəçilər fərqli dillərdə sorğu edir  
-**Həll**: 
+**Həll**:
 - Sorğu zamanı dil aşkarlanması
 - Axtarış üçün Azərbaycan dilinə tərcümə
 - Orijinal dildə cavab

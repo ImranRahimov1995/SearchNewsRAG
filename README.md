@@ -226,8 +226,8 @@ for chunk in chunks:
 
 Complete RAG pipeline:
 ```
-User Query → Language Detection → Translation → NER → 
-Intent Classification → Vector Search → LLM Generation → 
+User Query → Language Detection → Translation → NER →
+Intent Classification → Vector Search → LLM Generation →
 Structured Response with Sources
 ```
 
@@ -323,7 +323,7 @@ services:
 ```
 Internet → Nginx (80/443) → Frontend (static)
                          → Backend (API /api/*)
-                         
+
 Backend → ChromaDB (8000)
        → PostgreSQL (5432)
 ```
@@ -338,14 +338,14 @@ Backend → ChromaDB (8000)
 
 ### 2. Async Processing at Scale
 **Problem**: Processing thousands of articles efficiently  
-**Solution**: 
+**Solution**:
 - Semaphore-controlled concurrency (max 50 parallel)
 - Batch processing with progress tracking
 - Exponential backoff for rate limits
 
 ### 3. Multilingual Search
 **Problem**: Users query in different languages  
-**Solution**: 
+**Solution**:
 - Language detection at query time
 - Translation to Azerbaijani for search
 - Response in original language
