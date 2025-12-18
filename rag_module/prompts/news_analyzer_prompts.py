@@ -11,49 +11,63 @@ Vəzifələrin:
 6. Coğrafi əhatə və zaman aktuallığı
 
 Entity növləri:
-- person: şəxs adları, vəzifəlilər, siyasətçilər
-- organization: şirkətlər, təşkilatlar, dövlət orqanları
-- location: şəhərlər, ölkələr, bölgələr, ünvanlar
+- person: şəxs adları, vəzifəlilər, siyasətçilər, deputatlar, nazirlər
+- organization: şirkətlər, təşkilatlar, dövlət orqanları, partiyalar, klublar
+- location: şəhərlər, ölkələr, bölgələr, ünvanlar, rayonlar
 - date: tarixlər, vaxt ifadələri
-- money: məbləğlər, pul vahidləri
+- money: məbləğlər, pul vahidləri, büdcə
 - number: rəqəmlər, faizlər, statistika
-- event: hadisələr, tədbirlər
+- event: hadisələr, tədbirlər, konfranslar, matçlar
 - other: digər əhəmiyyətli entitylər
 
-Əsas Kateqoriyalar:
-- siyasət: siyasət, hökumət, diplomatiya, xarici əlaqələr
-- iqtisadiyyat: iqtisadiyyat, biznes, maliyyə, bazar, investisiya
+Əsas Kateqoriyalar (DİQQƏT: yalnız bu sözlərdən istifadə et, kiçik hərflərlə):
+- siyasət: siyasət, hökumət, diplomatiya, xarici əlaqələr, seçkilər
+- iqtisadiyyat: iqtisadiyyat, biznes, maliyyə, bazar, investisiya, valyuta
 - cəmiyyət: cəmiyyət, sosial məsələlər, əhali, təhsil, səhiyyə
-- idman: idman, yarışlar, komandalar, idmançılar
-- mədəniyyət: mədəniyyət, incəsənət, ədəbiyyat, musiqi
-- texnologiya: texnologiya, innovasiya, elm, IT
-- hadisə: hadisə, qəza, fəlakət, cinayət
+- idman: idman, yarışlar, komandalar, idmançılar, futbol, voleybol
+- mədəniyyət: mədəniyyət, incəsənət, ədəbiyyat, musiqi, kino, teatr
+- texnologiya: texnologiya, innovasiya, elm, IT, süni intellekt
+- hadisə: hadisə, qəza, fəlakət, cinayət, yanğın, yol qəzası
 - hüquq: hüquq, qanunvericilik, məhkəmə, hüquq pozuntuları, cərimələr
+- dünya: dünya xəbərləri, beynəlxalq hadisələr, xarici ölkələr (Azərbaycandan kənarda)
 - digər: digər mövzular
 
+Kateqoriya Seçimi Qaydaları:
+1. Əgər xəbər Azərbaycandan KƏNARDA baş verən hadisə barədədirsə - "dünya" kateqoriyası
+2. Əgər xəbər Azərbaycan prezidenti/nazirlərinin XARİCİ ölkələrə səfəri barədədirsə - "siyasət"
+3. Əgər xəbər xarici ölkədəki hadisə/müharibə/seçki barədədirsə - "dünya"
+4. Əgər xəbər beynəlxalq təşkilatlar (BMT, NATO, UEFA) barədədirsə - "dünya" və ya müvafiq kateqoriya
+
 Alt Kateqoriyalar və Mövzular üçün Qaydalar:
-- YALNIZ Azərbaycan dilində yaz
+- YALNIZ Azərbaycan dilində, kiçik hərflərlə yaz
 - Xəbərin ƏSAS məzmununu əks etdirən spesifik alt kateqoriyalar ver
 - Ümumi deyil, KONKRET mövzular göstər
-- Nümunələr: "yol qaydaları pozuntusu", "diplomatik avtomobil", "cərimə qanunvericiliyi"
+- Nümunələr: "yol qaydaları pozuntusu", "diplomatik görüş", "transfer xəbərləri"
 
 Sentiment:
-- positive: müsbət, xoş xəbər, nailiyyət
-- neutral: neytral, informativ
-- negative: mənfi, problem, böhran, pozuntu
+- positive: müsbət, xoş xəbər, nailiyyət, uğur
+- neutral: neytral, informativ, xəbər
+- negative: mənfi, problem, böhran, pozuntu, qəza
+
+Əhəmiyyət Dərəcəsi (1-10):
+- 9-10: Təcili xəbər, böyük hadisə, prezident səviyyəsində
+- 7-8: Vacib xəbər, nazirlik səviyyəsində, böyük layihə
+- 5-6: Orta əhəmiyyətli, regional xəbər
+- 3-4: Adi xəbər, məlumat xarakterli
+- 1-2: Az əhəmiyyətli, əyləncə
 
 Cavabı YALNIZ JSON formatında ver bu strukturda:
 {
-  "category": "əsas kateqoriya (yuxarıdakı siyahıdan seç)",
-  "subcategories": ["spesifik alt kateqoriya 1 (AZ)", "alt kateqoriya 2 (AZ)"],
-  "topics": ["konkret mövzu 1 (AZ)", "mövzu 2 (AZ)", "mövzu 3 (AZ)"],
-  "keywords": ["açar söz 1", "açar söz 2", ...],
+  "category": "əsas kateqoriya (yuxarıdakı siyahıdan seç, kiçik hərflərlə)",
+  "subcategories": ["spesifik alt kateqoriya 1", "alt kateqoriya 2"],
+  "topics": ["konkret mövzu 1", "mövzu 2", "mövzu 3"],
+  "keywords": ["açar söz 1", "açar söz 2"],
   "entities": [
     {
       "text": "entity mətni",
-      "type": "entity növü",
-      "normalized": "normallaşdırılmış forma",
-      "role": "kontekstdə rolu (optional)",
+      "type": "entity növü (person/organization/location/date/money/number/event/other)",
+      "normalized": "normallaşdırılmış forma (kiçik hərflərlə)",
+      "role": "kontekstdə rolu",
       "confidence": 0.9
     }
   ],
@@ -67,7 +81,9 @@ Cavabı YALNIZ JSON formatında ver bu strukturda:
   "reasoning": "nə üçün bu kateqoriya və əhəmiyyət dərəcəsi seçildi"
 }
 
-XATIRLATMA: category subcategories, topics, target_audience - hamısı YALNIZ AZƏRBAYCAN DİLİNDƏ!"""
+XATIRLATMA:
+- category, subcategories, topics - hamısı kiçik hərflərlə, Azərbaycan dilində!
+- entities[].normalized - kiçik hərflərlə, boşluqsuz yazılmalıdır"""
 
 ANALYZER_USER_PROMPT_TEMPLATE = """Xəbər məzmunu:
 

@@ -17,6 +17,7 @@ import { QuickQueryTemplates } from '@/components/QuickQueryTemplates';
 import { IndexStatusPanel } from '@/components/IndexStatusPanel';
 import { CategoriesPanel } from '@/components/TrendingTopicsPanel';
 import { LatestNewsPanel } from '@/components/LatestNewsPanel';
+import { UniversePage } from '@/universe';
 
 const HEADER_ANIMATION = {
   initial: { y: -100 },
@@ -65,6 +66,7 @@ function App() {
   const { messages, isLoading, sendMessage, filter, setFilter, messagesEndRef } = useChat();
   const { categories, latestNews, indexStatus, isLoading: analyticsLoading } = useAnalytics();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [view, setView] = React.useState<'chat' | 'universe'>('chat');
 
   return (
     <div className="h-screen flex flex-col overflow-hidden" style={{ height: '100dvh' }}>
@@ -72,7 +74,7 @@ function App() {
         {...HEADER_ANIMATION}
         className="flex-shrink-0 glass-card-strong border-b border-white/20 dark:border-gray-700/30 shadow-xl z-10"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="w-full px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between">
           <motion.div
             className="flex items-center gap-2 sm:gap-3"
             whileHover={{ scale: 1.02 }}
@@ -91,6 +93,28 @@ function App() {
           </motion.div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex gap-1 p-1 rounded-lg sm:rounded-xl glass-card">
+              {(
+                [
+                  { id: 'chat' as const, label: t.nav.chat },
+                  { id: 'universe' as const, label: t.nav.universe },
+                ]
+              ).map((item) => (
+                <motion.button
+                  key={item.id}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setView(item.id)}
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                    view === item.id
+                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  }`}
+                >
+                  {item.label}
+                </motion.button>
+              ))}
+            </div>
             <div className="flex gap-1 p-1 rounded-lg sm:rounded-xl glass-card">
               {(['az', 'en', 'ru'] as const).map((lang) => (
                 <motion.button
@@ -126,57 +150,61 @@ function App() {
         </div>
       </motion.header>
 
-      <div className="flex-1 flex overflow-hidden max-w-7xl w-full mx-auto min-h-0">
-        <div className="flex-1 flex flex-col min-w-0 min-h-0">
-          <motion.div
-            {...FILTER_ANIMATION}
-            className="flex-shrink-0 px-3 sm:px-6 py-3 sm:py-4 glass-card border-b border-white/20 dark:border-gray-700/30"
-          >
-            <TimeFilterSelector currentFilter={filter} onFilterChange={setFilter} t={t} />
-          </motion.div>
-
-          <ChatMessages messages={messages} messagesEndRef={messagesEndRef} isLoading={isLoading} t={t} />
-
-          <motion.div
-            {...INPUT_ANIMATION}
-            className="flex-shrink-0 glass-card-strong border-t border-white/20 dark:border-gray-700/30 p-3 sm:p-4 md:p-6 shadow-2xl"
-          >
-            <QuickQueryTemplates onSelectTemplate={sendMessage} t={t} />
-            <ChatInput onSendMessage={sendMessage} isLoading={isLoading} t={t} />
-          </motion.div>
-        </div>
-
-        <motion.aside
-          {...SIDEBAR_ANIMATION}
-          className="hidden lg:block w-96 glass-card border-l border-white/20 dark:border-gray-700/30 p-6 overflow-y-auto scrollbar-custom"
-        >
-          <div className="space-y-4">
-            <IndexStatusPanel status={indexStatus} t={t} />
-            <CategoriesPanel categories={categories} loading={analyticsLoading} t={t} />
-            <LatestNewsPanel news={latestNews} loading={analyticsLoading} t={t} />
-          </div>
-        </motion.aside>
-
-        {isSidebarOpen && (
-          <motion.div
-            {...MOBILE_OVERLAY_ANIMATION}
-            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            <motion.aside
-              {...MOBILE_SIDEBAR_ANIMATION}
-              onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-0 h-full w-[85vw] max-w-sm glass-card-strong border-l border-white/20 dark:border-gray-700/30 p-4 sm:p-6 overflow-y-auto shadow-2xl"
+      {view === 'universe' ? (
+        <UniversePage onBackToChat={() => setView('chat')} t={t} isDark={theme === 'dark'} />
+      ) : (
+        <div className="flex-1 flex overflow-hidden w-full min-h-0">
+          <div className="flex-1 flex flex-col min-w-0 min-h-0">
+            <motion.div
+              {...FILTER_ANIMATION}
+              className="flex-shrink-0 px-3 sm:px-6 py-3 sm:py-4 glass-card border-b border-white/20 dark:border-gray-700/30"
             >
-              <div className="space-y-4">
-                <IndexStatusPanel status={indexStatus} t={t} />
-                <CategoriesPanel categories={categories} loading={analyticsLoading} t={t} />
-                <LatestNewsPanel news={latestNews} loading={analyticsLoading} t={t} />
-              </div>
-            </motion.aside>
-          </motion.div>
-        )}
-      </div>
+              <TimeFilterSelector currentFilter={filter} onFilterChange={setFilter} t={t} />
+            </motion.div>
+
+            <ChatMessages messages={messages} messagesEndRef={messagesEndRef} isLoading={isLoading} t={t} />
+
+            <motion.div
+              {...INPUT_ANIMATION}
+              className="flex-shrink-0 glass-card-strong border-t border-white/20 dark:border-gray-700/30 p-3 sm:p-4 md:p-6 shadow-2xl"
+            >
+              <QuickQueryTemplates onSelectTemplate={sendMessage} t={t} />
+              <ChatInput onSendMessage={sendMessage} isLoading={isLoading} t={t} />
+            </motion.div>
+          </div>
+
+          <motion.aside
+            {...SIDEBAR_ANIMATION}
+            className="hidden lg:block w-96 glass-card border-l border-white/20 dark:border-gray-700/30 p-6 overflow-y-auto scrollbar-custom"
+          >
+            <div className="space-y-4">
+              <IndexStatusPanel status={indexStatus} t={t} />
+              <CategoriesPanel categories={categories} loading={analyticsLoading} t={t} />
+              <LatestNewsPanel news={latestNews} loading={analyticsLoading} t={t} />
+            </div>
+          </motion.aside>
+
+          {isSidebarOpen && (
+            <motion.div
+              {...MOBILE_OVERLAY_ANIMATION}
+              className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <motion.aside
+                {...MOBILE_SIDEBAR_ANIMATION}
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-0 top-0 h-full w-[85vw] max-w-sm glass-card-strong border-l border-white/20 dark:border-gray-700/30 p-4 sm:p-6 overflow-y-auto shadow-2xl"
+              >
+                <div className="space-y-4">
+                  <IndexStatusPanel status={indexStatus} t={t} />
+                  <CategoriesPanel categories={categories} loading={analyticsLoading} t={t} />
+                  <LatestNewsPanel news={latestNews} loading={analyticsLoading} t={t} />
+                </div>
+              </motion.aside>
+            </motion.div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
