@@ -9,6 +9,10 @@ export interface Translations {
     title: string;
     subtitle: string;
   };
+  nav: {
+    chat: string;
+    universe: string;
+  };
   welcome: {
     title: string;
     subtitle: string;
@@ -77,6 +81,43 @@ export interface Translations {
     dark: string;
   };
   topEvents: string;
+  universe: {
+    title: string;
+    subtitle: string;
+    backToChat: string;
+    loading: string;
+    error: string;
+    retry: string;
+    nodes: string;
+    links: string;
+    noData: string;
+    filterByCategory: string;
+    filterByEntity: string;
+    allCategories: string;
+    searchEntity: string;
+    legend: {
+      title: string;
+      entity: string;
+      entityDesc: string;
+      event: string;
+      eventDesc: string;
+      news: string;
+      newsDesc: string;
+    };
+    selected: {
+      title: string;
+      hint: string;
+      source: string;
+      time: string;
+      impact: string;
+      entities: string;
+    };
+    nodeTypes: {
+      entity: string;
+      event: string;
+      news: string;
+    };
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -84,6 +125,10 @@ export const translations: Record<Language, Translations> = {
     app: {
       title: 'NewsChat',
       subtitle: 'AI ilə xəbər analitikası',
+    },
+    nav: {
+      chat: 'Çat',
+      universe: 'Kainat',
     },
     welcome: {
       title: 'NewsChat-a xoş gəlmisiniz!',
@@ -165,11 +210,52 @@ export const translations: Record<Language, Translations> = {
       dark: 'Qaranlıq tema',
     },
     topEvents: 'Mənbələr',
+    universe: {
+      title: 'Xəbərlər Kainatı',
+      subtitle: 'Xəbərlərin, hadisələrin və şəxslərin əlaqəli qrafiki',
+      backToChat: 'Çata qayıt',
+      loading: 'Yüklənir...',
+      error: 'Məlumat yüklənmədi',
+      retry: 'Yenidən cəhd et',
+      nodes: 'obyekt',
+      links: 'əlaqə',
+      noData: 'Məlumat tapılmadı',
+      filterByCategory: 'Kateqoriya üzrə',
+      filterByEntity: 'Şəxs/Qurum üzrə',
+      allCategories: 'Bütün kateqoriyalar',
+      searchEntity: 'Şəxs/Qurum axtar...',
+      legend: {
+        title: 'Rəmzlər',
+        entity: 'Şəxs/Qurum',
+        entityDesc: 'insanlar, təşkilatlar, yerlər',
+        event: 'Hadisə',
+        eventDesc: 'vacib xəbər hadisəsi',
+        news: 'Xəbər',
+        newsDesc: 'adi xəbər yazısı',
+      },
+      selected: {
+        title: 'Seçilmiş',
+        hint: 'Ətraflı məlumat üçün qrafikdə obyektə klikləyin',
+        source: 'Mənbə',
+        time: 'Vaxt',
+        impact: 'Əhəmiyyət',
+        entities: 'Əlaqəli şəxslər',
+      },
+      nodeTypes: {
+        entity: 'QURUM',
+        event: 'HADİSƏ',
+        news: 'XƏBƏR',
+      },
+    },
   },
   en: {
     app: {
       title: 'NewsChat',
       subtitle: 'AI-powered news analytics',
+    },
+    nav: {
+      chat: 'Chat',
+      universe: 'Universe',
     },
     welcome: {
       title: 'Welcome to NewsChat!',
@@ -251,11 +337,52 @@ export const translations: Record<Language, Translations> = {
       dark: 'Dark theme',
     },
     topEvents: 'Top events',
+    universe: {
+      title: 'News Universe',
+      subtitle: 'Connected graph of news, events, and entities',
+      backToChat: 'Back to chat',
+      loading: 'Loading...',
+      error: 'Failed to load data',
+      retry: 'Retry',
+      nodes: 'nodes',
+      links: 'links',
+      noData: 'No data found',
+      filterByCategory: 'Filter by category',
+      filterByEntity: 'Filter by entity',
+      allCategories: 'All categories',
+      searchEntity: 'Search entity...',
+      legend: {
+        title: 'Legend',
+        entity: 'Entity',
+        entityDesc: 'people, organizations, places',
+        event: 'Event',
+        eventDesc: 'important news event',
+        news: 'News',
+        newsDesc: 'regular news post',
+      },
+      selected: {
+        title: 'Selected',
+        hint: 'Click a node in the graph to see details',
+        source: 'Source',
+        time: 'Time',
+        impact: 'Impact',
+        entities: 'Related entities',
+      },
+      nodeTypes: {
+        entity: 'ENTITY',
+        event: 'EVENT',
+        news: 'NEWS',
+      },
+    },
   },
   ru: {
     app: {
       title: 'NewsChat',
       subtitle: 'AI-powered новостная аналитика',
+    },
+    nav: {
+      chat: 'Чат',
+      universe: 'Вселенная',
     },
     welcome: {
       title: 'Добро пожаловать в NewsChat!',
@@ -337,5 +464,42 @@ export const translations: Record<Language, Translations> = {
       dark: 'Темная тема',
     },
     topEvents: 'Топ события',
+    universe: {
+      title: 'Вселенная Новостей',
+      subtitle: 'Связанный граф новостей, событий и сущностей',
+      backToChat: 'Назад в чат',
+      loading: 'Загрузка...',
+      error: 'Не удалось загрузить данные',
+      retry: 'Повторить',
+      nodes: 'объектов',
+      links: 'связей',
+      noData: 'Данные не найдены',
+      filterByCategory: 'По категории',
+      filterByEntity: 'По сущности',
+      allCategories: 'Все категории',
+      searchEntity: 'Поиск сущности...',
+      legend: {
+        title: 'Легенда',
+        entity: 'Сущность',
+        entityDesc: 'люди, организации, места',
+        event: 'Событие',
+        eventDesc: 'важное новостное событие',
+        news: 'Новость',
+        newsDesc: 'обычная новость',
+      },
+      selected: {
+        title: 'Выбрано',
+        hint: 'Нажмите на объект в графе для подробностей',
+        source: 'Источник',
+        time: 'Время',
+        impact: 'Важность',
+        entities: 'Связанные сущности',
+      },
+      nodeTypes: {
+        entity: 'СУЩНОСТЬ',
+        event: 'СОБЫТИЕ',
+        news: 'НОВОСТЬ',
+      },
+    },
   },
 };

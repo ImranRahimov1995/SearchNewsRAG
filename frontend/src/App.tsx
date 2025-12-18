@@ -17,7 +17,7 @@ import { QuickQueryTemplates } from '@/components/QuickQueryTemplates';
 import { IndexStatusPanel } from '@/components/IndexStatusPanel';
 import { CategoriesPanel } from '@/components/TrendingTopicsPanel';
 import { LatestNewsPanel } from '@/components/LatestNewsPanel';
-import { PrototypeGraphsPage } from '@/prototype/PrototypeGraphsPage';
+import { UniversePage } from '@/universe';
 
 const HEADER_ANIMATION = {
   initial: { y: -100 },
@@ -66,7 +66,7 @@ function App() {
   const { messages, isLoading, sendMessage, filter, setFilter, messagesEndRef } = useChat();
   const { categories, latestNews, indexStatus, isLoading: analyticsLoading } = useAnalytics();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [view, setView] = React.useState<'chat' | 'prototype'>('chat');
+  const [view, setView] = React.useState<'chat' | 'universe'>('chat');
 
   return (
     <div className="h-screen flex flex-col overflow-hidden" style={{ height: '100dvh' }}>
@@ -74,7 +74,7 @@ function App() {
         {...HEADER_ANIMATION}
         className="flex-shrink-0 glass-card-strong border-b border-white/20 dark:border-gray-700/30 shadow-xl z-10"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="w-full px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between">
           <motion.div
             className="flex items-center gap-2 sm:gap-3"
             whileHover={{ scale: 1.02 }}
@@ -93,11 +93,11 @@ function App() {
           </motion.div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex gap-1 p-1 rounded-lg sm:rounded-xl glass-card">
+            <div className="flex gap-1 p-1 rounded-lg sm:rounded-xl glass-card">
               {(
                 [
-                  { id: 'chat' as const, label: 'Chat' },
-                  { id: 'prototype' as const, label: 'Graph' },
+                  { id: 'chat' as const, label: t.nav.chat },
+                  { id: 'universe' as const, label: t.nav.universe },
                 ]
               ).map((item) => (
                 <motion.button
@@ -105,7 +105,7 @@ function App() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setView(item.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
                     view === item.id
                       ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
@@ -150,10 +150,10 @@ function App() {
         </div>
       </motion.header>
 
-      {view === 'prototype' ? (
-        <PrototypeGraphsPage onBackToChat={() => setView('chat')} />
+      {view === 'universe' ? (
+        <UniversePage onBackToChat={() => setView('chat')} t={t} isDark={theme === 'dark'} />
       ) : (
-        <div className="flex-1 flex overflow-hidden max-w-7xl w-full mx-auto min-h-0">
+        <div className="flex-1 flex overflow-hidden w-full min-h-0">
           <div className="flex-1 flex flex-col min-w-0 min-h-0">
             <motion.div
               {...FILTER_ANIMATION}
