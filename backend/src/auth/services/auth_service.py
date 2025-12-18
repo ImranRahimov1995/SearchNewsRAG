@@ -185,7 +185,9 @@ class AuthService:
             Token verification result
         """
         try:
-            payload = self.jwt_handler.verify_token(token, token_type="access")  # nosec B106
+            payload = self.jwt_handler.verify_token(
+                token, token_type="access"
+            )  # nosec B106
             user_id = payload.get("sub")
 
             if user_id is None:

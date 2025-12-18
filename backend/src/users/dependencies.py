@@ -128,7 +128,9 @@ async def get_current_user(
     token = credentials.credentials
 
     try:
-        payload = jwt_handler.verify_token(token, token_type="access")  # nosec B106
+        payload = jwt_handler.verify_token(
+            token, token_type="access"
+        )  # nosec B106
         user_id = payload.get("sub")
 
         if user_id is None:
