@@ -52,6 +52,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
     HOST=${HOST}
 
 COPY --chown=appuser:appuser backend/src ./src
+COPY --chown=appuser:appuser logging_config.py ./src/logging_config.py
 COPY --chown=appuser:appuser backend/alembic.ini ./alembic.ini
 COPY --chown=appuser:appuser backend/migrations ./migrations
 
