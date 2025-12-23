@@ -1,11 +1,12 @@
 """Converters for transforming data processing documents to vector documents."""
 
-from rag_module.config import get_logger
+import logging
+
 from rag_module.data_processing.protocols import Document
 
 from .protocols import VectorDocument
 
-logger = get_logger("converters")
+logger = logging.getLogger(__name__)
 
 
 class DocumentConverter:

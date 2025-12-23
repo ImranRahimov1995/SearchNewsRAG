@@ -1,11 +1,10 @@
 """Text analyzers for metadata extraction and classification."""
 
+import logging
 from abc import ABC, abstractmethod
 from typing import Any
 
-from rag_module.config import get_logger
-
-logger = get_logger("text_analyzers")
+logger = logging.getLogger(__name__)
 
 
 class BaseTextAnalyzer(ABC):

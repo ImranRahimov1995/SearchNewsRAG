@@ -1,11 +1,12 @@
 """Simple search handler - pure vector search without filters."""
 
-from rag_module.config import get_logger
+import logging
+
 from rag_module.vector_store.protocols import IVectorStore
 
 from ..protocols import SearchResult
 
-logger = get_logger("simple_search_handler")
+logger = logging.getLogger(__name__)
 
 
 class SimpleSearchHandler:

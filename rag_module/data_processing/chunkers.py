@@ -1,13 +1,12 @@
 """Text chunking strategies for document splitting."""
 
+import logging
 import re
 from abc import ABC, abstractmethod
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from rag_module.config import get_logger
-
-logger = get_logger("text_chunkers")
+logger = logging.getLogger(__name__)
 
 
 class BaseTextChunker(ABC):

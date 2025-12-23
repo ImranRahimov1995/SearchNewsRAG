@@ -1,13 +1,12 @@
 """Data loaders for various sources."""
 
 import json
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from rag_module.config import get_logger
-
-logger = get_logger("data_loaders")
+logger = logging.getLogger(__name__)
 
 
 class BaseDataLoader(ABC):

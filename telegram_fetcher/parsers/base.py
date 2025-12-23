@@ -1,6 +1,7 @@
 """Base classes and interfaces for news detail fetching with async support."""
 
 import asyncio
+import logging
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -9,9 +10,7 @@ from typing import Optional, Protocol
 import aiohttp
 from fake_useragent import UserAgent
 
-from telegram_fetcher.config import get_logger
-
-logger = get_logger("news_detail_fetcher")
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -85,7 +84,7 @@ class BaseContentParser(ABC):
 
     def __init__(self, fetcher: IContentFetcher):
         self.fetcher = fetcher
-        self.logger = get_logger(self.__class__.__name__)
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     @abstractmethod
     async def parse(self, url: str) -> str:
@@ -195,7 +194,7 @@ class SiteProcessor:
     ):
         self.url_extractor = url_extractor
         self.content_parser = content_parser
-        self.logger = get_logger(self.__class__.__name__)
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     async def process_item(self, item: NewsItem) -> NewsItem:
         """Process single news item asynchronously."""

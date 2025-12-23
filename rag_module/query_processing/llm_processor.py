@@ -8,11 +8,11 @@ Performs all query processing in a single API call:
 """
 
 import json
+import logging
 from typing import Any
 
 from openai import OpenAI
 
-from rag_module.config import get_logger
 from rag_module.prompts import (
     QUERY_ANALYZER_SYSTEM_PROMPT,
     QUERY_ANALYZER_USER_PROMPT,
@@ -26,7 +26,7 @@ from .protocols import (
     QueryIntent,
 )
 
-logger = get_logger("llm_query_processor")
+logger = logging.getLogger(__name__)
 
 
 class LLMQueryProcessor:

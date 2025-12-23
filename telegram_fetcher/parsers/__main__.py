@@ -6,14 +6,14 @@ Fetches article content from URLs in JSON files.
 import argparse
 import asyncio
 import json
+import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from telegram_fetcher.config import get_logger
 from telegram_fetcher.parsers import get_processor
 from telegram_fetcher.parsers.base import BaseContentParser, NewsItem
 
-logger = get_logger("news_parser")
+logger = logging.getLogger(__name__)
 
 
 class NewsParsingService:

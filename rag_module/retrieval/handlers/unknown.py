@@ -1,11 +1,12 @@
 """Unknown query handler - fallback to simple search."""
 
-from rag_module.config import get_logger
+import logging
+
 from rag_module.vector_store.protocols import IVectorStore
 
 from ..protocols import SearchResult
 
-logger = get_logger("unknown_handler")
+logger = logging.getLogger(__name__)
 
 
 class UnknownHandler:

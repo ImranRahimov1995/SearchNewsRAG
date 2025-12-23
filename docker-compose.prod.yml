@@ -19,6 +19,13 @@ services:
       retries: 5
     networks:
       - searchnewsrag-network
+    labels:
+      - "app=postgres"
+      - "container_name=searchnewsrag-postgres-prod"
+      - "env=production"
+      - "service=database"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   chromadb:
     image: chromadb/chroma:latest
@@ -32,6 +39,13 @@ services:
       ALLOW_RESET: "FALSE"
     networks:
       - searchnewsrag-network
+    labels:
+      - "app=chromadb"
+      - "container_name=searchnewsrag-chromadb-prod"
+      - "env=production"
+      - "service=vector-database"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   backend:
     image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
@@ -92,6 +106,15 @@ services:
       start_period: 40s
     networks:
       - searchnewsrag-network
+    labels:
+      - "app=backend"
+      - "container_name=searchnewsrag-backend-prod"
+      - "env=production"
+      - "service=searchnewsrag-api"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=8000"
+      - "prometheus.io/path=/metrics"
 
   frontend:
     image: ${DOCKERHUB_USERNAME}/searchnewsrag-frontend:latest
@@ -109,6 +132,13 @@ services:
       start_period: 10s
     networks:
       - searchnewsrag-network
+    labels:
+      - "app=frontend"
+      - "container_name=searchnewsrag-frontend-prod"
+      - "env=production"
+      - "service=searchnewsrag-web"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   nginx:
     image: ${DOCKERHUB_USERNAME}/searchnewsrag-nginx:latest
@@ -128,6 +158,13 @@ services:
       start_period: 10s
     networks:
       - searchnewsrag-network
+    labels:
+      - "app=nginx"
+      - "container_name=searchnewsrag-nginx-prod"
+      - "env=production"
+      - "service=reverse-proxy"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
 networks:
   searchnewsrag-network:

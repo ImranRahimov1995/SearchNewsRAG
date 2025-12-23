@@ -11,6 +11,13 @@ services:
       ALLOW_RESET: "TRUE"
     networks:
       - searchnewsrag-network
+      - monitoring
+    labels:
+      - "app=chromadb"
+      - "container_name=searchnewsrag-chromadb"
+      - "env=${ENVIRONMENT:-local}"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   postgres:
     image: postgres:16
@@ -30,6 +37,13 @@ services:
       start_period: 20s
     networks:
       - searchnewsrag-network
+      - monitoring
+    labels:
+      - "app=postgres"
+      - "container_name=searchnewsrag-postgres"
+      - "env=${ENVIRONMENT:-local}"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   backend:
     build:
@@ -50,6 +64,16 @@ services:
       start_period: 40s
     networks:
       - searchnewsrag-network
+      - monitoring
+    labels:
+      - "app=backend"
+      - "container_name=searchnewsrag-backend"
+      - "env=${ENVIRONMENT:-local}"
+      - "service=searchnewsrag-api"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=8000"
+      - "prometheus.io/path=/metrics"
 
   frontend:
     build:
@@ -71,6 +95,14 @@ services:
       start_period: 10s
     networks:
       - searchnewsrag-network
+      - monitoring
+    labels:
+      - "app=frontend"
+      - "container_name=searchnewsrag-frontend"
+      - "env=${ENVIRONMENT:-local}"
+      - "service=searchnewsrag-web"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   nginx:
     build:
@@ -92,7 +124,18 @@ services:
       start_period: 10s
     networks:
       - searchnewsrag-network
+      - monitoring
+    labels:
+      - "app=nginx"
+      - "container_name=searchnewsrag-nginx"
+      - "env=${ENVIRONMENT:-local}"
+      - "service=reverse-proxy"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
 networks:
   searchnewsrag-network:
     driver: bridge
+  monitoring:
+    external: true
+    name: ${MONITORING_NETWORK_NAME:-monitoring}

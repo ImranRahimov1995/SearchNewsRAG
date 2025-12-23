@@ -1,6 +1,7 @@
 """Base classes and protocols for Telegram message collection."""
 
 import json
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -8,9 +9,7 @@ from typing import Dict, Optional, Protocol
 
 from telethon import TelegramClient
 
-from telegram_fetcher.config import get_logger
-
-logger = get_logger("telegram_fetcher")
+logger = logging.getLogger(__name__)
 
 
 @dataclass

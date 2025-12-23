@@ -1,12 +1,11 @@
 """Batch processing utilities for vector operations."""
 
+import logging
 from typing import Any, Callable
-
-from rag_module.config import get_logger
 
 from .protocols import VectorDocument
 
-logger = get_logger("batch_processor")
+logger = logging.getLogger(__name__)
 
 
 class BatchProcessor:

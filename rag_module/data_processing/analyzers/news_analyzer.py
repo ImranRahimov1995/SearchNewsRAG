@@ -9,11 +9,11 @@ Async version supports concurrent analysis with semaphore-based rate limiting.
 
 import asyncio
 import json
+import logging
 from typing import Any, cast
 
 from openai import AsyncOpenAI, OpenAI
 
-from rag_module.config import get_logger
 from rag_module.data_processing.analyzers.base import BaseTextAnalyzer
 from rag_module.prompts.news_analyzer_prompts import (
     ANALYZER_SYSTEM_PROMPT as SYSTEM_PROMPT,
@@ -22,7 +22,7 @@ from rag_module.prompts.news_analyzer_prompts import (
     ANALYZER_USER_PROMPT_TEMPLATE as USER_PROMPT_TEMPLATE,
 )
 
-logger = get_logger("news_analyzer")
+logger = logging.getLogger(__name__)
 
 
 def parse_entities(

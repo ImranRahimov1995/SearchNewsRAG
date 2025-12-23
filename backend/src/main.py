@@ -1,8 +1,10 @@
 """FastAPI application for SearchNewsRAG."""
 
+import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+import uvicorn
 from admin import setup_admin
 from auth.router import router as auth_router
 from chats.router import router as chat_router
@@ -11,18 +13,17 @@ from database import get_db_manager
 from dependencies import get_container
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from logging_config import get_logger, setup_logging
 from migrations import run_migrations_on_startup
 from news.router import router as news_router
+from prometheus_fastapi_instrumentator import Instrumentator
 from users.router import router as users_router
 
+from logging_config import UVICORN_LOG_CONFIG, setup_logging
+
 settings = get_settings()
-setup_logging(
-    log_level=settings.log_level,
-    log_format=settings.log_format,
-    log_file=None,
-)
-logger = get_logger("main")
+setup_logging(log_level=settings.log_level, log_format=settings.log_format)
+
+logger = logging.getLogger(__name__)
 
 
 async def startup_handler() -> None:
@@ -112,6 +113,8 @@ app.include_router(users_router)
 app.include_router(chat_router)
 app.include_router(news_router)
 
+Instrumentator().instrument(app).expose(app, endpoint="/metrics")
+
 
 @app.get("/health")
 async def health_check() -> dict[str, str]:
@@ -124,12 +127,11 @@ async def health_check() -> dict[str, str]:
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     uvicorn.run(
         "main:app",
         host=settings.host,
         port=settings.port,
         reload=settings.debug,
         log_level=settings.log_level.lower(),
+        log_config=UVICORN_LOG_CONFIG,
     )
