@@ -12,6 +12,15 @@ class JSONFormatter(logging.Formatter):
     """JSON log formatter for structured logging."""
 
     def format(self, record: logging.LogRecord) -> str:
+        """Format log record as JSON.
+
+        Args:
+            record: Log record to format
+
+        Returns:
+            JSON-formatted log string
+
+        """
         log_data: dict[str, Any] = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "level": record.levelname,
@@ -21,7 +30,13 @@ class JSONFormatter(logging.Formatter):
         if record.exc_info:
             log_data["exception"] = self.formatException(record.exc_info)
 
-        for field in ("user_id", "request_id", "duration_ms", "environment", "chroma_mode"):
+        for field in (
+            "user_id",
+            "request_id",
+            "duration_ms",
+            "environment",
+            "chroma_mode",
+        ):
             if hasattr(record, field):
                 log_data[field] = getattr(record, field)
 
