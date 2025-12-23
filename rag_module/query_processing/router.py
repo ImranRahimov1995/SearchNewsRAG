@@ -1,10 +1,10 @@
 """Query routing logic - maps intent to retrieval strategy."""
 
-from rag_module.config import get_logger
+import logging
 
 from .protocols import QueryAnalysis, QueryIntent, RetrievalStrategy
 
-logger = get_logger("query_router")
+logger = logging.getLogger(__name__)
 
 
 class QueryRouter:

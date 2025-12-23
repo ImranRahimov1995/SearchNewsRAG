@@ -1,15 +1,14 @@
 """ChromaDB vector store implementation."""
 
+import logging
 from typing import Any
 
 from chromadb import Collection
 from chromadb.api import ClientAPI
 
-from rag_module.config import get_logger
-
 from .protocols import IEmbedding, VectorDocument, VectorSearchResult
 
-logger = get_logger("chroma_store")
+logger = logging.getLogger(__name__)
 
 
 class ChromaVectorStore:

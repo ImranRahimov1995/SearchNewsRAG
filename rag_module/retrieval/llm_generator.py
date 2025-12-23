@@ -1,11 +1,11 @@
 """LLM response generator - creates answers from retrieved news."""
 
 import json
+import logging
 from typing import Any
 
 from openai import OpenAI
 
-from rag_module.config import get_logger
 from rag_module.prompts import (
     ANSWER_GENERATION_SYSTEM,
     ANSWER_GENERATION_USER,
@@ -14,7 +14,7 @@ from rag_module.prompts import (
 
 from .protocols import SearchResult
 
-logger = get_logger("llm_generator")
+logger = logging.getLogger(__name__)
 
 
 class LLMResponseGenerator:

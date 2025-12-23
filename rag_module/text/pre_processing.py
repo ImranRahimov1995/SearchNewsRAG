@@ -13,14 +13,13 @@ Key Components:
 
 """
 
+import logging
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List, Protocol
 
-from rag_module.config import get_logger
-
-logger = get_logger("text_processors")
+logger = logging.getLogger(__name__)
 
 
 class ITextProcessor(Protocol):

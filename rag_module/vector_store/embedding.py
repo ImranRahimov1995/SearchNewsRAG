@@ -1,10 +1,10 @@
 """Embedding implementations using LangChain."""
 
+import logging
+
 from langchain_openai import OpenAIEmbeddings
 
-from rag_module.config import get_logger
-
-logger = get_logger("embedding")
+logger = logging.getLogger(__name__)
 
 
 class LangChainEmbedding:

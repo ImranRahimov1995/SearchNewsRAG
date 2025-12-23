@@ -1,14 +1,13 @@
 """RAG module CLI interface."""
 
 import argparse
+import logging
 import os
 import sys
 
-from rag_module.config import get_logger
-
 from .services import VectorizationService, VectorizationServiceV2
 
-logger = get_logger("rag_cli")
+logger = logging.getLogger(__name__)
 
 
 def vectorize_command(args: argparse.Namespace) -> int:

@@ -1,14 +1,13 @@
 """High-level repository for vector store operations."""
 
+import logging
 from typing import Any
-
-from rag_module.config import get_logger
 
 from .batch_processor import BatchProcessor
 from .chroma_store import ChromaVectorStore
 from .protocols import IEmbedding, VectorDocument, VectorSearchResult
 
-logger = get_logger("vector_repository")
+logger = logging.getLogger(__name__)
 
 
 class VectorStoreRepository:

@@ -1,8 +1,8 @@
 """Retrieval pipeline - coordinates query processing and search."""
 
+import logging
 from dataclasses import dataclass
 
-from rag_module.config import get_logger
 from rag_module.query_processing import QueryPipeline, QueryProcessingResult
 from rag_module.query_processing.protocols import RetrievalStrategy
 from rag_module.vector_store.protocols import IVectorStore
@@ -10,7 +10,7 @@ from rag_module.vector_store.protocols import IVectorStore
 from .handlers import SimpleSearchHandler, UnknownHandler
 from .protocols import SearchResult
 
-logger = get_logger("retrieval_pipeline")
+logger = logging.getLogger(__name__)
 
 
 @dataclass

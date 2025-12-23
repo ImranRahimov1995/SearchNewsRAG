@@ -1,16 +1,16 @@
 """Dependency injection for chat service."""
 
+import logging
 from typing import Annotated
 
 from config import get_settings
 from dependencies import get_vector_store
 from fastapi import Depends
 
-from rag_module.config import get_logger
 from rag_module.services.qa_service import QuestionAnsweringService
 from rag_module.vector_store import ChromaVectorStore
 
-logger = get_logger("chats.dependencies")
+logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
