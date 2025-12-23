@@ -1,9 +1,8 @@
 """Document processing pipeline orchestration."""
 
+import logging
 from dataclasses import dataclass
 from typing import Any
-
-from rag_module.config import get_logger
 
 from .analyzers import AsyncOpenAINewsAnalyzer, DummyAnalyzer
 from .chunkers import (
@@ -22,7 +21,7 @@ from .protocols import (
     ITextCleaner,
 )
 
-logger = get_logger("pipeline")
+logger = logging.getLogger(__name__)
 
 
 def _extract_content_from_item(item: dict[str, Any]) -> str:

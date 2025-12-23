@@ -1,10 +1,11 @@
 """Vectorization service v2 with relational persistence support."""
 
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from rag_module.config import get_database_url, get_logger
+from rag_module.config import get_database_url
 
 from ..data_processing import (
     AsyncDocumentProcessingPipeline,
@@ -23,7 +24,7 @@ from ..vector_store import ChromaVectorStore, VectorDocument
 from ..vector_store.embedding import LangChainEmbedding
 from .vectorization import VectorizationConfig, VectorizationService
 
-logger = get_logger("vectorization_service_v2")
+logger = logging.getLogger(__name__)
 
 
 @dataclass

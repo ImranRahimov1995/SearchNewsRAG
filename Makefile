@@ -87,3 +87,71 @@ migrate-pending: ## Check if migrations are pending
 
 migrate-create: ## Create new migration (use: make migrate-create name="your_migration_name")
 	cd backend && poetry run alembic revision --autogenerate -m "$(name)"
+
+# Monitoring commands
+monitoring-start: ## Start monitoring stack (local)
+	./monitoring.sh start local
+
+monitoring-start-prod: ## Start monitoring stack (production)
+	./monitoring.sh start prod
+
+monitoring-stop: ## Stop monitoring stack (local)
+	./monitoring.sh stop local
+
+monitoring-stop-prod: ## Stop monitoring stack (production)
+	./monitoring.sh stop prod
+
+monitoring-restart: ## Restart monitoring stack (local)
+	./monitoring.sh restart local
+
+monitoring-restart-prod: ## Restart monitoring stack (production)
+	./monitoring.sh restart prod
+
+monitoring-status: ## Show monitoring stack status (local)
+	./monitoring.sh status local
+
+monitoring-status-prod: ## Show monitoring stack status (production)
+	./monitoring.sh status prod
+
+monitoring-logs: ## Show Grafana logs (use: make monitoring-logs service=grafana)
+	./monitoring.sh logs $(service) local
+
+monitoring-logs-prod: ## Show monitoring service logs (use: make monitoring-logs-prod service=grafana)
+	./monitoring.sh logs $(service) prod
+
+full-start: ## Start application with monitoring (local)
+	./monitoring.sh full-start local
+
+full-start-prod: ## Start application with monitoring (production)
+	./monitoring.sh full-start prod
+
+full-stop: ## Stop application and monitoring (local)
+	./monitoring.sh full-stop local
+
+full-stop-prod: ## Stop application and monitoring (production)
+	./monitoring.sh full-stop prod
+
+# Docker commands
+docker-build: ## Build all Docker images
+	docker-compose build
+
+docker-build-prod: ## Build production Docker images
+	docker-compose -f docker-compose.prod.yml build
+
+docker-up: ## Start application containers
+	docker-compose up -d
+
+docker-up-prod: ## Start production containers
+	docker-compose -f docker-compose.prod.yml up -d
+
+docker-down: ## Stop application containers
+	docker-compose down
+
+docker-down-prod: ## Stop production containers
+	docker-compose -f docker-compose.prod.yml down
+
+docker-logs: ## Show application logs
+	docker-compose logs -f
+
+docker-logs-prod: ## Show production logs
+	docker-compose -f docker-compose.prod.yml logs -f

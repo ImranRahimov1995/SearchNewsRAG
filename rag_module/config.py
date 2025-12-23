@@ -1,12 +1,14 @@
 """RAG module configuration."""
 
-import logging
 import os
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
+from logging_config import setup_logging
+
 load_dotenv()
+setup_logging()
 
 _DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
 _DEFAULT_EMBEDDING_MODEL = "text-embedding-3-large"
@@ -98,31 +100,6 @@ class RAGConfig:
                 "Please create a .env file or set OPENAI_API_KEY in your environment."
             )
         return api_key
-
-
-def get_logger(name: str) -> logging.Logger:
-    """Get logger for RAG module.
-
-    Args:
-        name: Logger name
-
-    Returns:
-        Configured logger instance
-    """
-    logger = logging.getLogger(name)
-
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-        log_level = os.getenv("LOG_LEVEL", "INFO").upper()
-        logger.setLevel(getattr(logging, log_level))
-
-    return logger
 
 
 def get_database_url() -> str | None:

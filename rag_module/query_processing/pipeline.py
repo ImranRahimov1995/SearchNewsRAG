@@ -1,14 +1,13 @@
 """Query processing pipeline - orchestrates all query understanding steps."""
 
+import logging
 from dataclasses import dataclass
-
-from rag_module.config import get_logger
 
 from .llm_processor import LLMQueryProcessor
 from .protocols import ProcessedQuery, QueryAnalysis, RetrievalStrategy
 from .router import QueryRouter
 
-logger = get_logger("query_pipeline")
+logger = logging.getLogger(__name__)
 
 
 @dataclass

@@ -1,11 +1,10 @@
 """Vectorization service for processing and storing documents."""
 
 import asyncio
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
-
-from rag_module.config import get_logger
 
 from ..data_processing import (
     AsyncDocumentProcessingPipeline,
@@ -22,7 +21,7 @@ from ..data_processing.cleaners import TelegramNewsCleaner
 from ..vector_store import ChromaVectorStore, VectorDocument
 from ..vector_store.embedding import LangChainEmbedding
 
-logger = get_logger("vectorization_service")
+logger = logging.getLogger(__name__)
 
 
 @dataclass

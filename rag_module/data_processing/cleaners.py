@@ -1,14 +1,14 @@
 """Text cleaning components using text processors."""
 
+import logging
 from abc import ABC, abstractmethod
 
-from rag_module.config import get_logger
 from rag_module.text.pre_processing import (
     azerbaijani_news_processor,
     default_telegram_news_processor,
 )
 
-logger = get_logger("text_cleaners")
+logger = logging.getLogger(__name__)
 
 
 class BaseTextCleaner(ABC):

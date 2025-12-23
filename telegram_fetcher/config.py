@@ -1,13 +1,15 @@
 """Telegram fetcher configuration."""
 
-import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
 
 from dotenv import load_dotenv
 
+from logging_config import setup_logging
+
 load_dotenv()
+setup_logging()
 
 _DEFAULT_SOURCES = {
     "qafqazinfo": "https://t.me/qafqazinfo",
@@ -117,28 +119,3 @@ class TelegramFetcherConfig:
                 f"{_ENV_VAR_HELP.format(var_name='API_HASH')}"
             )
         return api_hash
-
-
-def get_logger(name: str) -> logging.Logger:
-    """Get logger for Telegram fetcher.
-
-    Args:
-        name: Logger name
-
-    Returns:
-        Configured logger instance
-    """
-    logger = logging.getLogger(name)
-
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-        log_level = os.getenv("LOG_LEVEL", "INFO").upper()
-        logger.setLevel(getattr(logging, log_level))
-
-    return logger

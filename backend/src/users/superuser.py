@@ -1,13 +1,14 @@
 """Superuser creation utility."""
 
+import logging
+
 from config import get_settings
 from database import get_db_manager
-from logging_config import get_logger
 from sqlalchemy import select
 from users.models import User
 from users.security import PasswordHasher
 
-logger = get_logger("superuser")
+logger = logging.getLogger(__name__)
 
 
 async def create_superuser_if_not_exists() -> None:

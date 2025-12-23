@@ -1,15 +1,15 @@
 """Shared dependency injection for all services."""
 
+import logging
 from typing import Annotated
 
 from config import get_settings
 from fastapi import Depends
 
-from rag_module.config import get_logger
 from rag_module.vector_store import ChromaVectorStore
 from rag_module.vector_store.embedding import LangChainEmbedding
 
-logger = get_logger("dependencies")
+logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
