@@ -38,22 +38,22 @@ print_error() {
 # Function to start monitoring stack
 start_monitoring() {
     local environment=${1:-local}
-    
+
     print_status "Starting monitoring stack for $environment environment..."
-    
+
     # Create monitoring network if it doesn't exist
     if ! docker network ls | grep -q "monitoring"; then
         print_status "Creating monitoring network..."
         docker network create monitoring
         print_success "Monitoring network created"
     fi
-    
+
     if [ "$environment" = "prod" ]; then
         docker-compose -f docker-compose.monitoring.prod.yml up -d
     else
         docker-compose -f docker-compose.monitoring.yml up -d
     fi
-    
+
     print_success "Monitoring stack started!"
     print_status "Services available at:"
     echo "  - Grafana: http://localhost:${GRAFANA_PORT:-3000} (admin/${GRAFANA_ADMIN_PASSWORD:-admin})"
@@ -66,22 +66,22 @@ start_monitoring() {
 # Function to stop monitoring stack
 stop_monitoring() {
     local environment=${1:-local}
-    
+
     print_status "Stopping monitoring stack for $environment environment..."
-    
+
     if [ "$environment" = "prod" ]; then
         docker-compose -f docker-compose.monitoring.prod.yml down
     else
         docker-compose -f docker-compose.monitoring.yml down
     fi
-    
+
     print_success "Monitoring stack stopped!"
 }
 
 # Function to restart monitoring stack
 restart_monitoring() {
     local environment=${1:-local}
-    
+
     print_status "Restarting monitoring stack for $environment environment..."
     stop_monitoring "$environment"
     start_monitoring "$environment"
@@ -91,12 +91,12 @@ restart_monitoring() {
 logs_monitoring() {
     local service=${1:-}
     local environment=${2:-local}
-    
+
     if [ -z "$service" ]; then
         print_status "Available services: grafana, prometheus, loki, promtail, node_exporter, cadvisor"
         return 1
     fi
-    
+
     if [ "$environment" = "prod" ]; then
         docker-compose -f docker-compose.monitoring.prod.yml logs -f "$service"
     else
@@ -107,9 +107,9 @@ logs_monitoring() {
 # Function to check status
 status_monitoring() {
     local environment=${1:-local}
-    
+
     print_status "Monitoring stack status for $environment environment:"
-    
+
     if [ "$environment" = "prod" ]; then
         docker-compose -f docker-compose.monitoring.prod.yml ps
     else
@@ -120,41 +120,41 @@ status_monitoring() {
 # Function to start application with monitoring
 start_full() {
     local environment=${1:-local}
-    
+
     print_status "Starting full stack (application + monitoring) for $environment environment..."
-    
+
     # Start monitoring first
     start_monitoring "$environment"
-    
+
     # Wait a bit for monitoring to be ready
     sleep 5
-    
+
     # Start application
     if [ "$environment" = "prod" ]; then
         docker-compose -f docker-compose.prod.yml up -d
     else
         docker-compose up -d
     fi
-    
+
     print_success "Full stack started!"
 }
 
 # Function to stop full stack
 stop_full() {
     local environment=${1:-local}
-    
+
     print_status "Stopping full stack for $environment environment..."
-    
+
     # Stop application
     if [ "$environment" = "prod" ]; then
         docker-compose -f docker-compose.prod.yml down
     else
         docker-compose down
     fi
-    
+
     # Stop monitoring
     stop_monitoring "$environment"
-    
+
     print_success "Full stack stopped!"
 }
 
