@@ -13,12 +13,11 @@ from database import get_db_manager
 from dependencies import get_container
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_logging_config import UVICORN_LOG_CONFIG
 from migrations import run_migrations_on_startup
 from news.router import router as news_router
 from prometheus_fastapi_instrumentator import Instrumentator
 from users.router import router as users_router
-
-from fastapi_logging_config import UVICORN_LOG_CONFIG
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
