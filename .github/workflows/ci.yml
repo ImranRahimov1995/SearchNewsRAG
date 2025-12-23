@@ -37,6 +37,9 @@ jobs:
         path: .venv
         key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
+    - name: Update lock file if needed
+      run: poetry lock --no-update
+
     - name: Install dependencies
       run: poetry install --with dev --no-interaction
 
