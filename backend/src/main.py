@@ -18,11 +18,9 @@ from news.router import router as news_router
 from prometheus_fastapi_instrumentator import Instrumentator
 from users.router import router as users_router
 
-from logging_config import UVICORN_LOG_CONFIG, setup_logging
+from fastapi_logging_config import UVICORN_LOG_CONFIG
 
 settings = get_settings()
-setup_logging(log_level=settings.log_level, log_format=settings.log_format)
-
 logger = logging.getLogger(__name__)
 
 
