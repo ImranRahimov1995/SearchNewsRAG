@@ -14,6 +14,7 @@ from .protocols import (
     ISourceService,
 )
 from .source import SourceService
+from .update_news import NewsUpdateConfig, NewsUpdateOrchestrator
 
 __all__ = [
     "CategoryService",
@@ -28,4 +29,6 @@ __all__ = [
     "NewsListService",
     "PostgresNewsService",
     "SourceService",
+    "NewsUpdateOrchestrator",
+    "NewsUpdateConfig",
 ]
