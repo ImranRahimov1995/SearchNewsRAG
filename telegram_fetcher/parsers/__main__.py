@@ -76,9 +76,7 @@ class NewsParsingService:
         items_to_process = []
         for item in items:
             if item.detail and not overwrite:
-                if not item.detail.startswith(
-                    ("Error", "Failed", "No URL", "Content not found")
-                ):
+                if len(item.detail) > 50:
                     self.stats["skipped"] += 1
                     continue
 
@@ -104,7 +102,6 @@ class NewsParsingService:
 
         await self._save_results(items, output_file)
 
-        # Close fetcher if it has a close method
         parser = self.processor.content_parser
         if isinstance(parser, BaseContentParser) and hasattr(
             parser, "fetcher"
@@ -131,9 +128,7 @@ class NewsParsingService:
 
                 self.stats["processed"] += 1
 
-                if result.detail and not result.detail.startswith(
-                    ("Error", "Failed", "No URL", "Content not found")
-                ):
+                if result.detail and len(result.detail) > 50:
                     self.stats["success"] += 1
                 else:
                     self.stats["failed"] += 1
