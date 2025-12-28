@@ -84,7 +84,7 @@ class TestQafqazInfoParser:
 
             result = await parser.parse("https://qafqazinfo.az/news/12345")
 
-            assert "Content not found" in result or "selector" in result
+            assert result == ""
 
         await fetcher.close()
 
@@ -107,8 +107,7 @@ class TestQafqazInfoParser:
 
             result = await parser.parse("https://qafqazinfo.az/news/12345")
 
-            assert "Short" in result
-            assert len(result) <= 50
+            assert result == ""
 
         await fetcher.close()
 
@@ -123,7 +122,7 @@ class TestQafqazInfoParser:
 
             result = await parser.parse("https://qafqazinfo.az/news/12345")
 
-            assert "Error" in result or "Failed" in result
+            assert result == ""
 
         await fetcher.close()
 
