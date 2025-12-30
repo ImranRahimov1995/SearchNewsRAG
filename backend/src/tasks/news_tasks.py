@@ -2,12 +2,11 @@
 
 import logging
 from datetime import datetime, timedelta
-import pytz
 from typing import Any
 
-from tasks.celery_app import celery_app
+import pytz
 from src.news.services import NewsUpdateConfig, NewsUpdateOrchestrator
-
+from tasks.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
 
