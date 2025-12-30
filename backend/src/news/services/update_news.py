@@ -56,8 +56,9 @@ class TelegramNewsFetcher:
 
     async def fetch(self, stop_date: datetime) -> dict[str, int]:
         """Fetch news from Telegram channels.
+
         Raises:
-                RuntimeError: If no messages were collected from any source.
+            RuntimeError: If no messages were collected from any source.
         """
         service = NewsCollectionService(
             sources=self.config.sources,
@@ -146,8 +147,9 @@ class NewsUpdateOrchestrator:
 
     def execute(self, target_date: datetime) -> dict[str, Any]:
         """Execute complete news update pipeline.
+
         Raises:
-                RuntimeError: If any step of the pipeline fails.
+            RuntimeError: If any step of the pipeline fails.
         """
         logger.info(f"Starting daily news update for {target_date.date()}")
         self.config.data_dir.mkdir(parents=True, exist_ok=True)
