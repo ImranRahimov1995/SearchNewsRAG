@@ -100,7 +100,7 @@ class TestAsyncContentFetcher:
 
             result = await fetcher.fetch("https://example.com/notfound")
 
-            assert "Error fetching URL" in result
+            assert result == ""
 
         await fetcher.close()
 

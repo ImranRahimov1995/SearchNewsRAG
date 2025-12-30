@@ -23,7 +23,10 @@ class NewsCollectionService(BaseCollectionService):
     ):
         if collector is None:
             config = TelegramFetcherConfig.from_env()
-            collector = TelegramCollector(str(config.api_id), config.api_hash)
+            session_path = os.getenv("TELEGRAM_SESSION_PATH", "session")
+            collector = TelegramCollector(
+                str(config.api_id), config.api_hash, session_path
+            )
 
         super().__init__(collector)
         self.sources = sources

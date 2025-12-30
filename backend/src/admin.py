@@ -50,6 +50,8 @@ class ArticleAdmin(ModelView, model=Article):
         "source_id",
         "doc_id",
         "message_id",
+        "full_content",
+        "has_detail",
         "url",
         "date",
         "category",

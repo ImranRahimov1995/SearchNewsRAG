@@ -38,10 +38,10 @@ class QafqazInfoParser(BaseContentParser):
         """Parse QafqazInfo article content."""
         html = await self.fetcher.fetch(url)
 
-        if html.startswith(("Error", "Failed", "Invalid")):
-            return html
+        if not html or len(html) < 100:
+            self.logger.error(f"Invalid HTML content from {url}")
+            return ""
 
-        # Parse with BeautifulSoup
         try:
             soup = BeautifulSoup(html, "html.parser")
             element = soup.select_one(self.selector)
@@ -53,19 +53,23 @@ class QafqazInfoParser(BaseContentParser):
                     self.logger.debug(
                         f"Parsed {len(text)} chars from {url[:50]}..."
                     )
-                return text
-
+                    return text
+                else:
+                    self.logger.warning(
+                        f"Content too short ({len(text)} chars) from {url}"
+                    )
+                    return ""
             else:
                 self.logger.error(
-                    f"Selector '{self.selector}' not found " f"on {url}"
+                    f"Selector '{self.selector}' not found on {url}"
                 )
-                return "Content not found with selector"
+                return ""
 
         except Exception as e:
             self.logger.error(
                 f"Error parsing HTML from {url}: {str(e)}", exc_info=True
             )
-            return f"Error parsing HTML: {str(e)}"
+            return ""
 
     async def parse_img_url(self, url: str) -> str | None:
         """Parse and return image URL from QafqazInfo article.
@@ -78,7 +82,7 @@ class QafqazInfoParser(BaseContentParser):
         """
         html = await self.fetcher.fetch(url)
 
-        if html.startswith(("Error", "Failed", "Invalid")):
+        if not html or len(html) < 100:
             return None
 
         try:

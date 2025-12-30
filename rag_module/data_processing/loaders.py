@@ -106,13 +106,17 @@ class TelegramJSONLoader(JSONFileLoader):
         skipped_count = 0
 
         for idx, item in enumerate(data):
-            if not item.get("text") and not item.get("detail"):
+            text = item.get("text") or ""
+            detail = item.get("detail") or ""
+
+            if not text.strip() and not detail.strip():
                 logger.warning(
                     f"Skipping item {idx}: "
                     f"missing both 'text' and 'detail' fields"
                 )
                 skipped_count += 1
                 continue
+
             valid_items.append(item)
 
         logger.info(

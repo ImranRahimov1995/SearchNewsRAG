@@ -71,7 +71,7 @@ class BaseURLExtractor:
         for pattern in self.url_patterns:
             urls = re.findall(pattern, cleaned_text)
             if urls:
-                url: str = urls[0]
+                url: str = urls[-1]
                 if not url.startswith(("http://", "https://")):
                     url = "https://" + url
                 return url
@@ -125,6 +125,54 @@ class AsyncContentFetcher:
         """Close aiohttp session."""
         if self.session and not self.session.closed:
             await self.session.close()
+            self.session = None
+
+    async def __aenter__(self):
+        """Enter async context: ensure session is ready and return self."""
+        await self._ensure_session()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        """Exit async context: close the session."""
+        await self.close()
+
+    def __del__(self):
+        """Attempt to close the aiohttp session when object is garbage collected.
+
+        This schedules an asynchronous close if the event loop is running,
+        or attempts a synchronous close otherwise. It's a best-effort cleanup
+        to avoid 'Unclosed client session' warnings.
+        """
+        try:
+            session = getattr(self, "session", None)
+            if not session:
+                return
+
+            loop = None
+            try:
+                loop = asyncio.get_event_loop()
+            except Exception as e:
+                logger.debug("Could not get event loop in __del__: %s", e)
+                loop = None
+
+            if loop and loop.is_running():
+                try:
+                    loop.create_task(self.close())
+                except Exception as e:
+                    logger.debug(
+                        "Failed to schedule close() in __del__: %s", e
+                    )
+            else:
+                try:
+                    if loop and not loop.is_closed():
+                        loop.run_until_complete(self.close())
+                except Exception as e:
+                    logger.debug(
+                        "Failed to run_until_complete close() in __del__: %s",
+                        e,
+                    )
+        except Exception as e:
+            logger.debug("Exception in AsyncContentFetcher.__del__: %s", e)
 
     async def fetch(self, url: str) -> str:
         """Fetch content from URL with retry logic."""
@@ -160,7 +208,8 @@ class AsyncContentFetcher:
                     )
                     await asyncio.sleep(wait_time)
                     continue
-                return "Error: Request timeout"
+                logger.error(f"Request timeout for {url}")
+                return ""
 
             except aiohttp.ClientError as e:
                 if attempt < self.max_retries:
@@ -171,19 +220,19 @@ class AsyncContentFetcher:
                     )
                     await asyncio.sleep(wait_time)
                     continue
-                return f"Error fetching URL: {str(e)}"
+                logger.error(f"Client error fetching {url}: {e}")
+                return ""
 
             except Exception as e:
                 logger.error(
-                    f"✗ Unexpected error fetching {url}: {e}", exc_info=True
+                    f"Unexpected error fetching {url}: {e}", exc_info=True
                 )
-                return f"Unexpected error: {str(e)}"
+                return ""
 
         logger.error(
-            f"✗ Failed to fetch {url} after "
-            f"{self.max_retries + 1} attempts"
+            f"Failed to fetch {url} after " f"{self.max_retries + 1} attempts"
         )
-        return "Failed to fetch content after all retries"
+        return ""
 
 
 class SiteProcessor:
@@ -201,9 +250,13 @@ class SiteProcessor:
         if not item.url:
             item.url = self.url_extractor.extract(item.text)
             if not item.url:
-                item.detail = "No URL found"
+                item.detail = None
+                item.image_url = None
                 return item
 
-        item.detail = await self.content_parser.parse(item.url)  # type: ignore[misc]
-        item.image_url = await self.content_parser.parse_img_url(item.url)  # type: ignore[misc]
+        detail = await self.content_parser.parse(item.url)  # type: ignore[misc]
+        item.detail = detail if detail and len(detail) > 50 else None
+
+        image = await self.content_parser.parse_img_url(item.url)  # type: ignore[misc]
+        item.image_url = image if image else None
         return item

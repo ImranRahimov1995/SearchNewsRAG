@@ -106,8 +106,10 @@ class JSONWriter:
 class TelegramCollector:
     """Collect messages from Telegram channel."""
 
-    def __init__(self, api_id: str, api_hash: str):
-        self.client = TelegramClient("session", api_id, api_hash)
+    def __init__(
+        self, api_id: str, api_hash: str, session_path: str = "session"
+    ):
+        self.client = TelegramClient(session_path, api_id, api_hash)
 
     async def collect(
         self, channel_url: str, stop_date: datetime, output_file: str
