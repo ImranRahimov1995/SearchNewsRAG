@@ -1,6 +1,30 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: searchnewsrag-redis-prod
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - searchnewsrag-network
+    labels:
+      - "app=redis"
+      - "container_name=searchnewsrag-redis-prod"
+      - "env=production"
+      - "service=cache"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
+
   postgres:
     image: postgres:16-alpine
     container_name: searchnewsrag-postgres-prod
@@ -71,6 +95,8 @@ services:
       CHROMA_PORT: 8000
       CHROMA_DB_PATH: ./chroma_db
 
+      REDIS_URL: redis://redis:6379/0
+
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
@@ -115,6 +141,119 @@ services:
       - "prometheus.io/scrape=true"
       - "prometheus.io/port=8000"
       - "prometheus.io/path=/metrics"
+
+  celery-worker:
+    image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
+    container_name: searchnewsrag-celery-worker-prod
+    restart: unless-stopped
+    command: sh -c "cd src && celery -A tasks.celery_app worker --loglevel=info --concurrency=${CELERY_WORKER_CONCURRENCY:-4}"
+    environment:
+      SETTINGS: prod
+      ENVIRONMENT: prod
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      API_ID: ${TELEGRAM_API_ID}
+      API_HASH: ${TELEGRAM_API_HASH}
+      TELEGRAM_SESSION_PATH: /app/session
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      ASYNC_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CHROMA_COLLECTION_NAME: ${CHROMA_COLLECTION_NAME:-news_analyzed_2025_800_150_large_v2}
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+      CHROMA_DB_PATH: ./chroma_db
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    volumes:
+      - datanew_data:/app/datanew
+      - session_data:/app/session.session
+    deploy:
+      resources:
+        limits:
+          cpus: '${CELERY_WORKER_CPU_LIMIT:-4}'
+          memory: ${CELERY_WORKER_MEMORY_LIMIT:-4G}
+        reservations:
+          cpus: '${CELERY_WORKER_CPU_RESERVATION:-1}'
+          memory: ${CELERY_WORKER_MEMORY_RESERVATION:-1G}
+    networks:
+      - searchnewsrag-network
+    labels:
+      - "app=celery-worker"
+      - "container_name=searchnewsrag-celery-worker-prod"
+      - "env=production"
+      - "service=background-worker"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
+
+  celery-beat:
+    image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
+    container_name: searchnewsrag-celery-beat-prod
+    restart: unless-stopped
+    command: sh -c "cd src && celery -A tasks.celery_app beat --loglevel=info --scheduler=celery.beat:PersistentScheduler"
+    environment:
+      SETTINGS: prod
+      ENVIRONMENT: prod
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - celerybeat_data:/app/celerybeat-schedule
+    deploy:
+      resources:
+        limits:
+          cpus: '${CELERY_BEAT_CPU_LIMIT:-0.5}'
+          memory: ${CELERY_BEAT_MEMORY_LIMIT:-256M}
+        reservations:
+          cpus: '${CELERY_BEAT_CPU_RESERVATION:-0.1}'
+          memory: ${CELERY_BEAT_MEMORY_RESERVATION:-128M}
+    networks:
+      - searchnewsrag-network
+    labels:
+      - "app=celery-beat"
+      - "container_name=searchnewsrag-celery-beat-prod"
+      - "env=production"
+      - "service=task-scheduler"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
+
+  flower:
+    image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
+    container_name: searchnewsrag-flower-prod
+    restart: unless-stopped
+    command: sh -c "cd src && celery -A tasks.celery_app flower --port=5555 --basic_auth=${FLOWER_USER:-admin}:${FLOWER_PASSWORD:-changeme}"
+    environment:
+      SETTINGS: prod
+      ENVIRONMENT: prod
+      REDIS_URL: redis://redis:6379/0
+    expose:
+      - "5555"
+    depends_on:
+      redis:
+        condition: service_healthy
+      celery-worker:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '${FLOWER_CPU_LIMIT:-0.5}'
+          memory: ${FLOWER_MEMORY_LIMIT:-256M}
+        reservations:
+          cpus: '${FLOWER_CPU_RESERVATION:-0.1}'
+          memory: ${FLOWER_MEMORY_RESERVATION:-128M}
+    networks:
+      - searchnewsrag-network
+    labels:
+      - "app=flower"
+      - "container_name=searchnewsrag-flower-prod"
+      - "env=production"
+      - "service=celery-monitoring"
+      - "logging.enabled=true"
+      - "prometheus.io/scrape=false"
 
   frontend:
     image: ${DOCKERHUB_USERNAME}/searchnewsrag-frontend:latest
@@ -171,7 +310,15 @@ networks:
     driver: bridge
 
 volumes:
+  redis_data:
+    driver: local
   postgres_data:
     driver: local
   chroma_data:
+    driver: local
+  datanew_data:
+    driver: local
+  celerybeat_data:
+    driver: local
+  session_data:
     driver: local

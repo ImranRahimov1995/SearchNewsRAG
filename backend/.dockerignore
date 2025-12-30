@@ -35,4 +35,4 @@ coverage.xml
 chroma_db/
 
 # Session files
-*.session
+# *.session

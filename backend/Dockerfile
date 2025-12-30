@@ -51,13 +51,17 @@ ENV PATH="/app/.venv/bin:$PATH" \
     PORT=${PORT} \
     HOST=${HOST}
 
+COPY --chown=appuser:appuser telegram_fetcher ./telegram_fetcher
+COPY --chown=appuser:appuser session.session ./session.session
+COPY --chown=appuser:appuser rag_module ./rag_module
 COPY --chown=appuser:appuser backend/src ./src
 COPY --chown=appuser:appuser logging_config.py ./src/logging_config.py
 COPY --chown=appuser:appuser backend/alembic.ini ./alembic.ini
 COPY --chown=appuser:appuser backend/migrations ./migrations
 
 RUN mkdir -p logs chroma_db && \
-    chown -R appuser:appuser logs chroma_db
+    chown -R appuser:appuser logs chroma_db && \
+    chown -R appuser:appuser /app
 
 USER appuser
 

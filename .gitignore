@@ -166,6 +166,7 @@ datanew/
 logs/
 htmlcov/
 pgdata/
+redis_data/
 
 # Session and data files
 *.session

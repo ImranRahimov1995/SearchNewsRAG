@@ -48,10 +48,13 @@ notebooks/
 
 # Database
 chroma_db/
+redis_data/
+celerybeat-schedule/
+datanew/
 *.sqlite3
 
 # Session files
-*.session
+# *.session
 
 # Git & CI/CD
 .git/
@@ -69,9 +72,6 @@ examples/
 
 # Frontend (when building backend)
 frontend/
-
-# Telegram fetcher (not needed in backend)
-telegram_fetcher/
 
 # Git
 .git/
