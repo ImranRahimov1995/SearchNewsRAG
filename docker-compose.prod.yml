@@ -76,26 +76,26 @@ services:
     container_name: searchnewsrag-backend
     restart: unless-stopped
     environment:
-      SETTINGS: prod
-      ENVIRONMENT: prod
-      HOST: 0.0.0.0
-      PORT: 8000
-      LOG_LEVEL: INFO
-      LOG_FORMAT: json
+      SETTINGS: ${SETTINGS}
+      ENVIRONMENT: ${ENVIRONMENT}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_FORMAT: ${LOG_FORMAT}
 
       OPENAI_API_KEY: ${OPENAI_API_KEY}
 
       API_ID: ${TELEGRAM_API_ID}
       API_HASH: ${TELEGRAM_API_HASH}
 
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      ASYNC_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      CHROMA_COLLECTION_NAME: news_analyzed_2025_800_150_large_v2
-      CHROMA_HOST: chromadb
-      CHROMA_PORT: 8000
-      CHROMA_DB_PATH: ./chroma_db
+      DATABASE_URL: ${DATABASE_URL}
+      ASYNC_DATABASE_URL: ${ASYNC_DATABASE_URL}
+      CHROMA_COLLECTION_NAME: ${CHROMA_COLLECTION_NAME}
+      CHROMA_HOST: ${CHROMA_HOST}
+      CHROMA_PORT: ${CHROMA_PORT}
+      CHROMA_DB_PATH: ${CHROMA_DB_PATH}
 
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: ${REDIS_URL}
 
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
@@ -116,7 +116,8 @@ services:
       SUPERUSER_EMAIL: ${SUPERUSER_EMAIL}
       SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
 
-      CORS_ORIGINS: '["http://news.aitools.az","https://news.aitools.az","http://backend-news.aitools.az","https://backend-news.aitools.az"]'
+      CORS_ORIGINS: ${CORS_ORIGINS}
+    command: ["/app/.venv/bin/python", "src/main.py"]
     expose:
       - "8000"
     depends_on:
@@ -146,21 +147,21 @@ services:
     image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
     container_name: searchnewsrag-celery-worker-prod
     restart: unless-stopped
-    command: sh -c "cd src && celery -A tasks.celery_app worker --loglevel=info --concurrency=${CELERY_WORKER_CONCURRENCY:-4}"
+    command: sh -c "cd src && celery -A tasks.celery_app worker --loglevel=info --concurrency=${CELERY_WORKER_CONCURRENCY}"
     environment:
-      SETTINGS: prod
-      ENVIRONMENT: prod
+      SETTINGS: ${SETTINGS}
+      ENVIRONMENT: ${ENVIRONMENT}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       API_ID: ${TELEGRAM_API_ID}
       API_HASH: ${TELEGRAM_API_HASH}
-      TELEGRAM_SESSION_PATH: /app/session
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      ASYNC_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      CHROMA_COLLECTION_NAME: ${CHROMA_COLLECTION_NAME:-news_analyzed_2025_800_150_large_v2}
-      CHROMA_HOST: chromadb
-      CHROMA_PORT: 8000
-      CHROMA_DB_PATH: ./chroma_db
-      REDIS_URL: redis://redis:6379/0
+      TELEGRAM_SESSION_PATH: ${TELEGRAM_SESSION_PATH}
+      DATABASE_URL: ${DATABASE_URL}
+      ASYNC_DATABASE_URL: ${ASYNC_DATABASE_URL}
+      CHROMA_COLLECTION_NAME: ${CHROMA_COLLECTION_NAME}
+      CHROMA_HOST: ${CHROMA_HOST}
+      CHROMA_PORT: ${CHROMA_PORT}
+      CHROMA_DB_PATH: ${CHROMA_DB_PATH}
+      REDIS_URL: ${REDIS_URL}
     depends_on:
       redis:
         condition: service_healthy
@@ -195,9 +196,9 @@ services:
     restart: unless-stopped
     command: sh -c "cd src && celery -A tasks.celery_app beat --loglevel=info --scheduler=celery.beat:PersistentScheduler"
     environment:
-      SETTINGS: prod
-      ENVIRONMENT: prod
-      REDIS_URL: redis://redis:6379/0
+      SETTINGS: ${SETTINGS}
+      ENVIRONMENT: ${ENVIRONMENT}
+      REDIS_URL: ${REDIS_URL}
     depends_on:
       redis:
         condition: service_healthy
@@ -225,11 +226,11 @@ services:
     image: ${DOCKERHUB_USERNAME}/searchnewsrag-backend:latest
     container_name: searchnewsrag-flower-prod
     restart: unless-stopped
-    command: sh -c "cd src && celery -A tasks.celery_app flower --port=5555 --basic_auth=${FLOWER_USER:-admin}:${FLOWER_PASSWORD:-changeme}"
+    command: sh -c "cd src && celery -A tasks.celery_app flower --port=5555 --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD}"
     environment:
-      SETTINGS: prod
-      ENVIRONMENT: prod
-      REDIS_URL: redis://redis:6379/0
+      SETTINGS: ${SETTINGS}
+      ENVIRONMENT: ${ENVIRONMENT}
+      REDIS_URL: ${REDIS_URL}
     expose:
       - "5555"
     depends_on:

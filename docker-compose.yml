@@ -90,6 +90,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    command: ["/app/.venv/bin/python", "src/main.py"]
     networks:
       - searchnewsrag-network
       - monitoring
@@ -110,8 +111,6 @@ services:
     container_name: searchnewsrag-celery-worker
     restart: unless-stopped
     env_file: .env
-    environment:
-      TELEGRAM_SESSION_PATH: /app/session
     command: sh -c "cd src && celery -A tasks.celery_app worker --loglevel=info --concurrency=${CELERY_WORKER_CONCURRENCY:-2}"
     depends_on:
       redis:
@@ -180,7 +179,7 @@ services:
     container_name: searchnewsrag-flower
     restart: unless-stopped
     env_file: .env
-    command: sh -c "cd src && celery -A tasks.celery_app flower --port=5555 --basic_auth=${FLOWER_USER:-admin}:${FLOWER_PASSWORD:-admin}"
+    command: sh -c "cd src && celery -A tasks.celery_app flower --port=5555 --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD}"
     ports:
       - "${FLOWER_PORT:-5555}:5555"
     depends_on:

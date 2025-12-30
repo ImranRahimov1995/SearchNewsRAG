@@ -69,5 +69,3 @@ EXPOSE ${PORT}
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD ["/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${PORT}/health').read()"]
-
-CMD ["/app/.venv/bin/python", "src/main.py"]
