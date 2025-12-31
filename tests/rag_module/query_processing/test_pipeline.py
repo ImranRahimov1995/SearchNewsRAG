@@ -144,7 +144,7 @@ class TestQueryPipeline:
         result = pipeline.process("Neçə nəfər iştirak etdi?")
 
         assert result.analysis.intent == QueryIntent.STATISTICAL
-        assert result.strategy == RetrievalStrategy.HYBRID_SEARCH
+        assert result.strategy == RetrievalStrategy.STATISTICS_QUERY
 
     def test_process_analytical_query(self):
         """Test processing analytical query."""

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class QueryRouter:
     """Routes queries to appropriate retrieval strategies.
 
-    Simplified routing: only FACTOID → SIMPLE_SEARCH, everything else → UNKNOWN.
+    Maps query intents to specific retrieval strategies.
     """
 
     def route(self, analysis: QueryAnalysis) -> RetrievalStrategy:
@@ -20,12 +20,21 @@ class QueryRouter:
             analysis: Query analysis with intent and entities
 
         Returns:
-            Recommended retrieval strategy (SIMPLE_SEARCH or HYBRID_SEARCH)
+            Recommended retrieval strategy
         """
-        if analysis.intent == QueryIntent.FACTOID:
-            strategy = RetrievalStrategy.SIMPLE_SEARCH
-        else:
-            strategy = RetrievalStrategy.HYBRID_SEARCH
+        intent_mapping = {
+            QueryIntent.FACTOID: RetrievalStrategy.SIMPLE_SEARCH,
+            QueryIntent.STATISTICS: RetrievalStrategy.STATISTICS_QUERY,
+            QueryIntent.PREDICTION: RetrievalStrategy.PREDICTION_QUERY,
+            QueryIntent.TALK: RetrievalStrategy.STATIC_RESPONSE,
+            QueryIntent.ATTACKING: RetrievalStrategy.REJECT,
+            QueryIntent.STATISTICAL: RetrievalStrategy.STATISTICS_QUERY,
+            QueryIntent.ANALYTICAL: RetrievalStrategy.HYBRID_SEARCH,
+        }
+
+        strategy = intent_mapping.get(
+            analysis.intent, RetrievalStrategy.HYBRID_SEARCH
+        )
 
         logger.info(
             f"Routed query: intent={analysis.intent} → strategy={strategy}"
@@ -63,6 +72,18 @@ class QueryRouter:
             ),
             RetrievalStrategy.LOCAL_SEARCH: (
                 "Search in Azerbaijan-specific data sources"
+            ),
+            RetrievalStrategy.STATISTICS_QUERY: (
+                "SQL-based statistical analysis and aggregation"
+            ),
+            RetrievalStrategy.PREDICTION_QUERY: (
+                "Generate predictions based on historical data"
+            ),
+            RetrievalStrategy.STATIC_RESPONSE: (
+                "Return pre-defined response without search"
+            ),
+            RetrievalStrategy.REJECT: (
+                "Reject malicious or inappropriate request"
             ),
         }
 

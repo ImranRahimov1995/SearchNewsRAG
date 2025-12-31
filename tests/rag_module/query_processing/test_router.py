@@ -31,7 +31,7 @@ class TestQueryRouter:
 
         strategy = router.route(analysis)
 
-        assert strategy == RetrievalStrategy.HYBRID_SEARCH
+        assert strategy == RetrievalStrategy.STATISTICS_QUERY
 
     def test_analytical_routing(self):
         """Test routing for analytical queries."""

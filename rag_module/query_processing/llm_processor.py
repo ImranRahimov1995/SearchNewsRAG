@@ -153,10 +153,16 @@ class LLMQueryProcessor:
                 continue
 
         intent_str = data.get("intent", "unknown").lower()
-        if intent_str == "factoid":
-            intent = QueryIntent.FACTOID
-        else:
-            intent = QueryIntent.UNKNOWN
+        intent_mapping = {
+            "factoid": QueryIntent.FACTOID,
+            "statistics": QueryIntent.STATISTICS,
+            "prediction": QueryIntent.PREDICTION,
+            "talk": QueryIntent.TALK,
+            "attacking": QueryIntent.ATTACKING,
+            "statistical": QueryIntent.STATISTICAL,
+            "analytical": QueryIntent.ANALYTICAL,
+        }
+        intent = intent_mapping.get(intent_str, QueryIntent.UNKNOWN)
 
         analysis = QueryAnalysis(
             intent=intent,

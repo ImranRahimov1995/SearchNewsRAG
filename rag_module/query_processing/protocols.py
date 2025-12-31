@@ -15,6 +15,10 @@ class QueryIntent(str, Enum):
     TASK_ORIENTED = "task_oriented"  # create, build, generate
     OPINION = "opinion"  # subjective, no factual answer
     LOCAL_AZ = "local_az"  # Azerbaijan-specific entities/slang
+    STATISTICS = "statistics"  # analytics, aggregations, trends
+    PREDICTION = "prediction"  # future forecasts and predictions
+    TALK = "talk"  # general conversation, greetings, off-topic
+    ATTACKING = "attacking"  # prompt injection, malicious attempts
     UNKNOWN = "unknown"  # cannot classify
 
 
@@ -28,6 +32,10 @@ class RetrievalStrategy(str, Enum):
     LLM_REASONING = "llm_reasoning"  # Pure LLM generation
     HYBRID_SEARCH = "hybrid_search"  # Combine multiple strategies
     LOCAL_SEARCH = "local_search"  # Search in AZ-specific data
+    STATISTICS_QUERY = "statistics_query"  # SQL-based analytics
+    PREDICTION_QUERY = "prediction_query"  # Future predictions
+    STATIC_RESPONSE = "static_response"  # Pre-defined messages
+    REJECT = "reject"  # Reject malicious requests
 
 
 class EntityType(str, Enum):
