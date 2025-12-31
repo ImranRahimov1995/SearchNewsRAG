@@ -47,7 +47,7 @@ class BackendSettings(BaseSettings):
         default=None, description="Redis connection URL"
     )
     cache_ttl: int = Field(
-        default=3600*24*3, description="Cache time to live in seconds"
+        default=3600 * 24 * 3, description="Cache time to live in seconds"
     )
 
     log_level: str = Field(default="INFO", description="Log level")
