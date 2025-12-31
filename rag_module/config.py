@@ -31,6 +31,8 @@ class RAGConfig:
         chroma_port: ChromaDB server port (optional)
         default_top_k: Default number of results to retrieve
         min_similarity_score: Minimum similarity threshold
+        redis_url: Redis server URL
+        cache_ttl: Cache time to live in seconds
         log_level: Logging level
     """
 
@@ -47,6 +49,9 @@ class RAGConfig:
 
     default_top_k: int = 5
     min_similarity_score: float = 0.3
+
+    redis_url: str | None = None
+    cache_ttl: int = 3600
 
     log_level: str = "INFO"
 
@@ -80,6 +85,8 @@ class RAGConfig:
             ),
             default_top_k=int(os.getenv("RAG_TOP_K", "5")),
             min_similarity_score=float(os.getenv("RAG_MIN_SCORE", "0.5")),
+            redis_url=os.getenv("REDIS_URL"),
+            cache_ttl=int(os.getenv("CACHE_TTL", "3600")),
             log_level=os.getenv("LOG_LEVEL", "INFO"),
         )
 

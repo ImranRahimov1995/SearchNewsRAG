@@ -43,6 +43,13 @@ class BackendSettings(BaseSettings):
         default=None, description="ChromaDB server port (for client mode)"
     )
 
+    redis_url: str | None = Field(
+        default=None, description="Redis connection URL"
+    )
+    cache_ttl: int = Field(
+        default=3600 * 24 * 3, description="Cache time to live in seconds"
+    )
+
     log_level: str = Field(default="INFO", description="Log level")
     log_format: str = Field(
         default="json", description="Log format: json or text"

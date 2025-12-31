@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
+from rag_module.cache.protocols import IQueryCache
 from rag_module.query_processing import QueryPipeline
 from rag_module.retrieval import LLMResponseGenerator, RetrievalPipeline
 from rag_module.retrieval.protocols import SearchResult
@@ -90,6 +91,8 @@ class QuestionAnsweringService:
         llm_model: str = "gpt-4o-mini",
         temperature: float = 0.3,
         top_k: int = 5,
+        cache: IQueryCache | None = None,
+        cache_ttl: int = 3600,
     ):
         """Initialize QA service.
 
@@ -99,6 +102,8 @@ class QuestionAnsweringService:
             llm_model: LLM model to use
             temperature: Generation temperature
             top_k: Number of documents to retrieve
+            cache: Optional cache implementation
+            cache_ttl: Cache time to live in seconds
         """
         self.retrieval_pipeline = RetrievalPipeline(
             vector_store=vector_store, query_pipeline=QueryPipeline()
@@ -109,9 +114,12 @@ class QuestionAnsweringService:
         )
 
         self.top_k = top_k
+        self.cache = cache
+        self.cache_ttl = cache_ttl
 
         logger.info(
-            f"Initialized QuestionAnsweringService: model={llm_model}, top_k={top_k}"
+            f"Initialized QuestionAnsweringService: model={llm_model}, "
+            f"top_k={top_k}, cache_enabled={cache is not None}"
         )
 
     def answer(self, query: str, top_k: int | None = None) -> QAResponse:
@@ -125,6 +133,19 @@ class QuestionAnsweringService:
             Complete QA response with answer and sources
         """
         k = top_k or self.top_k
+
+        if self.cache:
+            cache_key = self.cache.generate_key(query=query, top_k=k)
+            cached_result = self.cache.get(cache_key)
+            if cached_result:
+                logger.info(f"Cache hit for query: '{query[:50]}'")
+                try:
+                    return self._response_from_dict(cached_result)
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to deserialize cached response: {e}"
+                    )
+                    self.cache.delete(cache_key)
 
         logger.info(f"Processing question: '{query[:100]}'")
 
@@ -159,6 +180,9 @@ class QuestionAnsweringService:
             total_found=len(retrieval_result.search_results),
             handler_used=retrieval_result.handler_used,
         )
+
+        if self.cache:
+            self.cache.set(cache_key, response.to_dict(), ttl=self.cache_ttl)
 
         logger.info(
             f"QA complete: confidence={response.confidence}, "
@@ -243,3 +267,48 @@ class QuestionAnsweringService:
                 )
 
         return sources
+
+    def _response_from_dict(self, data: dict[str, Any]) -> QAResponse:
+        """Reconstruct QAResponse from cached dictionary.
+
+        Args:
+            data: Cached response dictionary
+
+        Returns:
+            QAResponse instance
+        """
+        sources = [
+            SourceInfo(
+                id=s["id"], name=s.get("name", "Unknown"), url=s.get("url")
+            )
+            for s in data.get("sources", [])
+        ]
+
+        search_results = []
+        for doc in data.get("retrieved_documents", []):
+            search_results.append(
+                SearchResult(
+                    doc_id=doc["doc_id"],
+                    content=doc.get("preview", ""),
+                    score=doc["score"],
+                    metadata={
+                        "category": doc.get("category"),
+                        "importance": doc.get("importance"),
+                        "source": doc.get("source"),
+                        "url": doc.get("url"),
+                    },
+                )
+            )
+
+        return QAResponse(
+            query=data["query"],
+            language=data["language"],
+            intent=data["intent"],
+            answer=data["answer"],
+            sources=sources,
+            confidence=data["confidence"],
+            key_facts=data.get("key_facts", []),
+            search_results=search_results,
+            total_found=data.get("total_found", 0),
+            handler_used=data.get("handler_used", "cached"),
+        )
