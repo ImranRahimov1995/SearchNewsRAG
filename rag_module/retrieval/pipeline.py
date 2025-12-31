@@ -1,13 +1,21 @@
 """Retrieval pipeline - coordinates query processing and search."""
 
 import logging
+import os
 from dataclasses import dataclass
 
 from rag_module.query_processing import QueryPipeline, QueryProcessingResult
 from rag_module.query_processing.protocols import RetrievalStrategy
 from rag_module.vector_store.protocols import IVectorStore
 
-from .handlers import SimpleSearchHandler, UnknownHandler
+from .handlers import (
+    AttackingHandler,
+    PredictionHandler,
+    SimpleSearchHandler,
+    StatisticsHandler,
+    TalkHandler,
+    UnknownHandler,
+)
 from .protocols import SearchResult
 
 logger = logging.getLogger(__name__)
@@ -79,19 +87,29 @@ class RetrievalPipeline:
         self,
         vector_store: IVectorStore,
         query_pipeline: QueryPipeline | None = None,
+        database_url: str | None = None,
     ):
         """Initialize retrieval pipeline.
 
         Args:
             vector_store: Vector store for search
             query_pipeline: Query processing pipeline (creates default if None)
+            database_url: PostgreSQL URL for statistics handler
         """
         self.query_pipeline = query_pipeline or QueryPipeline()
 
+        self.database_url = database_url or os.getenv(
+            "DATABASE_URL",
+        )
+
         self.simple_handler = SimpleSearchHandler(vector_store)
         self.unknown_handler = UnknownHandler(vector_store)
+        self.statistics_handler = StatisticsHandler(self.database_url)
+        self.prediction_handler = PredictionHandler(vector_store)
+        self.talk_handler = TalkHandler()
+        self.attacking_handler = AttackingHandler()
 
-        logger.info("Initialized RetrievalPipeline")
+        logger.info("Initialized RetrievalPipeline with all handlers")
 
     def search(self, query: str, top_k: int = 10) -> RetrievalResult:
         """Execute complete search pipeline.
@@ -109,11 +127,34 @@ class RetrievalPipeline:
 
         search_query = query_result.get_search_query()
         entities = query_result.analysis.entities
+        language = query_result.processed.language
 
-        if query_result.strategy == RetrievalStrategy.SIMPLE_SEARCH:
+        strategy = query_result.strategy
+
+        if strategy == RetrievalStrategy.SIMPLE_SEARCH:
             handler_name = "SimpleSearchHandler"
             search_results = self.simple_handler.retrieve(
                 search_query, entities, top_k
+            )
+        elif strategy == RetrievalStrategy.STATISTICS_QUERY:
+            handler_name = "StatisticsHandler"
+            search_results = self.statistics_handler.retrieve(
+                search_query, entities, top_k
+            )
+        elif strategy == RetrievalStrategy.PREDICTION_QUERY:
+            handler_name = "PredictionHandler"
+            search_results = self.prediction_handler.retrieve(
+                search_query, entities, top_k, language
+            )
+        elif strategy == RetrievalStrategy.STATIC_RESPONSE:
+            handler_name = "TalkHandler"
+            search_results = self.talk_handler.retrieve(
+                search_query, entities, top_k, language
+            )
+        elif strategy == RetrievalStrategy.REJECT:
+            handler_name = "AttackingHandler"
+            search_results = self.attacking_handler.retrieve(
+                query, entities, top_k, language
             )
         else:
             handler_name = "UnknownHandler"

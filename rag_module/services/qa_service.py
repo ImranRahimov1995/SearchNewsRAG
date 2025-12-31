@@ -93,6 +93,7 @@ class QuestionAnsweringService:
         top_k: int = 5,
         cache: IQueryCache | None = None,
         cache_ttl: int = 3600,
+        database_url: str | None = None,
     ):
         """Initialize QA service.
 
@@ -104,9 +105,12 @@ class QuestionAnsweringService:
             top_k: Number of documents to retrieve
             cache: Optional cache implementation
             cache_ttl: Cache time to live in seconds
+            database_url: PostgreSQL URL for statistics handler
         """
         self.retrieval_pipeline = RetrievalPipeline(
-            vector_store=vector_store, query_pipeline=QueryPipeline()
+            vector_store=vector_store,
+            query_pipeline=QueryPipeline(),
+            database_url=database_url,
         )
 
         self.llm_generator = LLMResponseGenerator(
@@ -158,28 +162,51 @@ class QuestionAnsweringService:
             )
         )
 
-        llm_response = self.llm_generator.generate(
-            query=query,
-            search_results=retrieval_result.search_results,
-            language=original_language,
-        )
+        if retrieval_result.handler_used in [
+            "TalkHandler",
+            "AttackingHandler",
+        ]:
+            if retrieval_result.search_results:
+                answer = retrieval_result.search_results[0].content
+            else:
+                answer = "Sistemdə xəta baş verdi."
 
-        sources = self._extract_sources(
-            llm_response.get("sources", []), retrieval_result.search_results
-        )
+            response = QAResponse(
+                query=query,
+                language=original_language,
+                intent=retrieval_result.query_result.analysis.intent.value,
+                answer=answer,
+                sources=[],
+                confidence="high",
+                key_facts=[],
+                search_results=retrieval_result.search_results,
+                total_found=len(retrieval_result.search_results),
+                handler_used=retrieval_result.handler_used,
+            )
+        else:
+            llm_response = self.llm_generator.generate(
+                query=query,
+                search_results=retrieval_result.search_results,
+                language=original_language,
+            )
 
-        response = QAResponse(
-            query=query,
-            language=original_language,
-            intent=retrieval_result.query_result.analysis.intent.value,
-            answer=llm_response.get("answer", "Cavab yaradıla bilmədi"),
-            sources=sources,
-            confidence=llm_response.get("confidence", "low"),
-            key_facts=llm_response.get("key_facts", []),
-            search_results=retrieval_result.search_results,
-            total_found=len(retrieval_result.search_results),
-            handler_used=retrieval_result.handler_used,
-        )
+            sources = self._extract_sources(
+                llm_response.get("sources", []),
+                retrieval_result.search_results,
+            )
+
+            response = QAResponse(
+                query=query,
+                language=original_language,
+                intent=retrieval_result.query_result.analysis.intent.value,
+                answer=llm_response.get("answer", "Cavab yaradıla bilmədi"),
+                sources=sources,
+                confidence=llm_response.get("confidence", "low"),
+                key_facts=llm_response.get("key_facts", []),
+                search_results=retrieval_result.search_results,
+                total_found=len(retrieval_result.search_results),
+                handler_used=retrieval_result.handler_used,
+            )
 
         if self.cache:
             self.cache.set(cache_key, response.to_dict(), ttl=self.cache_ttl)
