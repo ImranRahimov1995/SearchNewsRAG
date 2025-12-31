@@ -24,6 +24,9 @@ class BackendSettings(BaseSettings):
     openai_api_key: str = Field(
         default="", description="OpenAI API key (from OPENAI_API_KEY env var)"
     )
+    database_url: str | None = Field(
+        default=None, description="Database connection URL"
+    )
 
     async_database_url: str | None = Field(
         default=None, description="PostgreSQL async connection URL"

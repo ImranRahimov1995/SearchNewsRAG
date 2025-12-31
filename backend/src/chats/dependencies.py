@@ -37,4 +37,5 @@ def get_qa_service(
         top_k=settings.rag_top_k,
         cache=cache,
         cache_ttl=settings.cache_ttl,
+        database_url=settings.database_url,
     )
